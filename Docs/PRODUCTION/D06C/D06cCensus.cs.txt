@@ -1,0 +1,62 @@
+using System; using System.IO; using System.Linq; using System.Collections.Generic; using System.Diagnostics; using System.Text.RegularExpressions; using Dad.World;
+namespace Dad.Tests { public class D06c {
+  static string SA => Environment.GetEnvironmentVariable("DAD_SA");
+  public static void Places() {
+    var text = File.ReadAllText(Path.Combine(SA, "World", "places.json"));
+    var xs = new List<double>(); var zs = new List<double>(); var ns = new List<string>();
+    foreach (Match m in Regex.Matches(text, @"\{[^{}]*\}")) {
+      var x = Regex.Match(m.Value, "\"x\":\\s*(-?[0-9.]+)"); var z = Regex.Match(m.Value, "\"z\":\\s*(-?[0-9.]+)"); var n = Regex.Match(m.Value, "\"nameEn\":\\s*(null|\"([^\"]*)\")");
+      if (!x.Success || !z.Success) continue;
+      xs.Add(double.Parse(x.Groups[1].Value)); zs.Add(double.Parse(z.Groups[1].Value)); ns.Add(n.Success && n.Groups[2].Success ? n.Groups[2].Value : null);
+    }
+    Districts.Set(xs.ToArray(), zs.ToArray(), ns.ToArray());
+    Console.WriteLine($"places {Districts.Count}: old Dhaka {Districts.CountOf(District.OldDhaka)}, modern {Districts.CountOf(District.Modern)}");
+  }
+  static IEnumerable<string> Files(bool slice) {
+    var dir = Path.Combine(SA, "World", "chunks");
+    if (slice) { for (int ix = 6; ix <= 9; ix++) for (int iy = -30; iy <= -28; iy++) { var f = Path.Combine(dir, $"c_{ix}_{iy}.dadc"); if (File.Exists(f)) yield return f; } }
+    else foreach (var f in Directory.GetFiles(dir, "*.dadc").OrderBy(f => f)) yield return f;
+  }
+  public void Slice() => Census(true);
+  public void City() => Census(false);
+  static void Census(bool slice) {
+    Places();
+    int chunks = 0; long walls = 0, bays = 0, closed = 0, vRoof = 0, vFac = 0, iRoof = 0, iFac = 0; int maxV = 0, maxI = 0, maxFacV = 0, maxFacI = 0; string maxCell = "";
+    var styles = new long[9]; double msBuild = 0, msKit = 0; long cells = 0, cellsWith = 0;
+    var perCell = new List<(int tris, string id)>();
+    foreach (var f in Files(slice)) {
+      var c = Dadc.Load(File.ReadAllBytes(f)); chunks++;
+      var r = ChunkRoads.Build(c);
+      var sw = Stopwatch.StartNew();
+      var b = ChunkBuildings.Build(c);
+      msBuild += sw.Elapsed.TotalMilliseconds;
+      walls += b.NearWallCount; bays += b.NearBays; closed += b.NearBaysClosed;
+      for (int k = 0; k < 9; k++) styles[k] += b.NearStyles[k];
+      var st = r.Street;
+      for (int cell = 0; cell < 16; cell++) {
+        sw.Restart();
+        var kit = st.BuildNearKit(cell, b);
+        msKit += sw.Elapsed.TotalMilliseconds;
+        cells++;
+        int fv = kit.VertexCount, fi = kit.IndexCount - kit.RoofIndexCount;
+        // roof vertices: count those referenced in the roof submesh = vertices before the first facade vertex
+        var roofKit = st.BuildNearKit(cell);
+        int rv = roofKit.VertexCount; fv -= rv;
+        vRoof += rv; iRoof += kit.RoofIndexCount; vFac += fv; iFac += fi;
+        if (fi > 0) cellsWith++;
+        perCell.Add((fi / 3, c.Id + "/" + cell));
+        if (kit.VertexCount > maxV) { maxV = kit.VertexCount; maxCell = c.Id + "/" + cell; }
+        maxI = Math.Max(maxI, kit.IndexCount); maxFacV = Math.Max(maxFacV, fv); maxFacI = Math.Max(maxFacI, fi);
+      }
+    }
+    perCell.Sort((a, b2) => b2.tris.CompareTo(a.tris));
+    Console.WriteLine($"{(slice ? "slice" : "city")}: {chunks} chunks, {cells} cells ({cellsWith} with near facades); walls kept {walls}, bays {bays} ({closed} with < {ChunkBuildings.MinClear} m room)");
+    Console.WriteLine($"styles: " + string.Join(", ", Enumerable.Range(1, 8).Select(k => $"{(NearStyle)k} {styles[k]}")));
+    Console.WriteLine($"near facades {vFac} v {iFac / 3} tris; rooftop kit {vRoof} v {iRoof / 3} tris");
+    Console.WriteLine($"largest combined cell {maxCell}: {maxV} v, {maxI} i (largest facade part {maxFacV} v {maxFacI} i)");
+    Console.WriteLine($"buildings build {msBuild / chunks:F1} ms/chunk; combined near kit {msKit / cells:F2} ms/cell (single thread, debug Mono)");
+    Console.WriteLine("top cells by facade tris: " + string.Join(", ", perCell.Take(8).Select(p => $"{p.id} {p.tris}")));
+    double p50 = perCell[perCell.Count / 2].tris, p90 = perCell[perCell.Count / 10].tris;
+    Console.WriteLine($"facade tris per cell: p50 {p50}, p90 {p90}, max {perCell[0].tris}");
+  }
+}}

@@ -1,0 +1,17 @@
+#!/bin/zsh
+set -e
+P=${0:a:h}
+U=/Applications/Unity/Hub/Editor/6000.3.27f1/Unity.app/Contents/Resources/Scripting
+M=$U/MonoBleedingEdge
+NS=$U/NetStandard/ref/2.1.0/netstandard.dll
+MS=$U/NetStandard/compat/2.1.0/shims/netfx/mscorlib.dll
+C=($U/NetCoreRuntime/dotnet $U/DotNetSdkRoslyn/csc.dll -nologo -noconfig -nostdlib -langversion:9 -nowarn:1701,1702,8321 -optimize+)
+CH=$HOME/Documents/dhaka-after-dark-unity/Assets/StreamingAssets/World/chunks
+for v in head p6e; do $C -target:exe -out:$P/count/$v/time.exe -r:$NS -r:$MS -r:$P/count/$v/Dad.World.dll $P/Time.cs; done
+run() { MONO_PATH=$M/lib/mono/4.5:$M/lib/mono/4.5/Facades $M/bin/mono $P/count/$1/time.exe $CH 1 ${@:2}; }
+for list in slice-ids line6-ids; do
+  ids=(${(s:,:)"$(cat $P/$list.txt)"})
+  for r in 0 1 2 3; do for v in head p6e; do echo "$list round $r $v: $(run $v $ids)"; done; done
+done
+ids=($(cat $P/fly-chunks.txt))
+for r in 0 1 2; do for v in head p6e; do echo "fly461 round $r $v: $(run $v $ids)"; done; done

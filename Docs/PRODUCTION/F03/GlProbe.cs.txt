@@ -1,0 +1,14 @@
+using System; using System.IO; using System.Linq; using System.Collections.Generic; using Dad.World; using Dad.Traffic;
+static class P { 
+ static string D(Agent a){var l=a.Lane; return $"{a.Spec.Kind}#{a.Id} L{l.D.Id}{(l.D.Connector?"c":"")} r{l.D.Rank} s{a.S:F1}/{l.Length:F1} stop{l.D.StopS:F1} v{a.V:F2} still{a.Still:F0} stuck{a.Stuck:F0} why={a.Why} wa={a.WhyAgent?.Id} lead={a.Lead?.Id} held={a.HeldCount} wf={(a.WaitingFor==null?"-":a.WaitingFor.D.Id+"")} yield={l.D.Yield} jk={l.Junction?.D.Kind} ph{l.D.Phase} route={a.RouteCount}"; }
+ static void Main(string[] av){ string dir=av[0]; double secs=double.Parse(av[1]), hour=double.Parse(av[2]); ulong seed=ulong.Parse(av[3]); int budget=int.Parse(av[4]);
+  var net=new TrafficNet(); var sim=new TrafficSim(net,seed){Budget=budget,Hour=hour,FocusX=3750,FocusZ=14250};
+  for(int y=-30;y<=-28;y++) for(int x=6;x<=9;x++){ var c=Dadc.Load(File.ReadAllBytes(Path.Combine(dir,$"c_{x}_{y}.dadc"))); NeighbourRails.Attach(c,dir); var r=ChunkRoads.Build(c); sim.AddChunk(ChunkLanes.Build(c,r.Street.Blocks),false); }
+  net.Update(); sim.Populate(); var w=new GridlockWatch(); int shown=0;
+  for(int i=0;i<secs*10;i++){ sim.Advance(); if(i%10!=0) continue; int g=w.Gridlocks; w.Sample(sim.Agents,net.Junctions); if(w.Gridlocks>g&&shown<3){ shown++; Console.WriteLine($"t={sim.Time:F0} {w.First}"); 
+     foreach(var a in sim.Agents.Where(a=>a.Still>40).OrderByDescending(a=>a.Still).Take(14)) Console.WriteLine("  "+D(a));
+     { var cur=sim.Agents.Where(a=>a.Still>40&&a.WaitingFor!=null).OrderByDescending(a=>a.Still).FirstOrDefault(); var seen=new HashSet<int>(); Console.WriteLine("  chain:"); while(cur!=null&&seen.Add(cur.Id)){ Console.WriteLine("    "+D(cur)+$" at({cur.X:F0},{cur.Z:F0})"); var nx=cur.WaitingFor!=null&&cur.WhyAgent!=null?cur.WhyAgent:(cur.Lead??cur.WhyAgent); if(nx==null&&cur.WaitingFor!=null){ var l=cur.WaitingFor; Console.WriteLine($"    wants L{l.D.Id} res{l.Reserved} booked{l.Booked:F1} waiter={l.Waiter?.Id} jopen={l.Junction?.D.Kind}"); } cur=nx; } }
+     foreach(var a in sim.Agents.Where(a=>a.Still>40).OrderByDescending(a=>a.Still).Take(4)){ if(a.WaitingFor==null) continue; var l=a.WaitingFor; Console.WriteLine($"  {a.Id} wants L{l.D.Id} res{l.Reserved} booked{l.Booked:F1} waiter={l.Waiter?.Id} conflicts:"+string.Join(" ",l.Conflicts.Select(q=>$"L{q.D.Id}:res{q.Reserved}/cars{q.Cars.Count}/tails{q.Tails.Count}"))); }
+  } }
+  Console.WriteLine($"done gridlocks {w.Gridlocks} worst {sim.WorstStuck:F1}");
+}}

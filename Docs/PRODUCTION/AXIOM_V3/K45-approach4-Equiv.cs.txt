@@ -1,0 +1,55 @@
+using System; using System.IO; using System.Linq; using System.Collections.Generic; using System.Diagnostics; using System.Reflection; using Dad.World;
+// K-45 approach 4: each street cell's near content (near range, plus the near kit where BuildNearKit exists) and far range,
+// as a multiset of triangles (rotation-canonical, winding kept), hashed. Same output on main and the branch = same geometry.
+namespace Dad.Tests { public class Equiv {
+  static ulong Mix(ulong z) { z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9UL; z = (z ^ (z >> 27)) * 0x94D049BB133111EBUL; return z ^ (z >> 31); }
+  static ulong V(float[] p, uint[] c, int v) {
+    ulong h = 1469598103934665603UL;
+    h = Mix(h ^ (uint)BitConverter.SingleToInt32Bits(p[3*v])); h = Mix(h ^ (uint)BitConverter.SingleToInt32Bits(p[3*v+1]));
+    h = Mix(h ^ (uint)BitConverter.SingleToInt32Bits(p[3*v+2])); return Mix(h ^ c[v]);
+  }
+  static void Add(float[] p, uint[] c, int[] idx, int firstV, int firstI, int count, ref long n, ref ulong sum, ref ulong xr) {
+    for (int t = 0; t < count; t += 3) {
+      ulong a = V(p, c, firstV + idx[firstI+t]), b = V(p, c, firstV + idx[firstI+t+1]), d = V(p, c, firstV + idx[firstI+t+2]);
+      // rotate so the smallest comes first, winding kept
+      if (b < a && b < d) (a, b, d) = (b, d, a); else if (d < a && d < b) (a, b, d) = (d, a, b);
+      ulong h = Mix(Mix(Mix(a) ^ b) ^ d);
+      n++; sum += h; xr ^= Mix(h + 0x9E3779B97F4A7C15UL);
+    }
+  }
+  public void Run() {
+    var outFile = Environment.GetEnvironmentVariable("EQUIV_OUT");
+    var lines = new List<string>();
+    var near = typeof(ChunkStreet).GetMethod("BuildNearKit");
+    double buildMs = 0, kitMs = 0; int chunks = 0; long kitV = 0;
+    for (int pass = 0; pass < 2; pass++)
+    for (int ix = 6; ix <= 9; ix++) for (int iy = -30; iy <= -28; iy++) {
+      var c = Dadc.Load(File.ReadAllBytes(Path.Combine(Environment.GetEnvironmentVariable("DAD_SA"), "World", "chunks", $"c_{ix}_{iy}.dadc")));
+      var sw = Stopwatch.StartNew();
+      var st = ChunkRoads.Build(c).Street;
+      if (pass == 1) { buildMs += sw.Elapsed.TotalMilliseconds; chunks++; }
+      for (int cell = 0; cell < 16; cell++) {
+        for (int lod = 0; lod < 2; lod++) {
+          int r = ChunkStreet.Range(cell, lod); long n = 0; ulong sum = 0, xr = 0;
+          Add(st.Positions, st.Colors, st.Indices, st.FirstVertex[r], st.FirstIndex[r], st.IndexCounts[r], ref n, ref sum, ref xr);
+          if (lod == 0 && near != null) {
+            sw.Restart();
+            object k = near.Invoke(st, new object[] { cell, false });
+            if (pass == 1) kitMs += sw.Elapsed.TotalMilliseconds;
+            var t = k.GetType();
+            var kp = (float[])t.GetField("Positions").GetValue(k); var kc = (uint[])t.GetField("Colors").GetValue(k); var ki = (int[])t.GetField("Indices").GetValue(k);
+            int kic = (int)t.GetField("IndexCount").GetValue(k);
+            if (pass == 1) kitV += (int)t.GetField("VertexCount").GetValue(k);
+            Add(kp, kc, ki, 0, 0, kic, ref n, ref sum, ref xr);
+          }
+          if (pass == 1) lines.Add($"c_{ix}_{iy} {cell} {(lod == 0 ? "near" : "far")} {n} {sum:x16} {xr:x16}");
+        }
+      }
+      long sn = 0; ulong ss = 0, sx = 0;
+      Add(st.Positions, st.Colors, st.Indices, st.FirstVertex[0], st.FirstIndex[0], st.IndexCounts[0], ref sn, ref ss, ref sx);
+      if (pass == 1) lines.Add($"c_{ix}_{iy} structures {sn} {ss:x16} {sx:x16}");
+    }
+    File.WriteAllLines(outFile, lines);
+    Console.WriteLine($"{(near != null ? "branch" : "main")}: {lines.Count} lines; ChunkRoads.Build {buildMs / chunks:F1} ms/chunk (second pass); near kits {(near != null ? $"{kitMs:F0} ms for 192 cells, {kitV} vertices" : "in Build")}");
+  }
+}}

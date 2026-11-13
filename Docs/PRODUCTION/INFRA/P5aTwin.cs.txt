@@ -1,0 +1,28 @@
+// Build (Mono harness; U = the editor's Contents/Resources/Scripting): compile Assets/_Project/Runtime/World/*.cs to Dad.World.dll with -unsafe, then this file with -r:Dad.World.dll, using $U/NetCoreRuntime/dotnet $U/DotNetSdkRoslyn/csc.dll -nostdlib -r:$U/NetStandard/ref/2.1.0/netstandard.dll. Run: mono twin.exe Assets/StreamingAssets/World/chunks Docs/PRODUCTION/INFRA/line6-ids.txt
+// P-5a probe (read-only): for every built viaduct pier, the carriageways running along the deck within 30 m:
+// signed offset of the pier from each centre line (+ = right of the deck direction), half width, one-way flag.
+using System; using System.IO; using System.Linq; using System.Collections.Generic; using Dad.World;
+static class Twin {
+ static void Seg(int[] p, double x, double z, out double d, out double ux, out double uz, out double s) {
+  d = 1e9; ux = 1; uz = 0; s = 0;
+  for (int i = 0; i + 3 < p.Length; i += 2) { double ax=p[i]/100.0, az=p[i+1]/100.0, bx=p[i+2]/100.0, bz=p[i+3]/100.0, vx=bx-ax, vz=bz-az, L=Math.Sqrt(vx*vx+vz*vz); if (L<1e-6) continue;
+   double t=Math.Max(0,Math.Min(1,((x-ax)*vx+(z-az)*vz)/(L*L))), qx=ax+vx*t, qz=az+vz*t, dd=Math.Sqrt((x-qx)*(x-qx)+(z-qz)*(z-qz));
+   if (dd<d) { d=dd; ux=vx/L; uz=vz/L; s=(vx*(z-az)-vz*(x-ax))/L; } } }
+ static void Main(string[] a) {
+  string dir=a[0]; var ids=File.ReadAllText(a[1]).Trim().Split(',');
+  foreach (var id in ids) { var c=Dadc.Load(File.ReadAllBytes(Path.Combine(dir,id+".dadc"))); NeighbourRails.Attach(c, dir); var r=ChunkRoads.Build(c, keepMarks:true);
+   var one=new HashSet<long>((c.Edges??new GraphEdge[0]).Where(e=>e.Oneway!=0).Select(e=>e.Way));
+   foreach (var p in r.Street.Items.Where(i=>i.Kind==ChunkStreet.Kind.Pier && !i.Skipped)) {
+    // deck direction from the nearest elevated rail
+    double best=1e9, dx=1, dz=0;
+    foreach (var rl in c.Rails.Where(q=>q.YCm>=ChunkRoads.ViaductMinY*100)) { Seg(rl.Pts,p.X,p.Z,out var d,out var ux,out var uz,out _); if (d<best){best=d;dx=ux;dz=uz;} }
+    var parts=new List<string>();
+    foreach (var rd in c.Roads.Where(q=>!q.Bridge && q.Pts!=null && q.Pts.Length>=4)) {
+     Seg(rd.Pts,p.X,p.Z,out var d,out var ux,out var uz,out var s);
+     if (d>30 || Math.Abs(ux*dx+uz*dz)<0.87) continue;
+     double sign = ux*dx+uz*dz>0 ? 1 : -1; // offset measured right of the deck direction
+     double off = -s*sign; // s is left-positive of the road's own direction
+     parts.Add($"{rd.Id}:{rd.Cls}:{(one.Contains(rd.Id)?"1w":"2w")}:{rd.WidthCm/100.0:F1}{(rd.WidthEstimated?"e":"")}{(rd.WidthFromLanes?"L":"")}:{off:F1}");
+    }
+    Console.WriteLine($"{id}\t{c.CornerEastCm/100.0+p.X:F1}\t{c.CornerNorthCm/100.0+p.Z:F1}\t{p.Why??"-"}\t{string.Join(" ",parts)}");
+   } } } }

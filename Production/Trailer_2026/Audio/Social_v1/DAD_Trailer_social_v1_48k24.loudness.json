@@ -1,0 +1,28 @@
+{
+ "file": "DAD_Trailer_social_v1_48k24.wav",
+ "seconds": 30,
+ "integratedLUFS": -14,
+ "truePeakDBTP": -4.49,
+ "maxShortTermLUFS": -12.5,
+ "loudnessRangeLU": 3,
+ "limiterMaxReductionDB": 0,
+ "segments": [
+  [
+   62,
+   78
+  ],
+  [
+   94,
+   101
+  ],
+  [
+   106.2,
+   111.2
+  ],
+  [
+   116,
+   118,
+   0.15
+  ]
+ ]
+}

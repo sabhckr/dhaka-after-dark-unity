@@ -1,0 +1,46 @@
+# P-5a (2026-11-05): the plan's model (p5a_model.py.txt, W = 3.0 m, both twins keep 2 lanes, not in a crossing road or
+# junction) against the build: for each pier the model clears and each pier the builder puts on the median, both results.
+# Run from the repo root: python3 -I Docs/PRODUCTION/INFRA/p5a_reconcile.py.txt Docs/PRODUCTION/INFRA/p5a/line6-twins.tsv <built.tsv>
+# built.tsv: chunk, E, N, the builder's reason, one row per viaduct pier (the P-5a probe's output, p5a/line6-built.tsv).
+import re, sys, collections
+CARRIAGE = re.compile(r'^(motorway|trunk|primary|secondary|tertiary|residential|unclassified|living_street|service|road)(_link)?$')
+model = {}
+for l in open(sys.argv[1]):
+    ch, x, z, why, roads = (l.rstrip('\n').split('\t') + [''])[:5]
+    rs = []
+    for r in roads.split():
+        rid, cls, way, w, off = r.split(':')
+        if CARRIAGE.match(cls): rs.append((rid, cls, way, float(re.sub('[eL]', '', w)), float(off)))
+    L = [r for r in rs if r[4] > 0]; R = [r for r in rs if r[4] < 0]
+    near = lambda side: min(side, key=lambda r: abs(r[4]) - r[3] / 2) if side else None
+    l, r = near(L), near(R)
+    res = 'one side' if not l or not r else 'not one-way twins' if l[2] != '1w' or r[2] != '1w' else None
+    left = None
+    if res is None:
+        gaps = [abs(q[4]) - q[3] / 2 for q in (l, r)]
+        if any(g > 8 for g in gaps): res = 'twin too far'
+        else:
+            left = [q[3] - max(0, 1.5 - g) for q, g in zip((l, r), gaps)]
+            m = min(left)
+            res = 'clears, 2 lanes kept' if m >= 6.0 else 'clears, 1 lane kept' if m >= 3.0 else 'too narrow'
+    if res.startswith('clears') and why.endswith(('crossing road', 'junction')): res = 'crossing/junction'
+    model[(round(float(x), 1), round(float(z), 1))] = (ch, why, res, left, roads)
+built = {}
+for l in open(sys.argv[2]):
+    ch, x, z, why = l.rstrip('\n').split('\t')[:4]
+    built[(float(x), float(z))] = why
+def find(d, k):  # the same pier: within 0.2 m (the two probes print to different precision)
+    return next((v for q, v in d.items() if abs(q[0] - k[0]) < 0.2 and abs(q[1] - k[1]) < 0.2), None)
+rows = [(k, v) for k, v in model.items() if v[1].startswith('on a carriageway') and v[2] == 'clears, 2 lanes kept']
+print(f'model: {len(rows)} Line 6 piers on a carriageway cleared with 2 lanes kept each side (W 3.0 m, not in a crossing road or junction)')
+out = collections.Counter()
+for k, (ch, why, res, left, roads) in sorted(rows, key=lambda t: (t[1][0], t[0])):
+    b = find(built, k) or '(not built)'
+    out[b] += 1
+    print(f'  {ch} E {k[0]:.1f} N {k[1]:.1f}: model twins keep {"/".join(f"{v:.1f}" for v in left)} m; built: {b}')
+print('built results of the model\'s piers:', dict(out.most_common()))
+runs = [(k, b) for k, b in built.items() if b == 'median run']
+print(f'built: {len(runs)} piers on the continuous median')
+for k, b in sorted(runs):
+    m = find(model, k)
+    print(f'  E {k[0]:.1f} N {k[1]:.1f}: main {m[1] if m else "?"}; model {m[2] if m else "?"}')

@@ -1,0 +1,82 @@
+using System; using System.IO; using System.Linq; using System.Collections.Generic; using System.Diagnostics; using Dad.World;
+namespace Dad.Tests { public class K45 {
+  static List<DadcChunk> Slice() {
+    var l = new List<DadcChunk>();
+    for (int ix = 6; ix <= 9; ix++) for (int iy = -30; iy <= -28; iy++) {
+      var f = Path.Combine(Environment.GetEnvironmentVariable("DAD_SA"), "World", "chunks", $"c_{ix}_{iy}.dadc");
+      if (File.Exists(f)) l.Add(Dadc.Load(File.ReadAllBytes(f))); }
+    return l;
+  }
+  static long A() => GC.GetAllocatedBytesForCurrentThread();
+  static int P2(int n) { int p = 16; while (p < n) p <<= 1; return p; }
+  static readonly System.Reflection.MethodInfo releaseKit = typeof(ChunkStreet).GetMethod("ReleaseRoofKit");
+  public void Garbage() {
+    var chunks = Slice();
+    for (int pass = 0; pass < 4; pass++) {
+      long roads = 0, solids = 0; double ms = 0; long held = 0, used = 0, kitV0 = 0, kitV1 = 0, kitI0 = 0, kitI1 = 0, stV = 0, stI = 0; int maxV = 0, maxI = 0;
+      foreach (var c in chunks) {
+        long a0 = A(); var sw = Stopwatch.StartNew();
+        var r = ChunkRoads.Build(c, pooled: true);
+        ms += sw.Elapsed.TotalMilliseconds; long a1 = A();
+        var b = ChunkBuildings.Build(c, pooled: true); long a2 = A();
+        roads += a1 - a0; solids += a2 - a1;
+        var st = r.Street;
+        held += 4L * (st.Positions.Length + st.Colors.Length + st.Indices.Length);
+        used += 4L * (3 * st.VertexCount + st.VertexCount + st.IndexCount);
+        maxV = Math.Max(maxV, st.VertexCount); maxI = Math.Max(maxI, st.IndexCount);
+        stV += st.VertexCount; stI += st.IndexCount;
+        kitV0 += st.RoofVertices[0]; kitV1 += st.RoofVertices[1]; kitI0 += st.RoofIndices[0]; kitI1 += st.RoofIndices[1];
+        st.Release(); releaseKit?.Invoke(st, null); r.Release(); b.Release();
+      }
+      Console.WriteLine($"pass {pass}: roads+street alloc {roads/1048576.0:F1} MiB, buildings {solids/1048576.0:F1} MiB, roads build {ms/chunks.Count:F1} ms/chunk; street arrays used {used/1048576.0:F1} MiB, held (pool sizes) {held/1048576.0:F1} MiB; largest chunk street {maxV} verts {maxI} idx; slice street {stV} v {stI} i; kit near {kitV0} v {kitI0} i, far {kitV1} v {kitI1} i");
+    }
+  }
+  public void Flyovers() {
+    var seen = new Dictionary<long, (Road r, double len, int chunks)>();
+    foreach (var c in Slice()) foreach (var r in c.Roads) {
+      if (r.Cls == "footway" || r.Cls == "steps" || r.Cls == "path" || r.Cls == "pedestrian" || r.Cls == "cycleway") continue;
+      if (!(r.Bridge || (r.Layer ?? 0) >= 1 || r.YCm > 100)) continue;
+      double len = 0; for (int i = 2; i + 1 < r.Pts.Length; i += 2) len += Math.Sqrt(Math.Pow(r.Pts[i] - r.Pts[i - 2], 2) + Math.Pow(r.Pts[i + 1] - r.Pts[i - 1], 2)) / 100.0;
+      seen[r.Id] = seen.TryGetValue(r.Id, out var e) ? (r, e.len + len, e.chunks + 1) : (r, len, 1);
+    }
+    double tot = 0;
+    foreach (var (id, e) in seen.OrderBy(k => k.Value.r.Cls).ThenBy(k => k.Key)) {
+      tot += e.len;
+      Console.WriteLine($"{id}\t{e.r.Cls}\t{e.r.NameEn ?? e.r.Name ?? "-"}\tlayer {e.r.Layer?.ToString() ?? "-"}\tbridge {e.r.Bridge}\ty {e.r.YCm/100.0} m\twidth {e.r.WidthCm/100.0} m{(e.r.WidthEstimated ? " est" : "")}\tlanes {e.r.Lanes?.ToString() ?? "-"}\t{e.len:F0} m in {e.chunks} chunk(s)");
+    }
+    Console.WriteLine($"{seen.Count} elevated vehicle ways, {tot/1000:F2} km in the slice");
+  }
+  static bool In(int[] ring, double x, double z) {
+    bool inside = false;
+    for (int i = 0, j = ring.Length - 2; i < ring.Length; j = i, i += 2) {
+      double xi = ring[i] / 100.0, zi = ring[i + 1] / 100.0, xj = ring[j] / 100.0, zj = ring[j + 1] / 100.0;
+      if ((zi > z) != (zj > z) && x < (xj - xi) * (z - zi) / (zj - zi) + xi) inside = !inside; }
+    return inside;
+  }
+  public void DeckClash() {
+    // Elevated vehicle ways: every 2 m along the centre line, is the deck (its YCm, 1 m slab) inside a building's drawn volume?
+    var hits = new Dictionary<(long way, long bld), (int n, double x, double z, double y, double b, double t, string name, string type)>();
+    int samples = 0;
+    for (int ix = 6; ix <= 9; ix++) for (int iy = -30; iy <= -28; iy++) {
+      var f = Path.Combine(Environment.GetEnvironmentVariable("DAD_SA"), "World", "chunks", $"c_{ix}_{iy}.dadc"); if (!File.Exists(f)) continue;
+      var c = Dadc.Load(File.ReadAllBytes(f)); var sol = ChunkBuildings.Build(c);
+      foreach (var r in c.Roads) {
+        if (r.YCm <= 100 || r.Cls == "footway" || r.Cls == "steps" || r.Cls == "path" || r.Cls == "pedestrian" || r.Cls == "cycleway") continue;
+        double y = r.YCm / 100.0;
+        for (int i = 2; i + 1 < r.Pts.Length; i += 2) {
+          double ax = r.Pts[i - 2] / 100.0, az = r.Pts[i - 1] / 100.0, bx = r.Pts[i] / 100.0, bz = r.Pts[i + 1] / 100.0;
+          int n = Math.Max(1, (int)(Math.Sqrt((bx - ax) * (bx - ax) + (bz - az) * (bz - az)) / 2));
+          for (int k = 0; k < n; k++) {
+            double x = ax + (bx - ax) * k / n, z = az + (bz - az) * k / n; samples++;
+            for (int bi = 0; bi < c.Buildings.Length; bi++) {
+              var pl = sol.Placements[bi]; if (sol.VertexCounts[bi] == 0) continue;
+              if (!(pl.Base < y && pl.Top > y - 1)) continue;
+              var bd = c.Buildings[bi]; if (!In(bd.Outer, x, z)) continue;
+              bool hole = bd.Holes != null && bd.Holes.Any(h => In(h, x, z)); if (hole) continue;
+              var key = (r.Id, bd.Id);
+              hits[key] = hits.TryGetValue(key, out var e) ? (e.n + 1, e.x, e.z, e.y, e.b, e.t, e.name, e.type) : (1, ix * 500.0 + x, -iy * 500.0 - 500 + z, y, pl.Base, pl.Top, bd.Name, bd.Type);
+            } } } } }
+    Console.WriteLine($"{samples} deck samples; {hits.Count} way/building pairs where the deck passes through a building's drawn volume");
+    foreach (var h in hits.OrderByDescending(k => k.Value.n)) Console.WriteLine($"  way {h.Key.way} building {h.Key.bld} ({h.Value.type}, '{h.Value.name ?? "-"}') {h.Value.n * 2} m; first at E {h.Value.x:F1} N {h.Value.z:F1}; deck {h.Value.y} m, building {h.Value.b:F1}-{h.Value.t:F1} m");
+  }
+} }

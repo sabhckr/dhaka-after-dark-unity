@@ -1,0 +1,29 @@
+timeline_in,timeline_out,clip,source_in,source_out,source_shot,camera,quality,use,notes
+0.00,8.40,black,,,,,,"opening on black","AXIOM PRESENTS 1.2-4.2; A CITY... 5.0-8.0"
+8.40,16.80,C01,7.00,15.40,"high aerial over the whole city at noon, hazy","slow push forward, descending",good,"first reveal","source 1-7 s skipped: baked-in footage label at the bottom left"
+16.80,19.80,C02,16.00,19.00,"glass towers over the container yard and flyover","aerial drift right",good,"scale","hub-rich-air path; clean before the 19.5 s facade clip"
+19.80,21.60,C03,21.60,23.40,"among the glass towers","aerial drift",good,"scale","window between facade clips at 21.0 and 23.5"
+21.60,24.00,C04,33.00,35.40,"low-rise districts and the flyover from the air","aerial drift",fair,"scale","flat edge of the map at 32 s avoided"
+24.00,30.00,C05,36.50,42.50,"street drive under the metro viaduct, cars ahead","forward drive",good,"pulse","central-avenue path; stops before the rickshaw pass-through at 45.5-46.0"
+30.00,32.40,C06,49.20,51.60,"street drive, motorbike ahead","forward drive",good,"pulse",
+32.40,35.40,C07,56.20,59.20,"street drive, bus ahead under the viaduct","forward drive",good,"pulse","bus pass-through at 54 s avoided"
+35.40,37.80,C08,60.00,62.40,"under the flyover pillars","forward drive",good,"pulse","hard cut to black at 37.8"
+38.40,41.40,C09,102.20,105.20,"dusk street under the flyover","slow push (source still)",good,"THE GANGSTER?","cooled from the pink source cast"
+42.00,45.00,C10,80.30,83.30,"waterfront aerial descending towards the towers","aerial descent",good,"THE SAVIOUR?","hazy; contrast raised"
+45.60,49.80,C11,105.30,105.30,"night container ship under cranes (still)","push 1.00-1.05 added in the edit",good,"OR THE DEVIL HIMSELF?","source holds this still for 3 s; the push is the edit's, same treatment as the source's own stills"
+50.40,52.80,C12,76.60,79.00,"river bend, cranes and container yard","aerial",good,"acceleration",
+52.80,54.60,C13,84.20,86.00,"port cranes and bulk carrier","slow push",good,"YOUR CITY.",
+54.60,56.40,C14,87.20,89.00,"container ship at sea","slow push",good,"acceleration",
+56.40,58.20,C15,93.20,95.00,"small boats, containers, skyline","static, water moving",good,"YOUR STORY.",
+58.20,59.40,C16,66.20,67.40,"metro train at the platform","slow push",fair,"acceleration",
+59.40,60.60,C17,24.00,25.20,"glass towers","aerial drift",good,"acceleration",
+60.60,61.80,C18,52.60,53.80,"street, motorbike ahead","forward drive",good,"YOUR CHOICES.",
+61.80,62.70,C19,41.00,41.90,"street, traffic ahead","forward drive",good,"acceleration",
+62.70,63.60,C20,61.20,62.10,"flyover pillars","forward drive",good,"acceleration",
+63.60,64.20,C21,96.30,96.90,"dusk aerial","slow push",fair,"acceleration","cooled and desaturated"
+64.20,64.80,C22,100.20,100.80,"night port with lights","slow push",good,"acceleration","cooled"
+64.80,65.40,C23,108.60,109.20,"night street under the flyover, lamps","slow push",good,"acceleration",
+65.40,66.00,C24,106.40,107.00,"night ship","slow push",good,"acceleration","hard cut to black at 66.0: the drop"
+66.00,68.40,black,,,,,,"title impact on black at 67.2",
+68.40,77.00,C25,111.60,111.60,"night aerial over the lit city (still)","push 1.00-1.06 added in the edit",good,"title background","source 113-120 s unusable: carries the showcase's own baked title"
+77.00,85.00,black,,,,,,"release card 77.4-84.0","MADE BY ISHAK HASAN SABBiR / AXIOM / FIRST RELEASE - DECEMBER 16, 2026"

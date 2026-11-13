@@ -1,0 +1,8 @@
+using System; using System.IO; using System.Linq; using System.Collections.Generic; using Dad.World;
+class P { static void Main(string[] a) {
+  string dir=a[0]; long rt=0,bt=0,st=0; int n=0; var sw=new System.Diagnostics.Stopwatch();
+  for(int x=6;x<=9;x++) for(int y=-30;y<=-28;y++){ var c=Dadc.Load(File.ReadAllBytes(Path.Combine(dir,$"c_{x}_{y}.dadc"))); NeighbourRails.Attach(c,dir);
+    var r=ChunkRoads.Build(c); var b=ChunkBuildings.Build(c); 
+    Console.Write($"c_{x}_{y}: road {r.IndexCount/3} bld {b.IndexCount/3} walls {c.Buildings.Sum(q=>q.Outer.Length/2)}; "); rt+=r.IndexCount/3; bt+=b.IndexCount/3; n++; }
+  Console.WriteLine(); Console.WriteLine($"mean road {rt/n}, buildings {bt/n}");
+}}

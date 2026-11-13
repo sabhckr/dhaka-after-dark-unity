@@ -1,0 +1,23 @@
+#!/bin/zsh
+# K-38 worker time for P-5a (2026-11-05): main's and the branch's Dad.World, built into $1/head and $1/p5a, timed
+# interleaved with Time.cs.txt (best of 5 passes per run) on the slice, Line 6 and the 461 flyover chunks of p6-city.
+#   zsh Docs/PRODUCTION/INFRA/time-p5a.sh.txt <dir with head/ and p5a/ each holding Dad.World.dll>
+set -e
+P=${0:a:h}
+D=$1
+U=/Applications/Unity/Hub/Editor/6000.3.27f1/Unity.app/Contents/Resources/Scripting
+M=$U/MonoBleedingEdge
+NS=$U/NetStandard/ref/2.1.0/netstandard.dll
+MS=$U/NetStandard/compat/2.1.0/shims/netfx/mscorlib.dll
+C=($U/NetCoreRuntime/dotnet $U/DotNetSdkRoslyn/csc.dll -nologo -noconfig -nostdlib -langversion:9 -nowarn:1701,1702,8321 -optimize+)
+CH=$HOME/Documents/dhaka-after-dark-unity/Assets/StreamingAssets/World/chunks
+cp $P/Time.cs.txt $D/Time.cs
+for v in head p5a; do $C -target:exe -out:$D/$v/time.exe -r:$NS -r:$MS -r:$D/$v/Dad.World.dll $D/Time.cs; done
+run() { MONO_PATH=$M/lib/mono/4.5:$M/lib/mono/4.5/Facades $M/bin/mono $D/$1/time.exe $CH 1 ${@:2}; }
+SLICE=c_6_-30,c_6_-29,c_6_-28,c_7_-30,c_7_-29,c_7_-28,c_8_-30,c_8_-29,c_8_-28,c_9_-30,c_9_-29,c_9_-28
+for list in slice line6; do
+  if [[ $list == slice ]]; then ids=(${(s:,:)SLICE}); else ids=(${(s:,:)"$(cat $P/line6-ids.txt)"}); fi
+  for r in 0 1 2 3; do for v in head p5a; do echo "$list round $r $v: $(run $v $ids)"; done; done
+done
+ids=($(cat $P/p6-city/chunks.txt))
+for r in 0 1 2; do for v in head p5a; do echo "fly461 round $r $v: $(run $v $ids)"; done; done

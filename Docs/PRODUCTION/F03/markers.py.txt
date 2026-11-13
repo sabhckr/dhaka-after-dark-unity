@@ -1,0 +1,17 @@
+# F-03 traffic's main-thread share from a capture's markers.tsv (2026-11-06). Arg: the markers.tsv of a bench run with --traffic. Per frame: each Dad.Traffic
+# marker's total, and all of them together against the 1.5 ms budget.
+import sys, csv, collections
+rows = [r for r in csv.reader(open(sys.argv[1]), delimiter='\t') if r and not r[0].startswith('#')]
+h = rows[0]
+fr, th, mk, tot = h.index('frame'), h.index('thread'), h.index('marker'), h.index('totalMs')
+per = collections.defaultdict(collections.Counter)
+frames = set()
+for r in rows[1:]:
+    frames.add(int(r[fr]))
+    if r[th] == 'Main Thread' and r[mk].startswith('Dad.Traffic'): per[int(r[fr])][r[mk]] += float(r[tot])
+n = len(frames)
+for k in sorted({k for v in per.values() for k in v}):
+    a = sorted(per[f][k] for f in frames)
+    print('%-20s mean %.3f p50 %.3f p99 %.3f max %.3f' % (k, sum(a) / n, a[n // 2], a[n * 99 // 100], a[-1]))
+t = sorted(sum(per[f].values()) for f in frames)
+print('%-20s mean %.3f p50 %.3f p99 %.3f max %.3f; %d of %d frames over 1.5 ms' % ('all traffic', sum(t) / n, t[n // 2], t[n * 99 // 100], t[-1], sum(1 for x in t if x > 1.5), n))

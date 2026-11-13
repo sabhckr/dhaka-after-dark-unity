@@ -1,0 +1,26 @@
+{
+    "name": "Dad.Trailer",
+    "rootNamespace": "Dad.Trailer",
+    "references": [
+        "Dad.Core",
+        "Dad.World",
+        "Dad.Traffic",
+        "Dad.Vehicles",
+        "UnityEngine.TestRunner",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.RenderPipelines.Core.Runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

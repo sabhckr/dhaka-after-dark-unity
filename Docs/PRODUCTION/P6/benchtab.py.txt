@@ -1,0 +1,17 @@
+# P-6 bench table (2026-11-05; the D-06c/D-11a table script was lost with the scratch folder, so the columns are fewer).
+# Args: interleave.log. For each run named in the log: path, player, GPU p50 and mean, main-thread p50 (cpu p50), batches p50,
+# triangles p50, frames over 20 ms, system memory end/peak MiB, garbage and collections; then GPU p50 by fifth of the path.
+import sys, json, csv, os
+P = os.path.expanduser('~/Documents/dhaka-after-dark-unity/')
+rows = []
+for l in open(sys.argv[1]):
+    f = l.split()
+    if len(f) >= 5 and f[0] in ('p6', 'main') and f[2] == 'exit' and f[3] == '0': rows.append((f[0], f[1], f[4]))
+for b, p, d in sorted(rows, key=lambda r: (r[1], r[0], r[2])):
+    j = json.load(open(P + d + '/summary.json'))
+    g = [float(x['gpuMs']) for x in csv.DictReader(open(P + d + '/frames.csv')) if x['gpuMs'] not in ('', 'nan')]
+    n = len(g); q = lambda a: sorted(a)[len(a) // 2]
+    print('%-4s %-22s %s | GPU p50 %.2f mean %.2f | main %.2f (%.2f) | batches %.0f | tris %.0f k | >20 ms %d | sys %d / %d MiB | gc %.1f KiB, %d coll | fifths %s' % (
+        b, p, d[-15:], j['gpuMs']['p50'], sum(g) / n, j['mainThreadMs']['p50'], j['mainThreadCpuMs']['p50'], j['batches']['p50'],
+        j['triangles']['p50'] / 1000, j['framesOver20ms'], j['systemMemoryEndBytes'] >> 20, j['systemMemoryPeakBytes'] >> 20,
+        j['gcAllocTotalBytes'] / 1024, j['gcCollections'], ' '.join('%.2f' % q(g[i * n // 5:(i + 1) * n // 5]) for i in range(5))))

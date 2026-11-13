@@ -1,0 +1,24 @@
+{
+ "name": "n-roster-b-walk",
+ "east": 2613.84,
+ "north": 2105.01,
+ "height": 1.43,
+ "lookEast": 2619.2,
+ "lookNorth": 2108.7,
+ "lookHeight": 1.25,
+ "fov": 42,
+ "date": "",
+ "time": 12.0,
+ "weather": "clear",
+ "lineup": [
+  2619.2,
+  2108.7,
+  0.43,
+  235.4,
+  0.9,
+  0.42
+ ],
+ "act": "",
+ "facing": 0,
+ "only": "NPC_011,NPC_012,NPC_013,NPC_014,NPC_015,NPC_016,NPC_017"
+}

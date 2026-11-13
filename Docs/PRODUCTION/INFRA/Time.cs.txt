@@ -1,0 +1,17 @@
+// Roads worker time (K-38) for a chunk list: Dadc.Load + NeighbourRails.Attach (if the build has it) + ChunkRoads.Build,
+// best of 5 per chunk after one warm-up pass, in ms. Args: chunkDir, attach(0/1), ids...
+using System; using System.IO; using System.Linq; using System.Diagnostics; using Dad.World;
+static class Time { static int Main(string[] a) {
+ string dir=a[0]; bool attach=a[1]=="1"; var ids=a.Skip(2).ToArray();
+ var bytes=ids.ToDictionary(i=>i,i=>File.ReadAllBytes(Path.Combine(dir,i+".dadc")));
+ double tot=0, totAttach=0, cold=0; var sw=new Stopwatch();
+ for (int pass=0; pass<6; pass++) { double sum=0, sumA=0;
+  foreach (var id in ids) { sw.Restart(); var c=Dadc.Load(bytes[id]); double t1=sw.Elapsed.TotalMilliseconds;
+   if (attach) Attach(c, dir); double t2=sw.Elapsed.TotalMilliseconds; ChunkRoads.Build(c, keepMarks:false); double t3=sw.Elapsed.TotalMilliseconds;
+   sum+=t3; sumA+=t2-t1; }
+  if (pass==0) cold=sumA;
+  if (pass>0 && (tot==0 || sum<tot)) { tot=sum; totAttach=sumA; } }
+ Console.WriteLine($"{ids.Length} chunks, attach={attach}: best pass {tot:F1} ms, {tot/ids.Length:F2} ms a chunk (attach {totAttach:F1} ms of it, cached after the first pass; first pass, cold: {cold:F1} ms)");
+ return 0; }
+ static void Attach(DadcChunk c, string dir) { var t=Type.GetType("Dad.World.NeighbourRails, Dad.World"); t.GetMethod("Attach").Invoke(null, new object[]{c,dir}); }
+}

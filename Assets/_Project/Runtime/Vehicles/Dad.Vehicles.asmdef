@@ -1,0 +1,17 @@
+{
+    "name": "Dad.Vehicles",
+    "rootNamespace": "Dad.Vehicles",
+    "references": [
+        "Dad.World",
+        "Dad.Traffic"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}

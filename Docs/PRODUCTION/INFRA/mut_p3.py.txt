@@ -1,0 +1,65 @@
+# K-37 P-3 mutations (2026-11-05): each breaks one part of the split counter in a COPY of the sources (the project is
+# never edited), builds Dad.World, the survey and the test mirror (P3Check.cs) in the Mono harness, then runs the survey
+# on the slice and on Line 6 (64 chunks). Caught = the slice gate fails, the summary's "Viaduct piers in buildings" line
+# (the known list is the slice's) differs from today's on either (slice 2 / 11, survey 2 / 11 / 0; Line 6 4 / 97, survey 4 / 47 / 58), or a mirrored
+# test fails. Usage: python3 -I mut_p3.py.txt <outdir> [tags]
+import subprocess, sys, os, shutil, glob
+P = os.path.expanduser('~/Documents/dhaka-after-dark-unity')
+H = os.path.dirname(os.path.abspath(__file__))
+OUT = sys.argv[1]
+U = '/Applications/Unity/Hub/Editor/6000.3.27f1/Unity.app/Contents/Resources/Scripting'
+NS, MS, MO = U + '/NetStandard/ref/2.1.0/netstandard.dll', U + '/NetStandard/compat/2.1.0/shims/netfx/mscorlib.dll', U + '/MonoBleedingEdge'
+CSC = [U + '/NetCoreRuntime/dotnet', U + '/DotNetSdkRoslyn/csc.dll', '-nologo', '-noconfig', '-nostdlib', '-langversion:9', '-nowarn:1701,1702,8321', '-optimize+']
+ENV = dict(os.environ, MONO_PATH=f'{MO}/lib/mono/4.5:{MO}/lib/mono/4.5/Facades')
+CH = P + '/Assets/StreamingAssets/World/chunks'
+S, I = 'World/Structures.cs', 'Infra/InfraSurvey.cs'
+M = [
+ ('B0 none (control: must be MISSED)', S, 'st.Piers++;', 'st.Piers++;'),
+ ('B1 every pier in a building counted on the ground', S, 'if (InGroundBuilding(x, z)) { st.PiersInBuilding++;', 'if (true) { st.PiersInBuilding++;'),
+ ('B2 every pier in a building counted as raised', S, 'if (InGroundBuilding(x, z)) { st.PiersInBuilding++;', 'if (false) { st.PiersInBuilding++;'),
+ ('B3 ground buildings by bounding box only', S, 'z >= g.z0 && z <= g.z1 && InPolygon(g.ring, x, z)) return true;\n            return false;', 'z >= g.z0 && z <= g.z1) return true;\n            return false;'),
+ ('B4 raised piers not counted', S, 'else { st.PiersUnderRaised++;', 'else {'),
+ ('B5 old wording for raised piers', S, 'why = "under a raised building"; }', 'why = "in a building"; }'),
+ ('B6 ground list not loaded for piers', S, '                LoadGroundBuildings(c);\n                if (InGroundBuilding(x, z))', '                if (InGroundBuilding(x, z))'),
+ ('S1 survey: builder counts not summed', I, '                res.BuilderInBuilding += ch.R.Street.PiersInBuilding;\n', ''),
+ ('S2 survey: builder counts summed for context chunks too', I, '            if (!ch.Context)\n            {\n                res.BuilderInBuilding', '            if (true)\n            {\n                res.BuilderInBuilding'),
+]
+WANT = {'slice': 'the builder counts 2 in a building on the ground and 11 under a raised building (a station body); the survey finds 2 reaching into a building on the ground, 11 rising through a raised building and 0 standing clear under one.',
+        'line6': 'the builder counts 4 in a building on the ground and 97 under a raised building (a station body); the survey finds 4 reaching into a building on the ground, 47 rising through a raised building and 58 standing clear under one.'}
+only = sys.argv[2].split(',') if len(sys.argv) > 2 and sys.argv[2] else None
+L6 = open(H + '/line6-ids.txt').read().strip()
+def survey(d, tag, ids=None):
+    o = f'{d}/{tag}'
+    os.makedirs(o, exist_ok=True)
+    r = subprocess.run([MO + '/bin/mono', f'{d}/infra.exe', CH, o, P + '/Tests/Infra/known-violations.csv'] + ([ids] if ids else []), env=ENV, capture_output=True, text=True)
+    if r.returncode != 0 and not os.path.exists(o + '/summary.txt'):
+        ex = [l.strip() for l in r.stdout.splitlines() + r.stderr.splitlines() if 'Exception' in l]
+        return 'CRASH ' + (ex[0][:100] if ex else f'exit {r.returncode}')
+    return open(o + '/summary.txt').read()
+for name, rel, a, b in M:
+    tag = name.split()[0]
+    if only and tag not in only: continue
+    d = f'{OUT}/{tag}'
+    if os.path.exists(d): shutil.rmtree(d)
+    os.makedirs(d + '/World'); os.makedirs(d + '/Infra')
+    for f in glob.glob(P + '/Assets/_Project/Runtime/World/*.cs'): shutil.copy(f, d + '/World')
+    for f in glob.glob(P + '/Assets/_Project/Editor/Infra/*.cs'): shutil.copy(f, d + '/Infra')
+    src = open(f'{d}/{rel}').read()
+    assert src.count(a) == 1, (name, src.count(a))
+    open(f'{d}/{rel}', 'w').write(src.replace(a, b))
+    subprocess.run(CSC + ['-target:library', '-unsafe', f'-out:{d}/Dad.World.dll', '-r:' + NS] + glob.glob(d + '/World/*.cs'), check=True, capture_output=True)
+    subprocess.run(CSC + ['-target:exe', f'-out:{d}/infra.exe', '-r:' + NS, f'-r:{d}/Dad.World.dll', '-r:' + MS] + glob.glob(d + '/Infra/*.cs') + [P + '/Tools/infra/Infra.cs'], check=True, capture_output=True)
+    subprocess.run(CSC + ['-target:exe', f'-out:{d}/p3check.exe', '-r:' + NS, f'-r:{d}/Dad.World.dll', '-r:' + MS, H + '/P3Check.cs.txt'], check=True, capture_output=True)
+    why = []
+    for part, ids in (('slice', None), ('line6', L6)):
+        summ = survey(d, part, ids)
+        if summ.startswith('CRASH'): why.append(part + ' survey ' + summ); continue
+        gate = [l for l in summ.splitlines() if l.startswith('Against')]
+        if part == 'slice' and gate and ' 0 new, 0 gone' not in gate[0]: why.append(part + ' gate ' + gate[0].split(': ')[1])
+        line = [l for l in summ.splitlines() if l.startswith('Viaduct piers in buildings')][0]
+        if not line.endswith(WANT[part]): why.append(part + ': ' + line.split(': ', 1)[1][:120])
+    r = subprocess.run([MO + '/bin/mono', f'{d}/p3check.exe'], env=ENV, capture_output=True, text=True)
+    m = r.stdout.strip() or ('crash ' + ([l.strip() for l in r.stderr.splitlines() if 'Exception' in l] or ['?'])[0][:100])
+    if m != 'OK': why.append('mirrored test: ' + m)
+    print(('CAUGHT  ' if why else 'MISSED  ') + name + ': ' + ('; '.join(why) if why else 'nothing failed'), flush=True)
+    shutil.rmtree(d + '/World'); shutil.rmtree(d + '/Infra')

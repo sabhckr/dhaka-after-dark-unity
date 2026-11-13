@@ -1,0 +1,32 @@
+using System; using System.IO; using System.Linq; using System.Collections.Generic; using Dad.World; using Dad.Traffic;
+class P {
+ struct Box { public double x,z,hx,hz,l,w; }
+ static bool Overlap(Agent a, Agent b, double tol){
+   // separating axis on two boxes, shrunk by tol
+   double[] ax={a.Hx,a.Hz,-a.Hz,a.Hx,b.Hx,b.Hz,-b.Hz,b.Hx}; double dx=b.X-a.X,dz=b.Z-a.Z;
+   for(int i=0;i<8;i+=2){ double ux=ax[i],uz=ax[i+1]; double ra=Ext(a,ux,uz)-tol, rb=Ext(b,ux,uz)-tol; if(Math.Abs(dx*ux+dz*uz)>ra+rb) return false; } return true; }
+ static string D(Agent a){var l=a.Lane; return $"{a.Spec.Kind}#{a.Id} c{l.Chunk.X}_{l.Chunk.Y} L{l.D.Id}{(l.D.Connector?"c":"")} way{l.D.Way} r{l.D.Rank} i{l.D.Index}/{l.D.Count} w{l.D.Width:F1} s{a.S:F1}/{l.Length:F0} lat{a.Lateral:F2} at({a.X:F0},{a.Z:F0}) hd({a.Hx:F2},{a.Hz:F2}) v{a.V:F1}";}
+ static double Ext(Agent a,double ux,double uz){ return a.Spec.Length/2*Math.Abs(a.Hx*ux+a.Hz*uz)+a.Spec.Width/2*Math.Abs(-a.Hz*ux+a.Hx*uz); }
+ static void Main(string[] av) {
+  string dir=av[0]; double seconds=double.Parse(av[1]); double hour=double.Parse(av[2]); ulong seed=ulong.Parse(av[3]); int budget=int.Parse(av[4]);
+  var net=new TrafficNet(); var sim=new TrafficSim(net,seed); sim.Hour=hour; sim.Budget=budget;
+  for(int x=6;x<=9;x++) for(int y=-30;y<=-28;y++){ var c=Dadc.Load(File.ReadAllBytes(Path.Combine(dir,$"c_{x}_{y}.dadc"))); NeighbourRails.Attach(c,dir); var r=ChunkRoads.Build(c); sim.AddChunk(ChunkLanes.Build(c,r.Street.Blocks)); }
+  // Focus: Farmgate chunk middle
+  var ch=net.Chunks.First(q=>q.X==7&&q.Y==-29); sim.FocusX=ch.Lanes.CornerEastCm/100.0+250; sim.FocusZ=ch.Lanes.CornerNorthCm/100.0+250;
+  Console.WriteLine($"net: chunks {net.Chunks.Count}, seam links {net.SeamLinks}, sinks {net.Sinks}, junctions {net.Junctions.Count}");
+  sim.Populate(); Console.WriteLine($"populated {sim.Agents.Count}");
+  var sw=System.Diagnostics.Stopwatch.StartNew(); int steps=(int)(seconds/TrafficSim.Step); long overlaps=0; var pairs=new HashSet<(int,int)>(); double worstDepth=0; int grid=0; var perKind=new int[8]; var ovKinds=new Dictionary<string,int>();
+  var stuckAt=new Dictionary<int,double>(); double maxStuckNow=0; int stuckOver60=0; var over=new HashSet<int>();
+  for(int i=0;i<steps;i++){ sim.Advance();
+    if(i%10==0){ var ag=sim.Agents; for(int p=0;p<ag.Count;p++) for(int q=p+1;q<ag.Count;q++){ var a=ag[p];var b=ag[q]; double dx=a.X-b.X,dz=a.Z-b.Z; if(dx*dx+dz*dz>200) continue; if(Math.Abs(a.Y-b.Y)>1)continue; if(Overlap(a,b,0.1)){ overlaps++; var k=(Math.Min(a.Id,b.Id),Math.Max(a.Id,b.Id)); if(pairs.Add(k)){ string key=(a.Lane.D.Connector?"C":"L")+(b.Lane.D.Connector?"C":"L")+(a.Lane==b.Lane?" same":""); ovKinds[key]=ovKinds.GetValueOrDefault(key)+1; if(pairs.Count<=0) Console.WriteLine($"  overlap t={sim.Time:F1} {D(a)} / {D(b)}"); } } }
+      foreach(var a in ag) if(a.Stuck>60&&over.Add(a.Id)){stuckOver60++; if(stuckOver60<=0) Console.WriteLine($"  stuck t={sim.Time:F0} {a.Spec.Kind}#{a.Id} lane{a.Lane.D.Id}{(a.Lane.D.Connector?"c":"")} s={a.S:F1}/{a.Lane.Length:F1} stop={a.Lane.D.StopS:F1} j={a.Lane.Junction?.D.Kind} phase={a.Lane.D.Phase} route={a.RouteCount} wait={a.WaitingFor?.D.Id} res={a.WaitingFor?.Reserved} held={a.HeldCount} next={(a.RouteCount>0?a.Route[0].D.Id:-1)} why={a.Why} by={a.WhyAgent?.Id} {(a.WhyAgent!=null?D(a.WhyAgent):"")}"); }
+    }
+    if(i==3600||i==4200||i==5000||i==5900){ var roots=new Dictionary<string,int>(); var ex=new Dictionary<string,string>();
+      foreach(var q in sim.Agents.Where(q=>q.Stuck>30)){ var cur=q; var seen=new HashSet<int>(); string tag="?"; while(cur!=null&&seen.Add(cur.Id)){ var nx=cur.V<0.5?(cur.Why!=Hold.None?cur.WhyAgent:null)??cur.Lead:null; if(nx==null){ tag=$"{cur.Why} L{cur.Lane.D.Id}{(cur.Lane.D.Connector?"c":"")}@c{cur.Lane.Chunk.X}_{cur.Lane.Chunk.Y} v{cur.V:F1}"; ex[tag]=D(cur)+$" held{cur.HeldCount} rc{cur.RouteCount} next{(cur.RouteCount>0?cur.Route[0].D.Id:-1)} j{cur.Lane.Junction?.D.Kind} ph{cur.Lane.D.Phase}/{cur.Lane.Junction?.Phase}"; break;} cur=nx; } if(cur!=null&&seen.Contains(cur.Id)&&tag=="?") tag="CYCLE at #"+cur.Id+" "+cur.Why+" L"+cur.Lane.D.Id; roots[tag]=roots.GetValueOrDefault(tag)+1; }
+      Console.WriteLine($" t={sim.Time:F0} roots:"); foreach(var kv in roots.OrderByDescending(k=>k.Value).Take(8)) Console.WriteLine($"   {kv.Value} {kv.Key} :: {ex.GetValueOrDefault(kv.Key)}"); }
+    if(i==5900){ var w=sim.Agents.OrderByDescending(q=>q.Stuck).First(); Console.WriteLine($" worst {D(w)} stuck{w.Stuck:F0} why={w.Why} wa={w.WhyAgent?.Id} {(w.WhyAgent!=null?D(w.WhyAgent):"")}"); TLane l=w.Lane; for(int k=0;k<w.RouteCount&&k<4;k++){ var n=w.Route[k]; Console.WriteLine($"    route[{k}] L{n.D.Id}{(n.D.Connector?"c":"")} len{n.Length:F1} res{n.Reserved} booked{n.Booked:F1} cars[{string.Join(",",n.Cars.Select(q=>$"#{q.Id}{q.Spec.Kind} s{q.S:F1} v{q.V:F1} st{q.Stuck:F0} {q.Why}"))}] tails[{string.Join(",",n.Tails.Select(q=>$"#{q.Id} st{q.Stuck:F0}"))}] conf{n.Conflicts.Length} next{n.Next.Length} jk={n.Junction?.D.Kind} ph{n.D.Phase}"); } }
+    if(i%3000==0) Console.WriteLine($"t={sim.Time:F0} agents {sim.Agents.Count} spawned {sim.Spawned} despawned {sim.Despawned} exited {sim.Exited} grants {sim.Grants} changes {sim.LaneChanges} worst {sim.WorstStuck:F1} v̄ {sim.Agents.Average(a=>a.V):F1} far {sim.FarTotal():F0}");
+  }
+  foreach(var a in sim.Agents) perKind[(int)a.Spec.Kind]++;
+  Console.WriteLine($"done {seconds}s in {sw.ElapsedMilliseconds} ms ({sw.Elapsed.TotalMilliseconds/steps:F3} ms/step); overlap samples {overlaps}, pairs {pairs.Count} [{string.Join(", ",ovKinds.Select(k=>k.Key+":"+k.Value))}]; stuck>60 {stuckOver60}; worst stuck {sim.WorstStuck:F1}; released {sim.Released}; spawned {sim.Spawned}; kinds {string.Join(" ",perKind)}");
+ }}

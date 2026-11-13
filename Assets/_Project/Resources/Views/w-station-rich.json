@@ -1,0 +1,13 @@
+{
+ "name": "w-station-rich",
+ "east": 3500,
+ "north": 2640,
+ "height": 28,
+ "lookEast": 3549,
+ "lookNorth": 2620,
+ "lookHeight": 14,
+ "fov": 60,
+ "date": "",
+ "time": 12.0,
+ "weather": "clear"
+}

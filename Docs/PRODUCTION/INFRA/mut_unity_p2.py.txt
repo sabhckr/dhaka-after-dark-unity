@@ -1,0 +1,20 @@
+# P-2 mutants in Unity's EditMode runner: the tests that must fail. Restores the source after each run.
+import subprocess, os, re, glob
+P = os.path.expanduser('~/Documents/dhaka-after-dark-unity')
+B = P + '/Assets/_Project/Runtime/World/Structures.cs'
+N = P + '/Assets/_Project/Runtime/World/NeighbourRails.cs'
+for name, f, a, b, flt in [
+ ('P1 no neighbour rails', N, 'if (!any) { c.NearRails', 'if (true) { c.NearRails', 'InfraSurveyTests;StreetTests;RoadWidthTests'),
+ ('P6 no one-pier-per-place check', B, '            foreach (var p in placed)\n', '            foreach (var p in new List<(double x, double z)>())\n', 'InfraSurveyTests;StreetTests'),
+ ('P2 piers never slide', B, 'PierSlideMax = 4,', 'PierSlideMax = 0,', 'InfraSurveyTests;StreetTests;RoadWidthTests'),
+]:
+    src = open(f).read(); assert src.count(a) == 1
+    open(f, 'w').write(src.replace(a, b))
+    try:
+        r = subprocess.run(['caffeinate', '-dimsu', P + '/Tools/run-tests.sh', 'EditMode', flt], capture_output=True, text=True)
+    finally:
+        open(f, 'w').write(src)
+    xml = max(glob.glob(P + '/Evidence/local/tests-EditMode-*.xml'), key=os.path.getmtime)
+    x = open(xml).read()
+    failed = re.findall(r'<test-case [^>]*name="(\w+)"[^>]*result="Failed"', x)
+    print(f"{name}: exit {r.returncode}, {r.stdout.strip().splitlines()[-1] if r.stdout.strip() else ''}; failed {failed}; {os.path.basename(xml)}", flush=True)

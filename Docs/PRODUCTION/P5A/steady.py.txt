@@ -1,0 +1,18 @@
+# P-5a bench, second table (2026-11-05). Args: one or more interleave logs. For each run: main-thread p50 over the whole path and
+# over frames 300 on (after the first 5 s, when a street run's start-up loading is over), GPU mean from frame 300, streaming:
+# frames with an apply and their total apply ms, frames with a plan and total plan ms, and the last frame with an apply.
+import sys, csv, os
+P = os.path.expanduser('~/Documents/dhaka-after-dark-unity/')
+rows = []
+for a in sys.argv[1:]:
+    for l in open(a):
+        f = l.split()
+        if len(f) >= 5 and f[0] in ('p5a', 'main') and f[2] == 'exit' and f[3] == '0': rows.append((f[0], f[1], f[4]))
+q = lambda a: sorted(a)[len(a) // 2]
+for b, p, d in sorted(rows, key=lambda r: (r[1], r[0], r[2])):
+    r = list(csv.DictReader(open(P + d + '/frames.csv')))
+    m = [float(x['mainThreadMs']) for x in r]; g = [float(x['gpuMs']) for x in r[300:] if x['gpuMs'] not in ('', 'nan')]
+    ap = [(i, float(x['streamingApplyMs'])) for i, x in enumerate(r) if float(x['streamingApplyMs']) > 0]
+    pl = [float(x['streamingPlanMs']) for x in r if float(x['streamingPlanMs']) > 0]
+    print('%-4s %-22s %s | main p50 %.2f, from 300 %.2f | GPU mean from 300 %.2f | apply %d frames %.0f ms, last %s | plan %d frames %.0f ms' % (
+        b, p, d[-15:], q(m), q(m[300:]), sum(g) / len(g), len(ap), sum(v for _, v in ap), ap[-1][0] if ap else '-', len(pl), sum(pl)))

@@ -1,0 +1,438 @@
+{
+    "source": "marker_man.fbx (Mixamo), the stored pose of his avatar, measured 2026-11-13 before the model was deleted at the owner's word",
+    "ways": [
+        {
+            "bone": "LeftShoulder",
+            "to": "LeftUpperArm",
+            "way": {
+                "x": -0.9856365323066711,
+                "y": -0.0890486016869545,
+                "z": -0.1434958279132843
+            }
+        },
+        {
+            "bone": "LeftUpperArm",
+            "to": "LeftLowerArm",
+            "way": {
+                "x": -1.0,
+                "y": 0.0,
+                "z": 1.8837009463368305e-7
+            }
+        },
+        {
+            "bone": "LeftLowerArm",
+            "to": "LeftHand",
+            "way": {
+                "x": -1.0,
+                "y": -4.276746494724648e-7,
+                "z": 2.138373247362324e-7
+            }
+        },
+        {
+            "bone": "LeftHand",
+            "to": "LeftMiddleProximal",
+            "way": {
+                "x": -1.0,
+                "y": 0.000001136326204687066,
+                "z": 2.840815511717665e-7
+            }
+        },
+        {
+            "bone": "LeftThumbProximal",
+            "to": "LeftThumbIntermediate",
+            "way": {
+                "x": -0.7341964840888977,
+                "y": -0.14049826562404633,
+                "z": 0.6642406582832336
+            }
+        },
+        {
+            "bone": "LeftThumbIntermediate",
+            "to": "LeftThumbDistal",
+            "way": {
+                "x": -0.7825815081596375,
+                "y": -0.14597541093826295,
+                "z": 0.6051920056343079
+            }
+        },
+        {
+            "bone": "LeftThumbDistal",
+            "to": "LastBone",
+            "way": {
+                "x": -0.6451205611228943,
+                "y": -0.11654458194971085,
+                "z": 0.7551402449607849
+            }
+        },
+        {
+            "bone": "LeftIndexProximal",
+            "to": "LeftIndexIntermediate",
+            "way": {
+                "x": -1.0,
+                "y": 0.0,
+                "z": 2.6852239898289556e-7
+            }
+        },
+        {
+            "bone": "LeftIndexIntermediate",
+            "to": "LeftIndexDistal",
+            "way": {
+                "x": -1.0,
+                "y": 0.0,
+                "z": 6.59130876101699e-7
+            }
+        },
+        {
+            "bone": "LeftIndexDistal",
+            "to": "LastBone",
+            "way": {
+                "x": -0.9412031769752502,
+                "y": -0.26557067036628725,
+                "z": 0.20882736146450044
+            }
+        },
+        {
+            "bone": "LeftMiddleProximal",
+            "to": "LeftMiddleIntermediate",
+            "way": {
+                "x": -1.0,
+                "y": -0.000004116276613785885,
+                "z": 2.5726728836161785e-7
+            }
+        },
+        {
+            "bone": "LeftMiddleIntermediate",
+            "to": "LeftMiddleDistal",
+            "way": {
+                "x": -1.0,
+                "y": 0.0,
+                "z": 4.0130214529199295e-7
+            }
+        },
+        {
+            "bone": "LeftMiddleDistal",
+            "to": "LastBone",
+            "way": {
+                "x": -0.9602852463722229,
+                "y": -0.2614712715148926,
+                "z": 0.09739065915346146
+            }
+        },
+        {
+            "bone": "LeftRingProximal",
+            "to": "LeftRingIntermediate",
+            "way": {
+                "x": -1.0,
+                "y": 0.0,
+                "z": 1.3682840460660373e-7
+            }
+        },
+        {
+            "bone": "LeftRingIntermediate",
+            "to": "LeftRingDistal",
+            "way": {
+                "x": -1.0,
+                "y": 0.0,
+                "z": 6.019512852617481e-7
+            }
+        },
+        {
+            "bone": "LeftRingDistal",
+            "to": "LastBone",
+            "way": {
+                "x": -0.975790798664093,
+                "y": -0.21539826691150666,
+                "z": 0.03789219260215759
+            }
+        },
+        {
+            "bone": "LeftLittleProximal",
+            "to": "LeftLittleIntermediate",
+            "way": {
+                "x": -1.0,
+                "y": 0.0,
+                "z": 0.0
+            }
+        },
+        {
+            "bone": "LeftLittleIntermediate",
+            "to": "LeftLittleDistal",
+            "way": {
+                "x": -1.0,
+                "y": 0.0,
+                "z": 0.000001060092358784459
+            }
+        },
+        {
+            "bone": "LeftLittleDistal",
+            "to": "LastBone",
+            "way": {
+                "x": -0.9834074974060059,
+                "y": -0.18104290962219239,
+                "z": 0.011535735800862313
+            }
+        },
+        {
+            "bone": "RightShoulder",
+            "to": "RightUpperArm",
+            "way": {
+                "x": 0.9856455326080322,
+                "y": -0.08902227878570557,
+                "z": -0.14345046877861024
+            }
+        },
+        {
+            "bone": "RightUpperArm",
+            "to": "RightLowerArm",
+            "way": {
+                "x": 1.0,
+                "y": 0.0,
+                "z": 8.072990453911189e-8
+            }
+        },
+        {
+            "bone": "RightLowerArm",
+            "to": "RightHand",
+            "way": {
+                "x": 1.0,
+                "y": 0.0,
+                "z": 8.018888308924943e-8
+            }
+        },
+        {
+            "bone": "RightHand",
+            "to": "RightMiddleProximal",
+            "way": {
+                "x": 1.0,
+                "y": 0.0,
+                "z": 2.0735897976464913e-7
+            }
+        },
+        {
+            "bone": "RightThumbProximal",
+            "to": "RightThumbIntermediate",
+            "way": {
+                "x": 0.7472242116928101,
+                "y": -0.13060489296913148,
+                "z": 0.6516120433807373
+            }
+        },
+        {
+            "bone": "RightThumbIntermediate",
+            "to": "RightThumbDistal",
+            "way": {
+                "x": 0.7472261190414429,
+                "y": -0.13060568273067475,
+                "z": 0.6516097784042358
+            }
+        },
+        {
+            "bone": "RightThumbDistal",
+            "to": "LastBone",
+            "way": {
+                "x": 0.6038125157356262,
+                "y": -0.0800069123506546,
+                "z": 0.7931011319160461
+            }
+        },
+        {
+            "bone": "RightIndexProximal",
+            "to": "RightIndexIntermediate",
+            "way": {
+                "x": 1.0,
+                "y": 0.0,
+                "z": -4.157063813181594e-7
+            }
+        },
+        {
+            "bone": "RightIndexIntermediate",
+            "to": "RightIndexDistal",
+            "way": {
+                "x": 1.0,
+                "y": 0.0,
+                "z": 4.401447313284734e-7
+            }
+        },
+        {
+            "bone": "RightIndexDistal",
+            "to": "LastBone",
+            "way": {
+                "x": 0.9586373567581177,
+                "y": -0.19359856843948365,
+                "z": 0.20864775776863099
+            }
+        },
+        {
+            "bone": "RightMiddleProximal",
+            "to": "RightMiddleIntermediate",
+            "way": {
+                "x": 1.0,
+                "y": -0.0000021223650037427434,
+                "z": 5.305912509356858e-7
+            }
+        },
+        {
+            "bone": "RightMiddleIntermediate",
+            "to": "RightMiddleDistal",
+            "way": {
+                "x": 1.0,
+                "y": 0.0,
+                "z": 1.9940434015097709e-7
+            }
+        },
+        {
+            "bone": "RightMiddleDistal",
+            "to": "LastBone",
+            "way": {
+                "x": 0.9690691232681274,
+                "y": -0.21653933823108674,
+                "z": 0.11838778853416443
+            }
+        },
+        {
+            "bone": "RightRingProximal",
+            "to": "RightRingIntermediate",
+            "way": {
+                "x": 1.0,
+                "y": -0.0000022070403247198557,
+                "z": 2.7588004058998197e-7
+            }
+        },
+        {
+            "bone": "RightRingIntermediate",
+            "to": "RightRingDistal",
+            "way": {
+                "x": 1.0,
+                "y": 0.000003514827312756097,
+                "z": -2.1967670704725607e-7
+            }
+        },
+        {
+            "bone": "RightRingDistal",
+            "to": "LastBone",
+            "way": {
+                "x": 0.9723348617553711,
+                "y": -0.2247803509235382,
+                "z": 0.06355084478855133
+            }
+        },
+        {
+            "bone": "RightLittleProximal",
+            "to": "RightLittleIntermediate",
+            "way": {
+                "x": 1.0,
+                "y": 0.0,
+                "z": 4.079354880559549e-7
+            }
+        },
+        {
+            "bone": "RightLittleIntermediate",
+            "to": "RightLittleDistal",
+            "way": {
+                "x": 1.0,
+                "y": 0.0,
+                "z": -8.034400025280775e-7
+            }
+        },
+        {
+            "bone": "RightLittleDistal",
+            "to": "LastBone",
+            "way": {
+                "x": 0.9867621064186096,
+                "y": -0.16175886988639832,
+                "z": 0.011602014303207398
+            }
+        },
+        {
+            "bone": "Hips",
+            "to": "Spine",
+            "way": {
+                "x": -4.717248316410405e-7,
+                "y": 0.9857031106948853,
+                "z": 0.1684914380311966
+            }
+        },
+        {
+            "bone": "Spine",
+            "to": "Chest",
+            "way": {
+                "x": -1.672930594054378e-8,
+                "y": 0.9999480843544006,
+                "z": -0.010187732987105847
+            }
+        },
+        {
+            "bone": "Neck",
+            "to": "Head",
+            "way": {
+                "x": -4.34559810358337e-9,
+                "y": 0.9779452681541443,
+                "z": 0.20886148512363435
+            }
+        },
+        {
+            "bone": "LeftUpperLeg",
+            "to": "LeftLowerLeg",
+            "way": {
+                "x": 0.00015543066547252238,
+                "y": -0.9999116063117981,
+                "z": -0.013297784142196179
+            }
+        },
+        {
+            "bone": "LeftLowerLeg",
+            "to": "LeftFoot",
+            "way": {
+                "x": -0.00016562688688281924,
+                "y": -0.9986703991889954,
+                "z": -0.05154941603541374
+            }
+        },
+        {
+            "bone": "LeftFoot",
+            "to": "LeftToes",
+            "way": {
+                "x": 0.01243455708026886,
+                "y": -0.8271468877792358,
+                "z": 0.5618481636047363
+            }
+        },
+        {
+            "bone": "RightUpperLeg",
+            "to": "RightLowerLeg",
+            "way": {
+                "x": 0.00015541278116870672,
+                "y": -0.9999110698699951,
+                "z": -0.013332711532711983
+            }
+        },
+        {
+            "bone": "RightLowerLeg",
+            "to": "RightFoot",
+            "way": {
+                "x": -0.00016564592078793794,
+                "y": -0.9986724257469177,
+                "z": -0.051510922610759738
+            }
+        },
+        {
+            "bone": "RightFoot",
+            "to": "RightToes",
+            "way": {
+                "x": 0.012434612028300763,
+                "y": -0.8271467685699463,
+                "z": 0.5618483424186707
+            }
+        }
+    ],
+    "acrossLeft": {
+        "x": -0.00694507360458374,
+        "y": -0.0002162456512451172,
+        "z": 0.06683323532342911
+    },
+    "acrossRight": {
+        "x": 0.007863044738769532,
+        "y": 0.00037550926208496094,
+        "z": 0.06665702909231186
+    }
+}

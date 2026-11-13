@@ -1,0 +1,29 @@
+#!/bin/zsh
+# P-5a (2026-11-05): how many passing median deck points have the deck line off the drawn carriageway (the strip between twins
+# that do not meet). Copies the World sources to $1, adds a counter after RunSection in MedianRuns (OnCarriageway with margin 0),
+# builds and runs it over Line 6. The project is never edited.   zsh Docs/PRODUCTION/INFRA/p5a_gap.sh.txt <scratch dir>
+set -e
+P=${0:a:h}; D=$1; R=$HOME/Documents/dhaka-after-dark-unity
+U=/Applications/Unity/Hub/Editor/6000.3.27f1/Unity.app/Contents/Resources/Scripting; M=$U/MonoBleedingEdge
+C=($U/NetCoreRuntime/dotnet $U/DotNetSdkRoslyn/csc.dll -nologo -noconfig -nostdlib -langversion:9 -nowarn:1701,1702,8321 -optimize+ -r:$U/NetStandard/ref/2.1.0/netstandard.dll -r:$U/NetStandard/compat/2.1.0/shims/netfx/mscorlib.dll)
+mkdir -p $D/World; cp $R/Assets/_Project/Runtime/World/*.cs $D/World/
+/Library/Developer/CommandLineTools/usr/bin/python3 -I - $D/World/Structures.cs <<'PY'
+import sys
+p = sys.argv[1]; s = open(p).read()
+old = "                    ok = l > 1e-9 && RunSection(c, ss, x, z, dx / l, dz / l, before, beforeRuns);\n"
+assert s.count(old) == 1; s = s.replace(old, old + "                    if (ok) { GapAll++; if (!OnCarriageway(x, z, 0.28, 0)) GapOff++; }\n")
+old2 = "        static bool Inside(double x, double z) =>"
+assert s.count(old2) == 1; open(p, 'w').write(s.replace(old2, "        public static int GapAll, GapOff;\n" + old2))
+PY
+cat > $D/Gap.cs <<'CS'
+using System; using System.IO; using Dad.World;
+static class Gap { static void Main(string[] a) {
+  foreach (var id in File.ReadAllText(a[1]).Trim().Split(',')) { var c = Dadc.Load(File.ReadAllBytes(Path.Combine(a[0], id + ".dadc"))); NeighbourRails.Attach(c, a[0]);
+    int all0 = ChunkRoads.GapAll, off0 = ChunkRoads.GapOff; ChunkRoads.Build(c, keepMarks: true);
+    if (ChunkRoads.GapOff > off0) Console.WriteLine($"{id}: {ChunkRoads.GapAll - all0} passing points, {ChunkRoads.GapOff - off0} with the deck line off the carriageway"); }
+  Console.WriteLine($"total: {ChunkRoads.GapAll} passing deck points, {ChunkRoads.GapOff} off the carriageway");
+} }
+CS
+$C -target:library -unsafe -out:$D/Dad.World.dll $D/World/*.cs
+$C -target:exe -out:$D/gap.exe -r:$D/Dad.World.dll $D/Gap.cs
+MONO_PATH=$M/lib/mono/4.5:$M/lib/mono/4.5/Facades $M/bin/mono $D/gap.exe $R/Assets/StreamingAssets/World/chunks $P/line6-ids.txt

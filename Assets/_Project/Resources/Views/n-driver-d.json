@@ -1,0 +1,14 @@
+{
+ "name": "n-driver-d",
+ "east": 2671.22,
+ "north": 2134.91,
+ "height": 1.5,
+ "lookEast": 2668.22,
+ "lookNorth": 2139.55,
+ "lookHeight": 1.1,
+ "fov": 26,
+ "date": "",
+ "time": 12.0,
+ "weather": "clear",
+ "parade": [2644.3, 2127.0, 0.886, 0.465, 9, 0, 0, 0, 0]
+}

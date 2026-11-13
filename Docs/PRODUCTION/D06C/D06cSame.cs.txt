@@ -1,0 +1,18 @@
+using System; using System.IO; using System.Linq; using System.Security.Cryptography; using Dad.World;
+namespace Dad.Tests { public class D06cSame {
+  static string H(byte[] b) => BitConverter.ToString(SHA256.Create().ComputeHash(b)).Replace("-", "").Substring(0, 16);
+  static byte[] B<T>(T[] a, int n) where T : struct { var r = new byte[n * System.Runtime.InteropServices.Marshal.SizeOf<T>()]; Buffer.BlockCopy(a, 0, r, 0, r.Length); return r; }
+  public void Hashes() {
+    var dir = Path.Combine(Environment.GetEnvironmentVariable("DAD_SA"), "World", "chunks");
+    var outp = Environment.GetEnvironmentVariable("SAME_OUT");
+    using var w = new StreamWriter(outp);
+    foreach (var id in new[] { "c_6_-29","c_7_-29","c_7_-30","c_8_-29","c_8_-30","c_9_-28","c_6_-28","c_7_-28","c_8_-28","c_9_-29","c_9_-30","c_6_-30","c_8_-21","c_13_-35","c_10_-22" }) {
+      var c = Dadc.Load(File.ReadAllBytes(Path.Combine(dir, id + ".dadc")));
+      var b = ChunkBuildings.Build(c);
+      var r = ChunkRoads.Build(c); var st = r.Street;
+      w.WriteLine($"{id} buildings v {b.VertexCount} i {b.IndexCount} pos {H(B(b.Positions, 3 * b.VertexCount))} col {H(B(b.Colors, b.VertexCount))} idx {H(B(b.Indices, b.IndexCount))} fac {H(B(b.Facade, 4 * b.VertexCount))} pattern {b.PatternWalls} shops {b.ShopWalls}");
+      w.WriteLine($"{id} street v {st.VertexCount} i {st.IndexCount} pos {H(B(st.Positions, 3 * st.VertexCount))} col {H(B(st.Colors, st.VertexCount))} idx {H(B(st.Indices, st.IndexCount))}");
+      for (int cell = 0; cell < 16; cell++) { var k = st.BuildNearKit(cell); w.WriteLine($"{id}/{cell} roofkit v {k.VertexCount} i {k.IndexCount} pos {H(B(k.Positions, 3 * k.VertexCount))} idx {H(B(k.Indices, k.IndexCount))}"); }
+    }
+  }
+}}

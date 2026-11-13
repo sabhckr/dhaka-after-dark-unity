@@ -1,0 +1,29 @@
+# Infrastructure checker mutations: each breaks one check (survey) or one placement rule (builder), runs the
+# survey against the known list in the Mono harness (Tools/infra/run.sh) and restores the source.
+import subprocess, sys, os, re
+P = os.path.expanduser('~/Documents/dhaka-after-dark-unity')
+S = P + '/Assets/_Project/Editor/Infra/InfraSurvey.cs'
+B = P + '/Assets/_Project/Runtime/World/Structures.cs'
+M = [
+ ('S3b survey spans ignore which deck, duplicate limit 5 m', S, ('|| !s.Tracks.Overlaps(o.Tracks)) continue;', 'DuplicatePier = ChunkRoads.TwinMax,'), (') continue;', 'DuplicatePier = 5,')),
+ ('S7 survey span-short limit 35 m', S, 'ViaductSpanMin = 25,', 'ViaductSpanMin = 35,'),
+ ('B4b builder: footbridge columns every 30 m', B, 'ColumnStep = 12,', 'ColumnStep = 30,'),
+ ('B5 builder: stairs never attach', B, 'bool attached = Math.Min(ds, de) <= StairReach;', 'bool attached = false;'),
+]
+out = sys.argv[1]
+for name, f, a, b in M:
+    src = open(f).read()
+    mut = src
+    for x, y in (zip(a, b) if isinstance(a, tuple) else [(a, b)]):
+        assert mut.count(x) == 1, (name, x, mut.count(x)); mut = mut.replace(x, y)
+    open(f, 'w').write(mut)
+    try:
+        r = subprocess.run([P + '/Tools/infra/run.sh', out + '/' + name.split()[0]], capture_output=True, text=True)
+        txt = r.stdout + r.stderr
+        m = re.search(r'Against the known list \((\d+) entries\): (\d+) new, (\d+) gone', txt)
+        res = f'{m.group(2)} new, {m.group(3)} gone' if m else 'NO RESULT: ' + txt[-300:]
+        caught = m and (m.group(2) != '0' or m.group(3) != '0')
+        ex = [l.strip() for l in txt.splitlines() if l.strip().startswith(('NEW ', 'GONE '))][:2]
+        print(f"{'CAUGHT' if caught else 'MISSED'}  {name}: {res}  e.g. {' / '.join(x[:140] for x in ex)}")
+    finally:
+        open(f, 'w').write(src)

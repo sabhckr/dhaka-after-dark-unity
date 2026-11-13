@@ -1,0 +1,72 @@
+# Known infrastructure violations: every violation InfraSurvey finds in the slice today, with the issue it belongs to.
+# The EditMode test InfraSurveyTests fails on a violation not listed here and on a listed one that is gone.
+# A fix removes its rows; a new row needs a reference. Key: support or deck id | check | other party.
+# Spatial checks only: no navigation, collision or driving checks (AXIOM v3 section G.4). Generated 2026-11-04.
+key,reference,note
+FB-1561039844|unsupported-end|4015.2-14898.4,K-39,"deck rests on its ends: columns left out over the carriageway, stair unattached"
+FB-223101282|span-long|ST-1561039835-top>ST-1561039836-top,K-39,"deck rests on its ends: columns left out over the carriageway, stair unattached"
+FB-343249097|unsupported-end|4414.7-13534.4,K-39,"deck rests on its ends: columns left out over the carriageway, stair unattached"
+FC-4425.6-13537.1-343249097|bus-stop,K-50 e,"the column rule avoids carriageways, not bus stop pads"
+FC-4904.6-14937.8-1147748711|duplicate|FC-4904.6-14937.8-141697306,K-50 d,three footbridge ways meet at a node and each puts a column there
+FC-4904.6-14937.8-1147748712|duplicate|FC-4904.6-14937.8-141697306,K-50 d,three footbridge ways meet at a node and each puts a column there
+FC-4904.6-14937.8-141697306|duplicate|FC-4904.6-14937.8-1147748711,K-50 d,three footbridge ways meet at a node and each puts a column there
+FC-4932.9-14934.9-1147748711|duplicate|FC-4932.9-14934.9-1147748713,K-50 d,three footbridge ways meet at a node and each puts a column there
+FC-4932.9-14934.9-1147748713|duplicate|FC-4932.9-14934.9-1147748711,K-50 d,three footbridge ways meet at a node and each puts a column there
+FC-4932.9-14934.9-1147748714|duplicate|FC-4932.9-14934.9-1147748711,K-50 d,three footbridge ways meet at a node and each puts a column there
+FD-1249807413|deck-in-building|1429945788,AXIOM v3 E.4,deck centre line inside a drawn building volume
+FD-1249807413|deck-in-building|1429988537,AXIOM v3 E.4,deck centre line inside a drawn building volume
+FD-1249807413|deck-in-building|1436231067,AXIOM v3 E.4,deck centre line inside a drawn building volume
+FD-1249807413|deck-in-building|500648512,AXIOM v3 E.4,deck centre line inside a drawn building volume
+FD-1249807413|deck-in-building|500662109,AXIOM v3 E.4,deck centre line inside a drawn building volume
+FD-1249807413|unsupported-end|4379.1-14628.6,D-11a (K.5),"construction expressway built as finished (owner, K.5): its free end lies over a narrow two-way road between buildings; no support fits within 20 m"
+FD-1558255166|span-long|FL-4046.0-14890.5>FP-3960.0-14938.3,D-11a,"two trunk roads either side of the c_7_-30/c_8_-30 border, 25 m apart: no support fits between them outside the 4 m border keep-out; an engineered 100 m span"
+FD-1568247191|deck-in-building|505504579,AXIOM v3 E.4,deck centre line inside a drawn building volume
+FD-1568247194|deck-in-building|505504579,AXIOM v3 E.4,deck centre line inside a drawn building volume
+FD-297124203|deck-in-building|297124295,AXIOM v3 E.4,deck centre line inside a drawn building volume
+ST-1561039840-foot|stair-unattached,K-39,steps way ends more than 2.5 m from any deck; check against imagery
+ST-1561039840-top|stair-unattached,K-39,steps way ends more than 2.5 m from any deck; check against imagery
+ST-1561039841-foot|stair-unattached,K-39,steps way ends more than 2.5 m from any deck; check against imagery
+ST-1561039841-top|stair-unattached,K-39,steps way ends more than 2.5 m from any deck; check against imagery
+ST-1561039843-foot|stair-unattached,K-39,steps way ends more than 2.5 m from any deck; check against imagery
+ST-1561039843-top|stair-unattached,K-39,steps way ends more than 2.5 m from any deck; check against imagery
+VP-3420.0-14996.0|carriageway|1055297794,K-37 K37-01,"group E insufficient evidence; positions by rule, real piers unknown (evidence)"
+VP-3450.0-14992.4|carriageway|1055297794,K-37 K37-02,"group E insufficient evidence; positions by rule, real piers unknown (evidence)"
+VP-3600.0-14994.9|carriageway|343016048,K-37 K37-07,"group C station over road; positions by rule, real piers unknown (evidence)"
+VP-3600.0-14994.9|raised|1125768748,K-37 K37-07 (V-8),"group C: a station on its own viaduct piers, expected"
+VP-3630.0-14996.0|carriageway|343016048,K-37 K37-08,"group C station over road; positions by rule, real piers unknown (evidence)"
+VP-3630.0-14996.0|raised|1125768748,K-37 K37-08 (V-8),"group C: a station on its own viaduct piers, expected"
+VP-3660.0-14997.1|carriageway|343016048,K-37 K37-62,"group C station over road; positions by rule, real piers unknown (evidence)"
+VP-3660.0-14997.1|raised|1125768748,K-37 K37-62 (V-8),"group C: a station on its own viaduct piers, expected"
+VP-3690.0-14998.4|raised|1125768748,K-37 K37-63 (V-8),"group C: a station on its own viaduct piers, expected"
+VP-3720.0-14999.9|raised|1125768748,K-37 K37-64 (V-8),"group C: a station on its own viaduct piers, expected"
+VP-3840.0-14998.1|carriageway|343016048,K-37 K37-09,"group E insufficient evidence; positions by rule, real piers unknown (evidence)"
+VP-4002.6-14820.0|carriageway|528310083,K-37 K37-17,"group E insufficient evidence; positions by rule, real piers unknown (evidence)"
+VP-4012.1-14790.0|carriageway|528310083,K-37 K37-18,"group E insufficient evidence; positions by rule, real piers unknown (evidence)"
+VP-4022.1-14760.0|carriageway|528310083,K-37 K37-19,"group E insufficient evidence; positions by rule, real piers unknown (evidence)"
+VP-4032.2-14730.0|carriageway|528310083,K-37 K37-20,"group E insufficient evidence; positions by rule, real piers unknown (evidence)"
+VP-4042.2-14700.0|carriageway|528310083,K-37 K37-21,"group E insufficient evidence; positions by rule, real piers unknown (evidence)"
+VP-4052.3-14670.0|carriageway|528310083,K-37 K37-22,"group E insufficient evidence; positions by rule, real piers unknown (evidence)"
+VP-4062.4-14640.0|carriageway|528310083,K-37 K37-23,"group E insufficient evidence; positions by rule, real piers unknown (evidence)"
+VP-4072.7-14610.0|carriageway|528310083,K-37 K37-24,"group E insufficient evidence; positions by rule, real piers unknown (evidence)"
+VP-4082.9-14580.0|carriageway|528310083,K-37 K37-25,"group E insufficient evidence; positions by rule, real piers unknown (evidence)"
+VP-4093.2-14550.0|carriageway|528310083,K-37 K37-26,"group E insufficient evidence; positions by rule, real piers unknown (evidence)"
+VP-4103.4-14520.0|building|297758302,K-37 K37-27 (V-7),group D: footprint reaches into the carriageway
+VP-4103.4-14520.0|carriageway|528310083,K-37 K37-27,"group D building footprint; positions by rule, real piers unknown (evidence)"
+VP-4113.7-14490.0|carriageway|528310083,K-37 K37-28,"group E insufficient evidence; positions by rule, real piers unknown (evidence)"
+VP-4123.8-14460.2|carriageway|528310083,K-37 K37-29,"group B pier placement; positions by rule, real piers unknown (evidence)"
+VP-4134.1-14430.0|carriageway|528310083,K-37 K37-30,"group A' width estimate (narrow lanes); positions by rule, real piers unknown (evidence)"
+VP-4144.2-14400.0|carriageway|528310083,K-37 K37-31,"group A' width estimate (narrow lanes); positions by rule, real piers unknown (evidence)"
+VP-4154.4-14370.0|building|297114200,K-37 K37-32 (V-7),group D: footprint reaches into the carriageway
+VP-4154.4-14370.0|carriageway|528310083,K-37 K37-32,"group D building footprint; positions by rule, real piers unknown (evidence)"
+VP-4164.5-14340.0|carriageway|528310083,K-37 K37-33,"group E insufficient evidence; positions by rule, real piers unknown (evidence)"
+VP-4176.1-14310.0|carriageway|528310083,K-37 K37-34,"group E insufficient evidence; positions by rule, real piers unknown (evidence)"
+VP-4187.9-14280.0|carriageway|528310083,K-37 K37-35,"group E insufficient evidence; positions by rule, real piers unknown (evidence)"
+VP-4211.5-14220.0|raised|1125773740,K-37 K37-37 (V-8),"group C: a station on its own viaduct piers, expected"
+VP-4223.3-14190.0|raised|1125773740,K-37 K37-38 (V-8),"group C: a station on its own viaduct piers, expected"
+VP-4235.1-14160.0|carriageway|528310083,K-37 K37-39,"group C station over road; positions by rule, real piers unknown (evidence)"
+VP-4235.1-14160.0|raised|1125773740,K-37 K37-39 (V-8),"group C: a station on its own viaduct piers, expected"
+VP-4246.9-14130.0|raised|1125773740,K-37 K37-40 (V-8),"group C: a station on its own viaduct piers, expected"
+VP-4256.4-14100.0|raised|1125773740,K-37 K37-41 (V-8),"group C: a station on its own viaduct piers, expected"
+VP-4265.8-14070.0|raised|1125773740,K-37 K37-42 (V-8),"group C: a station on its own viaduct piers, expected"
+VP-4380.1-13710.0|through-deck|1568247194,K-50 c (K37-54),flyover drawn at its 6 m layer height (K-13); the real levels are not in the data
+VP-4441.8-13500.0|carriageway|691209729,K-50 b (P-2),"pier on the N 13,500 grid line, new in P-2 (no K-37 row); along-road trunk under the deck, as group A"

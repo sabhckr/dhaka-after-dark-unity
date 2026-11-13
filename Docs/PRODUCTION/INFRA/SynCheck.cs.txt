@@ -1,0 +1,61 @@
+// D-11a mutation harness: the FlyoverTests expectations, mirrored without NUnit, plus the slice's pinned counts.
+using System; using System.IO; using System.Linq; using System.Collections.Generic; using Dad.World;
+static class SynCheck {
+ static int fails; static void Check(bool ok, string what){ if(!ok){ fails++; Console.WriteLine("FAIL "+what);} }
+ static bool Near(double a,double b,double e=1e-6)=>Math.Abs(a-b)<=e;
+ static DadcChunk Chunk(bool west, Road[] under=null, Rail[] rails=null, Poly[] water=null){ int[] pts= west? new[]{45000,25000,5000,25000}: new[]{5000,25000,45000,25000};
+  var roads=new List<Road>{ new Road{Id=10,Cls="primary",WidthCm=700,YCm=600,Bridge=true,Pts=pts}}; if(under!=null) roads.AddRange(under);
+  return new DadcChunk{Ix=0,Iy=-1,Roads=roads.ToArray(),Rails=rails??new Rail[0],Water=water,Buildings=new Building[0],WidthsResolved=true}; }
+ static Road Under(int w)=>new Road{Id=20,Cls="primary",WidthCm=w,YCm=28,Pts=new[]{0,25000,50000,25000}};
+ static List<ChunkStreet.Item> Sup(ChunkRoads r)=> r.Street.Items.Where(i=>(i.Kind==ChunkStreet.Kind.FlyPier||i.Kind==ChunkStreet.Kind.FlyLeg)&&!i.Skipped).OrderBy(i=>i.X).ThenBy(i=>i.Z).ToList();
+ static ChunkRoads B(DadcChunk c)=>ChunkRoads.Build(c,keepMarks:true);
+ static (double vol,int open) Solid(List<float> p, List<int> idx){
+  var first=new Dictionary<(long,long,long),int>(); var map=new int[p.Count/3];
+  for(int v=0;v<map.Length;v++){ var k=((long)Math.Round(p[3*v]*1e4),(long)Math.Round(p[3*v+1]*1e4),(long)Math.Round(p[3*v+2]*1e4)); if(!first.TryGetValue(k,out int id)) first[k]=id=v; map[v]=id; }
+  double vol=0; var edges=new Dictionary<(int,int),int>();
+  for(int t=0;t<idx.Count;t+=3){ int a=map[idx[t]],b=map[idx[t+1]],c=map[idx[t+2]];
+   double ax=p[3*a],ay=p[3*a+1],az=p[3*a+2],bx=p[3*b],by=p[3*b+1],bz=p[3*b+2],cx=p[3*c],cy=p[3*c+1],cz=p[3*c+2];
+   vol+=(ax*(by*cz-bz*cy)+ay*(bz*cx-bx*cz)+az*(bx*cy-by*cx))/6.0;
+   foreach(var (x,y) in new[]{(a,b),(b,c),(c,a)}){ if(edges.TryGetValue((y,x),out int n)&&n>0){ if(--edges[(y,x)]==0) edges.Remove((y,x)); } else edges[(x,y)]=edges.TryGetValue((x,y),out int m)?m+1:1; } }
+  return (vol, edges.Values.Sum()); }
+ static int Main(string[] a){
+  try {
+  var grid=Enumerable.Range(2,14).Select(k=>k*30.0).ToArray();
+  foreach(bool w in new[]{false,true}){ var s=Sup(B(Chunk(w))); Check(s.Count==14 && s.Select(i=>i.X).Zip(grid,(x,g)=>Near(x,g)).All(q=>q) && s.All(i=>i.Why==null && Near(i.Z,250)), "grid "+(w?"west":"east")); }
+  { var r=B(Chunk(true,new[]{Under(1400)})); var s=Sup(r); Check(s.Count==14 && r.Street.FlyMedians==14 && r.Street.Items.Where(i=>i.Kind==ChunkStreet.Kind.Median).All(m=>m.Why=="lanes 5.60"), "wide road medians"); }
+  { var r=B(Chunk(true,new[]{Under(700)})); var s=Sup(r); Check(r.Street.FlyPortals==14 && r.Street.FlyMedians==0 && s.Count==28 && s.All(l=>Math.Abs(l.Z-250)>=3.5+ChunkRoads.FlyLegRadius && Math.Abs(l.Z-250)<=ChunkRoads.PortalReach), "narrow road portals"); }
+  { var r=B(Chunk(true,rails:new[]{new Rail{Id=30,YCm=0,Pts=new[]{0,25000,50000,25000}}})); var s=Sup(r); Check(s.Count==14 && r.Street.FlyOffsets==14 && s.All(p=>Math.Abs(p.Z-250)>=2.5+0.8-1e-9 && Math.Abs(p.Z-250)<=3.5+2+1e-9), "rail offsets"); }
+  { var r=B(Chunk(false,water:new[]{new Poly{Outer=new[]{16000,20000,29000,20000,29000,30000,16000,30000}}})); var s=Sup(r); var wx=s.Where(p=>p.Why=="water").Select(p=>p.X).ToArray(); Check(s.Count==14 && wx.Length==4 && Near(wx[0],180)&&Near(wx[3],270) && r.Street.FlyInWater==4, "water piers"); }
+  { var r=B(Chunk(false,new[]{new Road{Id=21,Cls="primary",WidthCm=1400,YCm=28,Pts=new[]{24000,0,24000,50000}}})); var s=Sup(r);
+    bool gaps=true; for(int k=1;k<s.Count;k++) gaps&= s[k].X-s[k-1].X>=25-1e-9 && s[k].X-s[k-1].X<=61;
+    Check(r.Street.FlySpanned==0 && r.Street.FlySlidFar==1 && s.Count(i=>i.Why=="slid-far")==1 && Near(s.Single(i=>i.Why=="slid-far").X,248) && !s.Any(i=>Near(i.X,270)) && gaps, "slide off the grid"); }
+  { Road Ac(int id,int x)=>new Road{Id=id,Cls="primary",WidthCm=2600,YCm=28,Pts=new[]{x,0,x,50000}}; var r=B(Chunk(false,new[]{Ac(21,24000),Ac(23,27000)})); var s=Sup(r);
+    bool g=true; for(int k=1;k<s.Count;k++) g&= s[k].X-s[k-1].X<=60+1e-9;
+    Check(r.Street.FlySpanned==2 && r.Street.FlyFilled==1 && s.Count(i=>i.Why=="fill")==1 && Near(s.Single(i=>i.Why=="fill").X,255) && g, "gap filled between two spanned places"); }
+  foreach(bool w in new[]{false,true}){ int[] pts=w?new[]{40000,25000,0,25000}:new[]{0,25000,40000,25000};
+    var c=new DadcChunk{Ix=0,Iy=-1,WidthsResolved=true,Rails=new Rail[0],Buildings=new Building[0],Roads=new[]{new Road{Id=10,Cls="primary",WidthCm=700,YCm=600,Bridge=true,Pts=pts}}};
+    var s=Sup(B(c)); Check(s.Count>1 && Near(s[0].X,4) && s[0].Why=="slid" && Near(s[1].X,30) && s.Select(i=>i.X).Distinct().Count()==s.Count, "west border place "+(w?"west":"east")); }
+  { var c=new DadcChunk{Ix=0,Iy=-1,WidthsResolved=true,Rails=new Rail[0],Buildings=new Building[0],Roads=new[]{new Road{Id=11,Cls="primary",WidthCm=700,YCm=600,Bridge=true,Pts=new[]{200,5000,200,45000}}}};
+    var r=B(c); var s=Sup(r); Check(r.Street.FlySpanned==0 && s.Count==14 && s.All(i=>Near(i.X,2) && Math.Abs(i.Z%30)<1e-6), "deck along the border (got "+s.Count+")"); }
+  { var c=new DadcChunk{Ix=0,Iy=-1,WidthsResolved=true,Rails=new Rail[0],Buildings=new Building[0],Roads=new[]{new Road{Id=12,Cls="primary",WidthCm=700,YCm=600,Bridge=true,Pts=new[]{200,24000,200,40000}},new Road{Id=13,Cls="primary",WidthCm=700,YCm=1100,Bridge=true,Pts=new[]{0,25000,30000,25000}}}};
+    var s=Sup(B(c)).Where(i=>i.Way==12).OrderBy(i=>i.Z).ToList(); Check(s.Count==6 && Near(s[0].Z,240) && s[0].X>=ChunkRoads.BorderKeep && s[0].Why=="offset" && s.Skip(1).All(i=>Near(i.X,2)), "strip kept out near another deck's cut"); }
+  foreach(bool one in new[]{true,false}){ var c=Chunk(true,new[]{new Road{Id=22,Cls="primary",WidthCm=700,YCm=28,Pts=new[]{0,25250,50000,25250}}});
+    if(one) c.Edges=new[]{new GraphEdge{Seq=1,A=0,B=1,Way=22,Cls="primary",Oneway=1,Pts=new[]{0,25250,50000,25250}}};
+    var r=B(c); Check(r.Street.FlyMedians==(one?14:0) && r.Street.FlyPortals==(one?0:14) && r.Street.Items.Where(i=>i.Kind==ChunkStreet.Kind.Median).All(m=>m.Why=="lanes 4.60"), "island "+(one?"one-way":"two-way")); }
+  { var c=Chunk(false); c.Roads=c.Roads.Append(new Road{Id=11,Cls="primary",WidthCm=700,YCm=600,Bridge=true,Pts=new[]{5000,25250,45000,25250}}).ToArray();
+    var s=Sup(B(c)); bool ok=s.Count==28 && s.Count(i=>i.Why=="slid")==14;
+    for(int i=0;i<s.Count;i++) for(int j=i+1;j<s.Count;j++){ double ri=s[i].Kind==ChunkStreet.Kind.FlyLeg?0.6:0.8, rj=s[j].Kind==ChunkStreet.Kind.FlyLeg?0.6:0.8; double d=Math.Sqrt(Math.Pow(s[i].X-s[j].X,2)+Math.Pow(s[i].Z-s[j].Z,2)); if(d<ri+rj+1.1+0.2-1e-9) ok=false; }
+    Check(ok, "pile caps apart"); }
+  { var r=B(Chunk(true)); var st=r.Street; var p=st.Positions.Take(3*st.Vertices[0]).ToList(); var idx=st.Indices.Take(st.IndexCounts[0]).ToList(); var (vol,open)=Solid(p,idx);
+    Check(open==0 && vol>0 && st.FlySegments==14 && Near(st.FlyLength,400-13*2*0.02), "girder closed"); }
+  // The slice, pinned as in EveryFlyoverInTheSliceStandsOnSupports.
+  int dec=0,sup=0,pier=0,por=0,slid=0,far=0,fil=0,med=0,off=0,wat=0,span=0; double len=0; var ways=new HashSet<long>(); var held=new HashSet<long>();
+  foreach(var id in new[]{6,7,8,9}.SelectMany(ix=>new[]{-30,-29,-28}.Select(iy=>$"c_{ix}_{iy}"))){
+    var c=Dadc.Load(File.ReadAllBytes(Path.Combine(a[0],id+".dadc"))); NeighbourRails.Attach(c,a[0]); var s=B(c).Street;
+    dec+=s.FlyDecks;sup+=s.FlySupports;pier+=s.FlyPiers;por+=s.FlyPortals;slid+=s.FlySlid;far+=s.FlySlidFar;fil+=s.FlyFilled;med+=s.FlyMedians;off+=s.FlyOffsets;wat+=s.FlyInWater;span+=s.FlySpanned;len+=s.FlyLength;
+    foreach(var q in c.Roads.Where(q=>q.Bridge&&q.YCm>=RoadPalette.ElevatedY*100&&!RoadPalette.IsFoot(q.Cls))) ways.Add(q.Id);
+    foreach(var i in s.Items.Where(i=>(i.Kind==ChunkStreet.Kind.FlyPier||i.Kind==ChunkStreet.Kind.FlyLeg)&&!i.Skipped)) held.Add(i.Way); }
+  string got=$"{dec} {len:F0} {sup} {pier} {por} {slid} {far} {fil} {med} {off} {wat} {span}";
+  Check(ways.Count==27 && held.IsSupersetOf(ways) && got=="44 10047 315 291 24 28 7 7 20 29 39 9", "slice pinned (got "+got+")");
+  } catch(Exception e){ fails++; Console.WriteLine("FAIL exception "+e.GetType().Name+": "+e.Message); }
+  Console.WriteLine("checks failed: "+fails); return fails; }}

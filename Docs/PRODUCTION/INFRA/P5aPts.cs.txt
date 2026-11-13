@@ -1,0 +1,7 @@
+using System; using System.IO; using System.Linq; using Dad.World;
+static class Pts { static void Main(string[] a) {
+ foreach (var id in a[1].Split(',')) { var c=Dadc.Load(File.ReadAllBytes(Path.Combine(a[0],id+".dadc")));
+  var ways=a[2].Split(',').Select(long.Parse).ToHashSet();
+  foreach (var r in c.Roads.Where(q=>ways.Contains(q.Id))) Console.WriteLine($"road {r.Id} {r.WidthCm/100.0} {string.Join(" ", Enumerable.Range(0,r.Pts.Length/2).Select(i=>$"{(c.CornerEastCm+r.Pts[2*i])/100.0:F1},{(c.CornerNorthCm+r.Pts[2*i+1])/100.0:F1}"))}");
+  foreach (var r in c.Rails.Where(q=>q.YCm>=1000)) Console.WriteLine($"rail {r.Id} {r.YCm/100.0} {string.Join(" ", Enumerable.Range(0,r.Pts.Length/2).Select(i=>$"{(c.CornerEastCm+r.Pts[2*i])/100.0:F1},{(c.CornerNorthCm+r.Pts[2*i+1])/100.0:F1}"))}");
+ } } }

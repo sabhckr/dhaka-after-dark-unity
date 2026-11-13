@@ -1,0 +1,13 @@
+{
+ "name": "w-n-turnout",
+ "east": 975,
+ "north": 1135,
+ "height": 2.6,
+ "lookEast": 945,
+ "lookNorth": 1113,
+ "lookHeight": 0.2,
+ "fov": 60,
+ "date": "",
+ "time": 12.0,
+ "weather": "clear"
+}

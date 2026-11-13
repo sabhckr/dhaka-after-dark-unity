@@ -1,0 +1,15 @@
+{
+  "name": "DHAKA: AFTER DARK thumbnail v1 (render one frame at 0.5 s, then downscale to 1280x720)",
+  "fps": 24, "width": 1920, "height": 1080, "duration": 1, "bars": 0,
+  "imageRoot": "Production/Trailer_2026/Graphics/Treated_v1",
+  "label": "CONCEPT VISUALISATION  ·  NOT GAMEPLAY",
+  "layout": {"labelY": 1030, "labelSize": 28, "titleY": 215, "creditY": 120},
+  "clips": [
+    {"img": "n-shopfront", "t": 0.0, "d": 1.0, "from": [0.42, 0.44, 1.12], "to": [0.42, 0.44, 1.12], "rain": 0.2, "label": true}
+  ],
+  "texts": [
+    {"t": 0.0, "d": 1.0, "style": "title", "text": "DHAKA: AFTER DARK", "size": 1.5},
+    {"t": 0.0, "d": 1.0, "style": "credit", "text": "ONE CITY.  A THOUSAND STORIES.  NO WAY BACK.", "size": 1.35}
+  ],
+  "flashes": []
+}

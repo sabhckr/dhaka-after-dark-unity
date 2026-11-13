@@ -1,0 +1,26 @@
+// P-5a (2026-11-05): how much of the drawn median covers a sidewalk or drain quad. Samples every median part (keepMarks) every
+// 0.5 m along and 7 points across its 3.0 m; a sample counts if it lies in any walk quad of the chunk (RoadBuilder Walks).
+// Build against the branch's Dad.World.dll (csc, as in time-p5a.sh.txt), run in the Mono harness: walk.exe <chunks dir> <comma-separated ids file>
+// P-5a: does the drawn median cover any sidewalk or drain quad? Samples each median part every 0.5 m along, 7 points across its 3.0 m.
+using System; using System.IO; using System.Linq; using System.Collections.Generic; using Dad.World;
+static class Walk {
+  static bool InQuad(double x, double z, double[] q) { // q: 4 corners (x,z) in order; inside if same sign of all cross products
+    int pos = 0, neg = 0; for (int i = 0; i < 4; i++) { double ax = q[2*i], az = q[2*i+1], bx = q[(2*i+2)%8], bz = q[(2*i+3)%8]; double c = (bx-ax)*(z-az) - (bz-az)*(x-ax); if (c > 1e-9) pos++; else if (c < -1e-9) neg++; }
+    return pos == 0 || neg == 0; }
+  static void Main(string[] a) {
+    var hits = new Dictionary<string, int>(); int samples = 0, covered = 0;
+    foreach (var id in File.ReadAllText(a[1]).Trim().Split(',')) {
+      var c = Dadc.Load(File.ReadAllBytes(Path.Combine(a[0], id + ".dadc"))); NeighbourRails.Attach(c, a[0]);
+      var r = ChunkRoads.Build(c, keepMarks: true); var st = r.Street; if (st.MedianRunParts == null || st.MedianRunParts.Count == 0) continue;
+      var quads = r.Walks.Select(w => (w.Kind, q: new[] { w.InAx, w.InAz, w.InBx, w.InBz, w.OutBx, w.OutBz, w.OutAx, w.OutAz })).ToList();
+      int chunkCovered = 0;
+      foreach (var (ax, az, bx, bz) in st.MedianRunParts) {
+        double len = Math.Sqrt((bx-ax)*(bx-ax)+(bz-az)*(bz-az)); if (len < 1e-9) continue; double ux = (bx-ax)/len, uz = (bz-az)/len;
+        for (double s = 0; s <= len + 1e-9; s += 0.5) for (int k = -3; k <= 3; k++) {
+          double x = ax + ux*s - uz*0.5*k, z = az + uz*s + ux*0.5*k; samples++;
+          foreach (var (kind, q) in quads) if (InQuad(x, z, q)) { covered++; chunkCovered++; var key = kind.ToString(); hits[key] = hits.TryGetValue(key, out int n) ? n + 1 : 1; break; }
+        } }
+      if (chunkCovered > 0) Console.WriteLine($"{id}: {chunkCovered} median samples on a walk or drain");
+    }
+    Console.WriteLine($"total {samples} samples, {covered} on a walk or drain: " + string.Join(", ", hits.Select(kv => $"{kv.Key} {kv.Value}")));
+  } }

@@ -1,0 +1,8 @@
+# Large or regenerable trailer media stays local (rebuild with Tools/trailer; see Reports).
+/Exports/
+/Captures/
+/Graphics/Treated_v*/
+/Audio/**/*.wav
+/Audio/**/*.aiff
+/Audio/**/*.m4a
+/Thumbnails/*.png

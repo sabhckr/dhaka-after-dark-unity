@@ -1,0 +1,13 @@
+{
+ "name": "w-street-slum",
+ "east": 3550,
+ "north": 1900,
+ "height": 1.7,
+ "lookEast": 3560,
+ "lookNorth": 1980,
+ "lookHeight": 1.7,
+ "fov": 60,
+ "date": "",
+ "time": 12.0,
+ "weather": "clear"
+}

@@ -1,0 +1,55 @@
+# The credits screen (start screen, Credits). One line a work: title | by | licence | source | what it is in the game and what was changed | id.
+# The id is not shown; CreditsTests checks every credited part of the records against it. Lines starting ## are headings; # lines are notes.
+DHAKA: AFTER DARK | MADE BY ISHAK HASAN SABBiR | | | A CITY THAT NEVER SLEEPS. | game
+## THE PEOPLE'S CLOTHES AND GEAR
+Patrol cap | Mindfront (Sweden) | CC BY 4.0 | makehumancommunity.org/node/841 | Worn by Man 3, Man 7 and Woman 5. Fitted to their bodies and shaded for the game. | mindfront_patrol_cap
+Helmet KZ45 | Mindfront (Sweden) | CC BY 4.0 | makehumancommunity.org/node/1310 | Worn by Man 2 and Woman 2. Fitted to their bodies and shaded for the game. | mindfront_helmet_kz45
+Knitted hat 01 | Mindfront (Sweden) | CC BY 4.0 | makehumancommunity.org/node/745 | Worn by Man 6. Fitted to their bodies and shaded for the game. | mindfront_knitted_hat_01
+Knitted sweater 02 | Mindfront (Sweden) | CC BY 4.0 | makehumancommunity.org/node/661 | Worn by Woman 8. Fitted to their bodies and shaded for the game. | mindfront_knitted_sweater_02
+Cardigan, long, open front | Mindfront (Sweden) | CC BY 4.0 | makehumancommunity.org/node/1528 | Worn by Woman 7. Fitted to their bodies and shaded for the game. | mindfront_cardigan_long_open_front
+Suit 01 | Mindfront (Sweden) | CC BY 4.0 | makehumancommunity.org/node/390 | Worn by Man 10. Fitted to their bodies and shaded for the game. | mindfront_m_suit_01
+Male trousers 1 | Mindfront (Sweden) | CC BY 4.0 | makehumancommunity.org/node/746 | Worn by Man 3. Fitted to their bodies and shaded for the game. | mindfront_male_trousers_1
+Male trousers 2 | Mindfront (Sweden) | CC BY 4.0 | makehumancommunity.org/node/1497 | Worn by Man 7. Fitted to their bodies and shaded for the game. | mindfront_male_trousers_2
+Biker boots, female | Mindfront (Sweden) | CC BY 4.0 | makehumancommunity.org/node/623 | Worn by Woman 1, Woman 2, Woman 3, Woman 4, Woman 5, Woman 6 and Woman 7. Fitted to their bodies and shaded for the game. | mindfront_shoes_biker_boots_female
+Biker boots, male | Mindfront (Sweden) | CC BY 4.0 | makehumancommunity.org/node/624 | Worn by Man 1, Man 2, Man 3, Man 4 and Man 7. Fitted to their bodies and shaded for the game. | mindfront_shoes_biker_boots_male
+EMT uniform jacket, female | Elvaerwyn and punkduck | CC BY 4.0 | makehumancommunity.org/node/1960 | The Red Cross patch covered with the jacket's red. Worn by Woman 4. Fitted to their bodies and shaded for the game. | elvs_emt_uniform_jacket_female
+EMT uniform jacket, male | Elvaerwyn and punkduck | CC BY 4.0 | makehumancommunity.org/node/1953 | The Red Cross patch covered with the jacket's red. Worn by Man 5. Fitted to their bodies and shaded for the game. | elvs_emt_uniform_jacket_male
+EMT uniform trousers, female | Elvaerwyn and punkduck | CC BY 4.0 | makehumancommunity.org/node/1959 | Worn by Woman 4. Fitted to their bodies and shaded for the game. | elvs_emt_uniform_pants_female
+EMT uniform trousers, male | Elvaerwyn and punkduck | CC BY 4.0 | makehumancommunity.org/node/1954 | Worn by Man 5. Fitted to their bodies and shaded for the game. | elvs_emt_uniform_pants_male
+Male coveralls 1 | Elvaerwyn | CC BY | makehumancommunity.org/node/2698 | Worn by Man 6 and Woman 6. Fitted to their bodies and shaded for the game. | elvs_male_coveralls_1
+Slouchy beanie 1 | Elvaerwyn | CC BY | makehumancommunity.org/node/2088 | Worn by Man 4. Fitted to their bodies and shaded for the game. | elvs_slouchy_beanie1
+Bandana mask | culturalibre, after the original by Tactical_Beard | CC BY | makehumancommunity.org/node/2483 | Original: sketchfab.com/3d-models/bandana-mask-1d39e7ae6b5748acb2ffddf420893f5a. Worn by Man 2, Man 4 and Woman 3. Fitted to their bodies and shaded for the game. | culturalibre_bandana_mask
+M1951-72 helmet | JALdMIC | CC BY | makehumancommunity.org/node/2942 | Worn by Man 1. Fitted to their bodies and shaded for the game. | jaldmic_m1951_72
+Old female sweater | janexx | CC BY | makehumancommunity.org/node/2767 | Worn by Woman 9. Fitted to their bodies and shaded for the game. | janexx_old_female_sweater
+Female tight jeans | punkduck | CC BY 3.0 | makehumancommunity.org/node/391 | Worn by Woman 7 and Woman 9. Fitted to their bodies and shaded for the game. | punkduck_female_tight_jeans
+Male classic jeans | punkduck | CC BY 4.0 | makehumancommunity.org/node/1655 | Worn by Man 9. Fitted to their bodies and shaded for the game. | punkduck_male_classic_jeans
+Free - Armor Plate Carrier - Gameready Metahuman | Karnaval (@amadions) | Sketchfab Free Standard | sketchfab.com/3d-models/free-armor-plate-carrier-gameready-metahuman-39d3b162b14444d487eb39186268e7a7 | Worn by Man 1, Man 2, Man 3, Woman 1 and Woman 2; refitted from the MetaHuman body, its flag patch made plain. | plate_carrier
+## WEAPONS
+G17 Gen 5 Handgun + Olight - NSW Police Force | 8sianDude | CC BY 4.0 | sketchfab.com/3d-models/g17-gen-5-handgun-olight-nsw-police-force-0200c248eba14385ad2bee8d4dc4e586 | The pistol, scaled to its real size. | glock
+Ump40 | Ngkua06 | CC BY 4.0 | sketchfab.com/3d-models/ump40-91ac3865fa784e12b8960babadd8c6ed | The submachine gun, scaled to its real size. | ump
+FN Herstal Scar Light | Mateusz Woliński | CC BY-NC 4.0 | sketchfab.com/3d-models/fn-herstal-scar-light-ec72c65287234d61b7a2f5a7840f7861 | The rifle, scaled to its real size. | scar
+## THE CITY
+Map data | © OpenStreetMap contributors | ODbL 1.0 | openstreetmap.org/copyright | The city's streets, buildings, railways and water are drawn from OpenStreetMap data, available under the Open Database License. | osm
+Old Residential Building [4k] | Andrej Grave | CC BY 4.0 | sketchfab.com/3d-models/old-residential-building-4k-dd400ed693cf416e940c5b8e3107205e | Material masks made from the author's maps; the windows' see-through from the opacity map. | old_residential
+Container Ship | RM02 | CC BY 4.0 | | The two container ships in port. | vessel_container
+Liberty ship | AlanTinka | CC BY 4.0 | | The three cargo ships in the bay. | vessel_liberty
+Shipyard, Dry dock, Cargo ship, Giant vessel | Metazeon | CC BY 4.0 | | Taken apart: the shipyard's deck seen from above, two of its ships, and one of its cranes at every berth. | vessel_yard
+Zodiac boat | RedC130 | CC BY 4.0 | | The small boats at the east port, which you can take. | boat
+small flat cube of water | organ collector (jtaylor27) | CC BY 4.0 | | Its pictures make the sea and its ripples. | water
+Rocky soil tile texture | CATholic | CC BY 4.0 | | The rock ground and the ground's large-scale variation. | rock
+## WITH THANKS
+MakeHuman and MPFB 2 | The MakeHuman team and community | CC0 | makehumancommunity.org | The twenty people's bodies, skins, eyes, teeth and much of their hair and clothes. | makehuman
+Clothes, hair, skins, brows and lashes | Cortu, Joel Palmius, namuhekam, MargaretToigo, Mindfront, culturalibre, RehmanPolanski, callharvey3d, CutOff3D, OnlyTheGhosts | CC0 | makehumancommunity.org | Shared free of any condition, credited with thanks. | cc0_people
+Face shapes (faceunits01, visemes02) | Mika Suominen | CC0 | makehumancommunity.org | The people's expressions and speech shapes. | faces
+Fabric082A, Fabric030, Fabric061, Leather026 | ambientCG | CC0 | ambientcg.com | The weave and grain on the clothes. | ambientcg
+Animations | Mixamo (Adobe) | Mixamo terms | mixamo.com | How the people stand, walk, run, hold guns and fall. | mixamo
+Engine | Unity Technologies | Unity terms | unity.com | Made with Unity. | unity
+## LICENCES
+CC BY 4.0 | Creative Commons Attribution 4.0 International | | creativecommons.org/licenses/by/4.0 | | lic_by4
+CC BY 3.0 | Creative Commons Attribution 3.0 Unported | | creativecommons.org/licenses/by/3.0 | | lic_by3
+CC BY | Creative Commons Attribution, version not given by the author | | creativecommons.org/licenses | | lic_by
+CC BY-NC 4.0 | Creative Commons Attribution-NonCommercial 4.0 International | | creativecommons.org/licenses/by-nc/4.0 | | lic_bync4
+Sketchfab Free Standard | Sketchfab | | sketchfab.com/licenses | | lic_sketchfab
+ODbL 1.0 | Open Database License 1.0 | | opendatacommons.org/licenses/odbl/1-0 | | lic_odbl
+CC0 | Creative Commons Zero, no rights reserved | | creativecommons.org/publicdomain/zero/1.0 | | lic_cc0
+# Models and pictures may also have been resized, rescaled or compressed to fit the game.

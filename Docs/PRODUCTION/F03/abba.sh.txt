@@ -1,0 +1,17 @@
+#!/bin/zsh
+# F-03 traffic cost (2026-11-06): one player, traffic off and on, in the order off on on off on off off on on each path, so neither side
+# is always first (K-56: runs of one player differ by up to 0.6 ms). Lid and power are checked before each run.
+#   caffeinate -dimsu zsh Docs/PRODUCTION/F03/abba.sh.txt <out file>
+cd ~/Documents/dhaka-after-dark-unity
+out=$1
+: > $out
+for route in slice-crossing-air kawran-farmgate-street; do
+  for side in off on on off on off off on; do
+    lid=$(ioreg -r -k AppleClamshellState -d 4 | /usr/bin/grep AppleClamshellState | head -1 | sed 's/.*= //')
+    [[ $lid == No ]] || { echo "lid closed, stopped" >> $out; exit 1; }
+    arg=""; [[ $side == on ]] && arg=--traffic
+    Tools/bench.sh $route ${=arg} > /dev/null 2>&1
+    d=$(ls -dt Evidence/local/bench-$route-* | head -1)
+    echo "$route $side $d" >> $out
+  done
+done

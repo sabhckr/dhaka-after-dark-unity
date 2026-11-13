@@ -1,0 +1,22 @@
+#!/bin/zsh
+# Interleaved bench: the HEAD player (Builds/MacBench-head, main 3348cc6) and the D-11a player (Builds/MacBench), run for
+# run, each after one discarded run. Both players are kept.
+D=${0:a:h}; L=$D/interleave.log; cd ~/Documents/dhaka-after-dark-unity
+st() { echo "$1 $(date +%H%M%S)" >> $L; }
+st "start $(pmset -g batt | head -1) $(ioreg -r -k AppleClamshellState -d 4 | /usr/bin/grep -m1 AppleClamshellState)"
+cur=d11a
+lid() { ioreg -r -k AppleClamshellState -d 4 | /usr/bin/grep -m1 AppleClamshellState | /usr/bin/grep -q Yes; }
+stop() { st "lid closed: stopping"; [ $cur = d11a ] || sw; exit 2; }
+sw() { if [ $cur = head ]; then mv Builds/MacBench Builds/MacBench-head; mv Builds/MacBench-d11a Builds/MacBench; cur=d11a; else mv Builds/MacBench Builds/MacBench-d11a; mv Builds/MacBench-head Builds/MacBench; cur=head; fi; }
+lid && stop; Tools/bench.sh slice-crossing-air > /dev/null 2>&1; st "d11a discard exit $? $(ls -td Evidence/local/bench-slice-crossing-air-* | head -1)"
+lid && stop; sw; Tools/bench.sh slice-crossing-air > /dev/null 2>&1; st "head discard exit $? $(ls -td Evidence/local/bench-slice-crossing-air-* | head -1)"
+for i in 1 2 3; do
+  for p in slice-crossing-air kawran-farmgate-street; do
+    for b in d11a head; do
+      lid && stop; [ $cur = $b ] || sw
+      Tools/bench.sh $p > /dev/null 2>&1; st "$b $p exit $? $(ls -td Evidence/local/bench-$p-* | head -1)"
+    done
+  done
+done
+[ $cur = d11a ] || sw
+st "done; D-11a player in Builds/MacBench, HEAD in Builds/MacBench-head $(pmset -g batt | head -1) $(ioreg -r -k AppleClamshellState -d 4 | /usr/bin/grep -m1 AppleClamshellState)"

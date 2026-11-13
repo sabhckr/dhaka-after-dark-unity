@@ -1,0 +1,13 @@
+{
+ "name": "w-s-sunset",
+ "east": 2640,
+ "north": 2118,
+ "height": 1.7,
+ "lookEast": 2720,
+ "lookNorth": 2160,
+ "lookHeight": 12,
+ "fov": 60,
+ "date": "",
+ "time": 17.8,
+ "weather": "clear"
+}

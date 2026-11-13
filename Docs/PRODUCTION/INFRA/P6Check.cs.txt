@@ -1,0 +1,68 @@
+// Mirror of ViaductIslandTests (K-37 P-6) for the mutation harness: prints one line per failing case, "OK" if none.
+using System; using System.Linq; using System.Collections.Generic; using Dad.World;
+static class P6Check {
+ static DadcChunk Chunk(Road[] roads, int railZ = 25000, Building[] b = null, GraphEdge[] e = null) => new DadcChunk {
+  Ix = 0, Iy = -1, WidthsResolved = true, Roads = roads, Buildings = b ?? new Building[0], Edges = e,
+  Rails = new[] { new Rail { Id = 30, YCm = 3100, Pts = new[] { 5000, railZ, 45000, railZ } } } };
+ static Road R(long id, int w, int z, string cls = "primary") => new Road { Id = id, Cls = cls, WidthCm = w, YCm = 28, Pts = new[] { 0, z, 50000, z } };
+ static GraphEdge OW(Road r, int seq) => new GraphEdge { Seq = seq, A = 2 * seq, B = 2 * seq + 1, Way = r.Id, Cls = r.Cls, Oneway = 1, Pts = r.Pts };
+ static List<string> fail = new List<string>();
+ static void Check(string name, bool ok, string got = "") { if (!ok) fail.Add(name + (got == "" ? "" : " (got " + got + ")")); }
+ static ChunkStreet B(DadcChunk c) => ChunkRoads.Build(c, keepMarks: true).Street;
+ static IEnumerable<ChunkStreet.Item> Med(ChunkStreet s) => s.Items.Where(i => i.Kind == ChunkStreet.Kind.Median);
+ static IEnumerable<ChunkStreet.Item> Pi(ChunkStreet s) => s.Items.Where(i => i.Kind == ChunkStreet.Kind.Pier && !i.Skipped);
+ static int Ref(ChunkStreet s, string k) => s.IslandRefusals != null && s.IslandRefusals.TryGetValue(k, out int n) ? n : 0;
+ static int Main() {
+  var w = B(Chunk(new[] { R(20, 1400, 25000) }));
+  Check("wide", w.PiersOnIsland == 14 && Med(w).All(m => m.Why == "lanes 5.50") && Med(w).Count() == 14 && Pi(w).All(p => p.Why == "median"), $"{w.PiersOnIsland} {string.Join(",", Med(w).Select(m => m.Why).Distinct())}");
+  Check("sizes", Math.Abs(ChunkRoads.ViaductIslandHalf - 1.5) < 1e-9 && Math.Abs(ChunkRoads.ViaductIslandEnds - 3.9) < 1e-9);
+  var at = B(Chunk(new[] { R(20, 900, 25000) }));
+  Check("lane 3.00", at.PiersOnIsland == 14 && Med(at).All(m => m.Why == "lanes 3.00"), at.PiersOnIsland.ToString());
+  var un = B(Chunk(new[] { R(20, 890, 25000) }));
+  Check("lane 2.95", un.PiersOnIsland == 0 && Ref(un, "narrow") == 14 && !Med(un).Any(), un.PiersOnIsland.ToString());
+  var r22 = R(22, 700, 25250);
+  var ow = B(Chunk(new[] { r22 }, e: new[] { OW(r22, 1) }));
+  Check("one-way kerb side", ow.PiersOnIsland == 0 && Ref(ow, "one side") == 14, ow.PiersOnIsland.ToString());
+  foreach (var (gap, want) in new[] { (80, 14), (150, 0) }) {
+   var ta = new Road { Id = 40, Cls = "secondary", WidthCm = 700, YCm = 28, Pts = new[] { 0, 24750, 50000, 24750 } };
+   int bz = 25150 + gap + 350;
+   var tb = new Road { Id = 41, Cls = "secondary", WidthCm = 700, YCm = 28, Pts = new[] { 50000, bz, 0, bz } };
+   var t = B(Chunk(new[] { ta, tb }, e: new[] { OW(ta, 1), OW(tb, 2) }));
+   Check("twin strip " + gap, t.PiersOnIsland == want && (want == 0 ? Ref(t, "one side") == 14 : Med(t).All(m => m.Why == "lanes 4.50")), t.PiersOnIsland.ToString()); }
+  var tw = B(Chunk(new[] { R(22, 700, 25250) }));
+  Check("two-way", tw.PiersOnIsland == 0 && Ref(tw, "narrow") == 14, tw.PiersOnIsland.ToString());
+  var bo = B(Chunk(new[] { R(20, 1400, 100) }, railZ: 100));
+  Check("border", bo.PiersOnIsland == 0 && Ref(bo, "border") == 14, bo.PiersOnIsland.ToString());
+  var g = new Building { Id = 70, HeightCm = 900, Outer = new[] { 9250, 25120, 10000, 25120, 10000, 26000, 9250, 26000 } };
+  var gb = B(Chunk(new[] { R(20, 1400, 25000) }, b: new[] { g }));
+  Check("ground building", gb.PiersOnIsland == 13 && Ref(gb, "building") == 1, gb.PiersOnIsland.ToString());
+  var rb = new Building { Id = 71, HeightCm = 2400, MinHeightCm = 1600, Outer = new[] { 8000, 24000, 10000, 24000, 10000, 26000, 8000, 26000 } };
+  var ra = B(Chunk(new[] { R(20, 1400, 25000) }, b: new[] { rb }));
+  Check("raised building", ra.PiersOnIsland == 14, ra.PiersOnIsland.ToString());
+  var a = new Road { Id = 40, Cls = "secondary", WidthCm = 700, YCm = 28, Pts = new[] { 0, 24650, 50000, 24650 } };
+  var bb = new Road { Id = 41, Cls = "secondary", WidthCm = 700, YCm = 28, Pts = new[] { 50000, 25350, 0, 25350 } };
+  var dv = B(Chunk(new[] { a, bb }, e: new[] { OW(a, 1), OW(bb, 2) }));
+  var divs = dv.Items.Where(i => i.Kind == ChunkStreet.Kind.Divider).ToList();
+  bool clear = Pi(dv).All(p => divs.All(d => Math.Abs(d.X - p.X) >= ChunkRoads.ViaductIslandEnds || Math.Abs(d.Z - p.Z) >= ChunkRoads.ViaductIslandHalf));
+  Check("divider", dv.PiersOnIsland == 14 && divs.Count > 0 && clear, $"{dv.PiersOnIsland} {divs.Count} {clear}");
+  DadcChunk Fly() => new DadcChunk { Ix = 0, Iy = -1, WidthsResolved = true, Rails = new Rail[0], Buildings = new Building[0], Roads = new[] { new Road { Id = 10, Cls = "primary", WidthCm = 700, YCm = 600, Bridge = true, Pts = new[] { 5000, 25000, 45000, 25000 } } } };
+  string Sig(ChunkStreet s) => string.Join(" ", s.Items.Where(i => i.Kind == ChunkStreet.Kind.FlyPier || i.Kind == ChunkStreet.Kind.FlyLeg).Select(i => $"{i.X:F2},{i.Z:F2}"));
+  B(new DadcChunk { Ix = 5, Iy = -5, Roads = new Road[0], Buildings = new Building[0], WidthsResolved = true });
+  string alone = Sig(B(Fly())); B(Chunk(new Road[0])); string after = Sig(B(Fly()));
+  Check("scratch", alone == after && alone.Split(' ').Length == 14);
+  var zc = new DadcChunk { Ix = 0, Iy = -1, WidthsResolved = true, Roads = new[] { R(20, 1400, 25000) }, Buildings = new Building[0],
+   Points = new[] { new PointFeature { Id = 5, Kind = "crossing", CrossingType = "zebra", East = 9550, North = 25000 } },
+   Rails = new[] { new Rail { Id = 30, YCm = 3100, Pts = new[] { 5000, 25000, 45000, 25000 } } } };
+  var zb = B(zc);
+  Check("zebra", zb.PiersOnIsland == 13 && Pi(zb).Single(p => Math.Abs(p.X - 90) < 1e-6).Why == "on a carriageway; no island: crossing", zb.PiersOnIsland + " " + Pi(zb).Single(p => Math.Abs(p.X - 90) < 1e-6).Why);
+  var sideR = new Road { Id = 21, Cls = "residential", WidthCm = 600, YCm = 28, Pts = new[] { 9800, 0, 9800, 50000 } };
+  var jb = B(Chunk(new[] { R(20, 1400, 25000), sideR }));
+  Check("junction", jb.PiersOnIsland == 13 && Pi(jb).Single(p => Math.Abs(p.X - 90) < 1e-6).Why == "on a carriageway; no island: junction", jb.PiersOnIsland + " " + Pi(jb).Single(p => Math.Abs(p.X - 90) < 1e-6).Why);
+  var fr = new List<Road> { new Road { Id = 10, Cls = "primary", WidthCm = 700, YCm = 600, Bridge = true, Pts = new[] { 45000, 25000, 5000, 25000 } }, R(20, 1400, 25000) };
+  var fc = new DadcChunk { Ix = 0, Iy = -1, Roads = fr.ToArray(), Rails = new Rail[0], WidthsResolved = true,
+   Buildings = new[] { new Building { Id = 70, HeightCm = 300, Outer = new[] { 9250, 25050, 9350, 25050, 9350, 25120, 9250, 25120 } } } };
+  var fm = ChunkRoads.Build(fc, keepMarks: true).Street.Items.Where(i => i.Kind == ChunkStreet.Kind.Median).ToList();
+  var f90 = fm.Single(m => Math.Abs(m.X - 90) < 1e-6);
+  Check("fly building", fm.Count == 14 && f90.Z + ChunkRoads.MedianHalf <= 250.5 && f90.Why == "lanes 4.60", f90.Z.ToString("F2") + " " + f90.Why);
+  Console.WriteLine(fail.Count == 0 ? "OK" : string.Join("; ", fail));
+  return 0; } }

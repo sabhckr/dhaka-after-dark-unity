@@ -1,0 +1,13 @@
+{
+ "name": "w-m-boats",
+ "east": 1922.0,
+ "north": 1229.0,
+ "height": 4.0,
+ "lookEast": 1912.0,
+ "lookNorth": 1252.0,
+ "lookHeight": 0.5,
+ "fov": 60,
+ "date": "",
+ "time": 12.0,
+ "weather": "clear"
+}

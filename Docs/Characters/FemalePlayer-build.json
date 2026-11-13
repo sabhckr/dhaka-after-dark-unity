@@ -1,0 +1,349 @@
+{
+ "bones": 163,
+ "height": 1.62,
+ "meshes": {
+  "Body": {
+   "verts": 44496,
+   "tris": 88912,
+   "keys": 100,
+   "first_keys": [
+    "Basis",
+    "aa_02",
+    "aa_ah_ax_01",
+    "ao_03"
+   ],
+   "materials": {
+    "Body": [
+     [
+      "indian_skin3e.png",
+      2048,
+      2048,
+      "mpfb/data/skins/cutoff3d_indian_female_enhanced/indian_skin3e.png"
+     ]
+    ]
+   }
+  },
+  "Eyebrows": {
+   "verts": 124,
+   "tris": 192,
+   "keys": 26,
+   "first_keys": [
+    "Basis",
+    "browDownLeft",
+    "browDownRight",
+    "browInnerUp"
+   ],
+   "materials": {
+    "Eyebrows": [
+     [
+      "eyebrow010.png",
+      512,
+      512,
+      "mpfb/data/eyebrows/eyebrow010/eyebrow010.png"
+     ]
+    ]
+   }
+  },
+  "Eyelashes": {
+   "verts": 250,
+   "tris": 368,
+   "keys": 28,
+   "first_keys": [
+    "Basis",
+    "viseme_E",
+    "viseme_SS",
+    "browDownLeft"
+   ],
+   "materials": {
+    "Eyelashes": [
+     [
+      "eyelashes01.png",
+      512,
+      512,
+      "mpfb/data/eyelashes/eyelashes01/eyelashes01.png"
+     ]
+    ]
+   }
+  },
+  "Eyes": {
+   "verts": 1064,
+   "tris": 2040,
+   "keys": 9,
+   "first_keys": [
+    "Basis",
+    "eyeLookDownLeft",
+    "eyeLookDownRight",
+    "eyeLookInLeft"
+   ],
+   "materials": {
+    "Eyes": [
+     [
+      "brown_eye.png",
+      1024,
+      1024,
+      "mpfb/data/eyes/materials/brown_eye.png"
+     ]
+    ]
+   }
+  },
+  "Hair": {
+   "verts": 4493,
+   "tris": 5518,
+   "keys": 1,
+   "first_keys": [
+    "Basis"
+   ],
+   "materials": {
+    "Hair": [
+     [
+      "braid01_diffuse.png",
+      2048,
+      2048,
+      "mpfb/data/hair/braid01/braid01_diffuse.png"
+     ]
+    ]
+   }
+  },
+  "shoes06": {
+   "verts": 1594,
+   "tris": 3064,
+   "keys": 1,
+   "first_keys": [
+    "Basis"
+   ],
+   "materials": {
+    "shoes06": [
+     [
+      "shoes06_diffuse.png",
+      1024,
+      1024,
+      "mpfb/data/clothes/shoes06/shoes06_diffuse.png"
+     ]
+    ]
+   }
+  },
+  "Teeth": {
+   "verts": 3868,
+   "tris": 7120,
+   "keys": 33,
+   "first_keys": [
+    "Basis",
+    "aa_02",
+    "aa_ah_ax_01",
+    "ao_03"
+   ],
+   "materials": {
+    "Teeth": [
+     [
+      "teeth.png",
+      2048,
+      2048,
+      "mpfb/data/teeth/teeth_base/teeth.png"
+     ]
+    ]
+   }
+  },
+  "toigo_basic_tucked_t-shirt": {
+   "verts": 1391,
+   "tris": 2700,
+   "keys": 1,
+   "first_keys": [
+    "Basis"
+   ],
+   "materials": {
+    "toigo_basic_tucked_t-shirt": [
+     [
+      "T-shirt_basic-bump.png",
+      2048,
+      2048,
+      "mpfb/data/clothes/toigo_basic_tucked_t-shirt/T-shirt_basic-bump.png"
+     ],
+     [
+      "T-shirt_basic.png",
+      2048,
+      2048,
+      "mpfb/data/clothes/toigo_basic_tucked_t-shirt/T-shirt_basic.png"
+     ]
+    ]
+   }
+  },
+  "toigo_wool_pants": {
+   "verts": 1372,
+   "tris": 2674,
+   "keys": 1,
+   "first_keys": [
+    "Basis"
+   ],
+   "materials": {
+    "toigo_wool_pants": [
+     [
+      "Pants_wool.png",
+      2048,
+      2048,
+      "mpfb/data/clothes/toigo_wool_pants/Pants_wool.png"
+     ]
+    ]
+   }
+  },
+  "Tongue": {
+   "verts": 226,
+   "tris": 448,
+   "keys": 34,
+   "first_keys": [
+    "Basis",
+    "aa_02",
+    "aa_ah_ax_01",
+    "ao_03"
+   ],
+   "materials": {
+    "Tongue": [
+     [
+      "tongue01_diffuse.png",
+      1024,
+      1024,
+      "mpfb/data/tongue/tongue01/tongue01_diffuse.png"
+     ]
+    ]
+   }
+  }
+ },
+ "body_height": 1.5972,
+ "mouth": {
+  "FemalePlayer.body_export_copy": [
+   "AA",
+   "EE",
+   "IH",
+   "OH",
+   "OU",
+   "FV",
+   "MBP",
+   "L",
+   "WQ",
+   "TH"
+  ],
+  "FemalePlayer.teeth_base_export_copy": [
+   "AA",
+   "OH",
+   "MBP",
+   "L",
+   "TH"
+  ],
+  "FemalePlayer.tongue01_export_copy": [
+   "AA",
+   "OH",
+   "MBP",
+   "L",
+   "TH"
+  ]
+ },
+ "maps": {
+  "Body.png": {
+   "source": "mpfb/data/skins/cutoff3d_indian_female_enhanced/indian_skin3e.png",
+   "size": [
+    2048,
+    2048
+   ]
+  },
+  "Hair.png": {
+   "source": "mpfb/data/hair/braid01/braid01_diffuse.png",
+   "size": [
+    2048,
+    2048
+   ]
+  },
+  "Eyebrows.png": {
+   "source": "mpfb/data/eyebrows/eyebrow010/eyebrow010.png",
+   "size": [
+    512,
+    512
+   ]
+  },
+  "Eyelashes.png": {
+   "source": "mpfb/data/eyelashes/eyelashes01/eyelashes01.png",
+   "size": [
+    512,
+    512
+   ]
+  },
+  "Eyes.png": {
+   "source": "mpfb/data/eyes/materials/brown_eye.png",
+   "size": [
+    1024,
+    1024
+   ]
+  },
+  "shoes06.png": {
+   "source": "mpfb/data/clothes/shoes06/shoes06_diffuse.png",
+   "size": [
+    1024,
+    1024
+   ]
+  },
+  "Teeth.png": {
+   "source": "mpfb/data/teeth/teeth_base/teeth.png",
+   "size": [
+    2048,
+    2048
+   ]
+  },
+  "toigo_basic_tucked_t-shirt_bump.png": {
+   "source": "mpfb/data/clothes/toigo_basic_tucked_t-shirt/T-shirt_basic-bump.png",
+   "size": [
+    2048,
+    2048
+   ]
+  },
+  "toigo_basic_tucked_t-shirt.png": {
+   "source": "mpfb/data/clothes/toigo_basic_tucked_t-shirt/T-shirt_basic.png",
+   "size": [
+    2048,
+    2048
+   ]
+  },
+  "toigo_wool_pants.png": {
+   "source": "mpfb/data/clothes/toigo_wool_pants/Pants_wool.png",
+   "size": [
+    2048,
+    2048
+   ]
+  },
+  "Tongue.png": {
+   "source": "mpfb/data/tongue/tongue01/tongue01_diffuse.png",
+   "size": [
+    1024,
+    1024
+   ]
+  }
+ },
+ "fbx": "Assets/_Project/Characters/Female/FemalePlayer.fbx",
+ "fbx_mb": 11.6,
+ "recipe": {
+  "name": "FemalePlayer",
+  "folder": "Female",
+  "phenotype": {
+   "gender": 0.0,
+   "age": 0.45,
+   "muscle": 0.55,
+   "weight": 0.45,
+   "proportions": 0.62,
+   "height": 0.57,
+   "cupsize": 0.5,
+   "firmness": 0.6,
+   "race": {
+    "asian": 0.35,
+    "caucasian": 0.45,
+    "african": 0.2
+   }
+  },
+  "skin": "cutoff3d_indian_female_enhanced",
+  "eyes": "brown",
+  "eyebrows": "eyebrow010",
+  "eyelashes": "eyelashes01",
+  "hair": "braid01",
+  "clothes": [
+   "toigo_basic_tucked_t-shirt",
+   "toigo_wool_pants",
+   "shoes06"
+  ]
+ }
+}

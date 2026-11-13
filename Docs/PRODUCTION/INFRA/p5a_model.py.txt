@@ -1,0 +1,59 @@
+# P-5a model (K-37, read-only planning tool, 2026-11-05). Input: the P5aTwin probe output and Tests/Infra/known-violations.csv.
+# Run from the repo root: python3 -I Docs/PRODUCTION/INFRA/p5a_model.py.txt Docs/PRODUCTION/INFRA/p5a/line6-twins.tsv Tests/Infra/known-violations.csv [W to list K-37 piers]
+# A median W m wide, centred on the pier line, trims each one-way twin's inner edge to W/2 from the pier. A pier clears when
+# a one-way carriageway lies each side within 8 m (TwinMax) and both keep 3 m or more; a pier in a crossing road or junction stays.
+import re, sys, collections
+K = {}
+for l in open(sys.argv[2]):
+    m = re.match(r"VP-([-\d.]+)-([-\d.]+)\|carriageway\|[^,]*,K-37 (K37-\d+)", l)
+    if m: K[(round(float(m.group(1)), 1), round(float(m.group(2)), 1))] = m.group(3)
+CARRIAGE = re.compile(r'^(motorway|trunk|primary|secondary|tertiary|residential|unclassified|living_street|service|road)(_link)?$')
+rows = []
+for l in open(sys.argv[1]):
+    ch, x, z, why, roads = (l.rstrip('\n').split('\t') + [''])[:5]
+    rs = []
+    for r in roads.split():
+        rid, cls, way, w, off = r.split(':')
+        if not CARRIAGE.match(cls): continue
+        rs.append((rid, cls, way, float(re.sub('[eL]', '', w)), float(off)))
+    rows.append((ch, float(x), float(z), why, rs, K.get((round(float(x), 1), round(float(z), 1)))))
+def kind(rs):
+    # nearest carriageway each side of the pier (off > 0: road centre to the pier's left)
+    L = [r for r in rs if r[4] > 0]; R = [r for r in rs if r[4] < 0]
+    near = lambda side: min(side, key=lambda r: abs(r[4]) - r[3] / 2) if side else None
+    return near(L), near(R)
+def judge(rs, W):
+    l, r = kind(rs)
+    if not l or not r: return 'one side', None
+    if l[2] != '1w' or r[2] != '1w': return 'not one-way twins', None
+    gaps = [abs(q[4]) - q[3] / 2 for q in (l, r)]
+    if any(g > 8 for g in gaps): return 'twin too far', None
+    left = [q[3] - max(0, W / 2 - g) for q, g in zip((l, r), gaps)]
+    m = min(left)
+    return ('clears, 2 lanes kept' if m >= 6.0 else 'clears, 1 lane kept' if m >= 3.0 else 'too narrow'), left
+on = [r for r in rows if r[3].startswith('on a carriageway')]
+print(f'built piers {len(rows)}, on a carriageway {len(on)}, of them in K-37 {sum(1 for r in on if r[5])}')
+for W in (2.5, 3.0, 3.5):
+    for label, sub in (('line 6', on), ('K-37', [r for r in on if r[5]])):
+        c = collections.Counter(judge(r[4], W)[0] for r in sub)
+        print(f'W {W} m {label}:', dict(sorted(c.items())))
+if len(sys.argv) > 3:
+    W = float(sys.argv[3])
+    for r in on:
+        if r[5]:
+            j, left = judge(r[4], W)
+            print(r[5], r[0], f'{r[1]:.1f},{r[2]:.1f}', r[3].split(': ')[-1], j, '' if left is None else '/'.join(f'{v:.1f}' for v in left), ' '.join(f'{q[0]}:{q[2]}:{q[3]}:{q[4]}' for q in r[4]))
+print('--- refined: a pier in a crossing road or junction stays listed (a median stops short of a junction)')
+for W in (2.5, 3.0, 3.5):
+    for label, sub in (('line 6', on), ('K-37', [r for r in on if r[5]])):
+        c = collections.Counter(('crossing/junction' if r[3].endswith(('crossing road', 'junction')) and judge(r[4], W)[0].startswith('clears') else judge(r[4], W)[0]) for r in sub)
+        print(f'W {W} m {label}:', dict(sorted(c.items())))
+print('--- piers whose one-way twins (same class, opposite directions unknown) both lie on one side, none on the other')
+same = collections.Counter()
+for r in on:
+    one = [q for q in r[4] if q[2] == '1w' and q[1] in ('trunk', 'primary', 'secondary', 'tertiary', 'motorway')]
+    L = [q for q in one if q[4] > 0]; R = [q for q in one if q[4] < 0]
+    if (len(L) >= 2 and not R) or (len(R) >= 2 and not L):
+        same[(r[0], tuple(sorted(q[0] for q in (L or R))))] += 1
+for k, v in sorted(same.items()): print(v, k)
+print('total', sum(same.values()))

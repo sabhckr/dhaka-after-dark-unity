@@ -1,0 +1,7 @@
+import sys,csv
+# GPU ms by fifth of the path (p50 of each fifth) and the mean over the run, from a bench run's frames.csv.
+for d in sys.argv[1:]:
+    r=list(csv.DictReader(open(d+'/frames.csv')))
+    g=[float(x['gpuMs']) for x in r if x['gpuMs'] not in ('','nan')]
+    n=len(g); q=lambda a:sorted(a)[len(a)//2]
+    print('%-46s mean %.2f | fifths p50 %s' % (d, sum(g)/n, ' '.join('%.2f'%q(g[i*n//5:(i+1)*n//5]) for i in range(5))))

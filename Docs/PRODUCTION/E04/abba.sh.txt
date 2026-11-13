@@ -1,0 +1,30 @@
+#!/bin/zsh
+# E-04 cost (2026-11-06), 8 runs a side on each path, in the order off on on off on off off on, so neither side is always first (K-56: runs of one player differ by up to 0.6 ms).
+#   step:  "off" is the F-03 player (Builds/MacBench-f03, fixed step 0.02), "on" the E-04 player, both with nothing switched on: what the 0.01 s step costs a game that is not driving.
+#   drive: "off" is the E-04 player with traffic on; "on" adds the colliders and a car with its engine running, near the camera. Both have traffic, as a played game does.
+# Lid and power are checked before each run.
+#   caffeinate -dimsu zsh Docs/PRODUCTION/E04/abba.sh.txt <step log> <drive log>
+cd ~/Documents/dhaka-after-dark-unity
+old=$PWD/Builds/MacBench-f03/DhakaAfterDark.app
+run() {
+  local out=$1 route=$2 side=$3; shift 3
+  local lid=$(ioreg -r -k AppleClamshellState -d 4 | /usr/bin/grep AppleClamshellState | head -1 | sed 's/.*= //')
+  [[ $lid == No ]] || { echo "lid closed, stopped" >> $out; exit 1; }
+  pmset -g batt | /usr/bin/grep -q "AC Power" || { echo "not on AC, stopped" >> $out; exit 1; }
+  "$@" > /dev/null 2>&1
+  local d=$(ls -dt Evidence/local/bench-$route-* | head -1)
+  echo "$route $side $d" >> $out
+}
+: > $1; : > $2
+for route in slice-crossing-air kawran-farmgate-street; do
+  for side in off on on off on off off on; do
+    if [[ $side == off ]]; then run $1 $route $side env BENCH_APP=$old Tools/bench.sh $route
+    else run $1 $route $side Tools/bench.sh $route; fi
+  done
+done
+for route in slice-crossing-air kawran-farmgate-street; do
+  for side in off on on off on off off on; do
+    if [[ $side == off ]]; then run $2 $route $side Tools/bench.sh $route --traffic
+    else run $2 $route $side Tools/bench.sh $route --drive; fi
+  done
+done

@@ -1,0 +1,41 @@
+# Unity generated
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+*.csproj
+*.sln
+*.slnx
+*.unityproj
+*.user
+*.pidb
+*.booproj
+*.pdb
+*.mdb
+*.apk
+*.aab
+*.unitypackage
+crashlytics-build.properties
+.vs/
+.vscode/
+.idea/
+.DS_Store
+
+# World data is generated from the dhaka-after-dark repository (Tools/sync-world-data.sh).
+# It is ODbL data and regenerable byte for byte; only WorldData.lock is tracked.
+/Assets/StreamingAssets/World/
+/Assets/StreamingAssets/World.meta
+
+# Local evidence (profiler captures, screenshots before they are curated)
+/Evidence/local/
+
+# Models taken out of the game, kept with their .meta files
+/Archive/
+
+# Rhubarb Lip Sync binary (MIT), unpacked from its GitHub release; not kept in git
+Tools/rhubarb/

@@ -1,0 +1,79 @@
+# D-11a mutations (2026-11-04): each breaks one flyover rule in a COPY of the sources (the project is never edited),
+# builds Dad.World, the survey and the test mirror (SynCheck.cs) in the Mono harness, runs the survey on the slice
+# against the known list, and the mirror of FlyoverTests. Caught = the slice gate or a mirrored test fails.
+import subprocess, sys, os, re, shutil, glob
+P = os.path.expanduser('~/Documents/dhaka-after-dark-unity')
+H = os.path.dirname(os.path.abspath(__file__))
+OUT = sys.argv[1]
+U = '/Applications/Unity/Hub/Editor/6000.3.27f1/Unity.app/Contents/Resources/Scripting'
+NS, MS, MO = U + '/NetStandard/ref/2.1.0/netstandard.dll', U + '/NetStandard/compat/2.1.0/shims/netfx/mscorlib.dll', U + '/MonoBleedingEdge'
+CSC = [U + '/NetCoreRuntime/dotnet', U + '/DotNetSdkRoslyn/csc.dll', '-nologo', '-noconfig', '-nostdlib', '-langversion:9', '-nowarn:1701,1702,8321', '-optimize+']
+ENV = dict(os.environ, MONO_PATH=f'{MO}/lib/mono/4.5:{MO}/lib/mono/4.5/Facades')
+CH = P + '/Assets/StreamingAssets/World/chunks'
+F, I = 'World/Flyovers.cs', 'Infra/InfraSurvey.cs'
+M = [
+ ('F1 grid places visited in grid order (the westward bug)', F, 'double g = b >= a ? first + gi * PierGrid : lastLine - gi * PierGrid;', 'double g = first + gi * PierGrid;'),
+ ('F2 a line at a segment\'s low end not a place', F, 'Math.Ceiling((lo - 1e-3) / PierGrid) * PierGrid', 'Math.Floor(lo / PierGrid) * PierGrid + PierGrid'),
+ ('F3 two-way roads may be covered on one side', F, 'if (part < 0.3 && e.oneWay) continue;', 'if (part < 0.3) continue;'),
+ ('F4 lane beside an island 2 m', F, 'LaneMin = 3.0,', 'LaneMin = 2.0,'),
+ ('F5 rail clearance 1 m', F, 'RailClear = 2.5;', 'RailClear = 1.0;'),
+ ('F6 no portal frames', F, '            if (Portal(d, st, w, ss, px, pz, dx, dz, half, along, way, keep, tag)) return true;\n', ''),
+ ('F7 no slide off the grid', F, 'FlyWideSlide = 12;', 'FlyWideSlide = 0;'),
+ ('F8 pile caps ignored in spacing', F, 'double m = q.r + r + 2 * CapRim + CapGap;', 'double m = q.r + r + 0.5;'),
+ ('F9 building tested at the centre only', F, 'for (int k = 0; k < 16; k++)', 'for (int k = 0; k < 0; k++)'),
+ ('F10 no end supports', F, 'if (start ? d.StartOn : d.EndOn) continue;', 'continue;'),
+ ('F11 slides may come within the minimum span', F, 'if (at < 0 || at > total || at < minAt || at > maxAt) continue;', 'if (at < 0 || at > total || at > maxAt) continue;'),
+ ('F12 island judged at its centre only', F, 'for (int k = -1; k <= 1; k++)\n            {\n                if (!IslandAt(', 'for (int k = 0; k <= 0; k++)\n            {\n                if (!IslandAt('),
+ ('F13 island may stand over a road\'s end', F, '            foreach (var e in near.Values) if (e.past) return false;\n', ''),
+ ('F14 no girder joint at the supports', F, 'JointGap = 0.02', 'JointGap = 0.0'),
+ ('F15 no border keep-out', F, 'BorderKeep = 4,', 'BorderKeep = 0,'),
+ ('F16 no gap filling', F, '            FillGaps(c, d, drawn, st, w, ss, keep);\n', ''),
+ ('F17 crossing keep-outs not avoided (city)', F, 'foreach (var ring in Mine().GradeKeepOuts) if (InOrNear(ring, x, z, r)) return Ground.Crossing;', ''),
+ ('F18 bus stop pads not avoided (city)', F, 'if (OnStopPad(x, z, r)) return Ground.BusStop;', ''),
+ ('F19 supports may touch a lower deck (city)', F, 'LowerDeckClear = 0.3;', 'LowerDeckClear = -0.3;'),
+ ('F20 border keep-out on every border strip', F, 'if (AtCutBorder(d, ss, x, z)) return Ground.Border;', 'if (x < BorderKeep || x > Size - BorderKeep || z < BorderKeep || z > Size - BorderKeep) return Ground.Border;'),
+ ('F21 cuts of other decks ignored (city)', F, 'if (!d.Bridge || d.Y < RoadPalette.ElevatedY || d.N < 2) continue;', 'continue;'),
+ ('F22 own cut ignored beyond the border reach (city)', F, 'if (!(k == 0 ? d.StartOn : d.EndOn)) continue;', 'continue;'),
+ ('S1 survey: pile cap rim 1.0 m', I, 'FlyCapRim = 0.55;', 'FlyCapRim = 1.0;'),
+ ('S2 survey: flyover long-span limit 31 m', I, 'FlyAxisMax = 61,', 'FlyAxisMax = 31,'),
+ ('S3 survey: rail clearance 4 m', I, 'RailClearMin = 2.5,', 'RailClearMin = 4,'),
+ ('S4 survey: lane beside an island 4 m', I, 'LaneMinWidth = 3,', 'LaneMinWidth = 4,'),
+ ('S5 survey: free end held within 5 m', I, 'FlyEndReachMax = 20,', 'FlyEndReachMax = 5,'),
+ ('S6 survey: two-way roads judged as one-way', I, ': Math.Min(left, right) < LaneMinWidth;', ': left >= 0.3 && left < LaneMinWidth || right >= 0.3 && right < LaneMinWidth || Math.Max(left, right) < LaneMinWidth;'),
+]
+only = sys.argv[2].split(',') if len(sys.argv) > 2 and sys.argv[2] else None
+CITY = ','.join(l.strip() for l in open(H + '/fly-chunks.txt') if l.strip())
+BASE = {'deck-in-building': 280, 'unsupported-end': 39, 'no-supports': 16, 'span-long': 19, 'span-short': 1}  # today's builder (city9), 2026-11-04
+for name, rel, a, b in M:
+    tag = name.split()[0]
+    if only and tag not in only: continue
+    d = f'{OUT}/{tag}'
+    if os.path.exists(d): shutil.rmtree(d)
+    os.makedirs(d + '/World'); os.makedirs(d + '/Infra')
+    for f in glob.glob(P + '/Assets/_Project/Runtime/World/*.cs'): shutil.copy(f, d + '/World')
+    for f in glob.glob(P + '/Assets/_Project/Editor/Infra/*.cs'): shutil.copy(f, d + '/Infra')
+    src = open(f'{d}/{rel}').read()
+    assert src.count(a) == 1, (name, src.count(a))
+    open(f'{d}/{rel}', 'w').write(src.replace(a, b) if b != 'JointGap = 0.0' else src.replace(a, b))
+    subprocess.run(CSC + ['-target:library', '-unsafe', f'-out:{d}/Dad.World.dll', '-r:' + NS] + glob.glob(d + '/World/*.cs'), check=True, capture_output=True)
+    subprocess.run(CSC + ['-target:exe', f'-out:{d}/infra.exe', '-r:' + NS, f'-r:{d}/Dad.World.dll', '-r:' + MS] + glob.glob(d + '/Infra/*.cs') + [P + '/Tools/infra/Infra.cs'], check=True, capture_output=True)
+    subprocess.run(CSC + ['-target:exe', f'-out:{d}/syncheck.exe', '-r:' + NS, f'-r:{d}/Dad.World.dll', '-r:' + MS, H + '/SynCheck.cs'], check=True, capture_output=True)
+    txt = subprocess.run([MO + '/bin/mono', f'{d}/infra.exe', CH, d + '/slice', P + '/Tests/Infra/known-violations.csv'], capture_output=True, text=True, env=ENV)
+    txt = txt.stdout + txt.stderr
+    m = re.search(r'Against the known list \((\d+) entries\): (\d+) new, (\d+) gone', txt)
+    gate = f'{m.group(2)} new, {m.group(3)} gone' if m else 'NO RESULT'
+    ex = [l.strip() for l in txt.splitlines() if l.strip().startswith(('NEW ', 'GONE '))][:1]
+    sc = subprocess.run([MO + '/bin/mono', f'{d}/syncheck.exe', CH], capture_output=True, text=True, env=ENV)
+    fl = [l[5:] for l in sc.stdout.splitlines() if l.startswith('FAIL ')]
+    caught = (not m) or m.group(2) != '0' or m.group(3) != '0' or sc.returncode != 0
+    city = ''
+    if '(city)' in name:
+        # The 461 chunks with a flyover deck: any flyover finding beyond the baseline's counts.
+        subprocess.run([MO + '/bin/mono', f'{d}/infra.exe', CH, d + '/city', P + '/Tests/Infra/known-violations.csv', CITY], capture_output=True, text=True, env=ENV)
+        import csv as _c, collections as _k
+        cnt = _k.Counter(r['check'] for r in _c.DictReader(open(d + '/city/findings.csv')) if r['id'][:3] in ('FP-', 'FL-', 'FD-') and r['kind'] == 'violation')
+        extra = {k: v - BASE.get(k, 0) for k, v in cnt.items() if v > BASE.get(k, 0)}
+        city = f'; city flyover findings beyond the baseline: {extra}'
+        caught = caught or bool(extra)
+    print(f"{'CAUGHT' if caught else 'MISSED'}  {name}: gate {gate}{(' e.g. ' + ex[0][:120]) if ex else ''}; mirrored tests failing {len(fl)}: {'; '.join(x[:60] for x in fl[:4])}{city}", flush=True)
+    shutil.rmtree(d + '/World'); shutil.rmtree(d + '/Infra')

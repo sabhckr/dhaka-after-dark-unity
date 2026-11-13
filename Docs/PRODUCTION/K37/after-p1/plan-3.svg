@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1334" viewBox="0 0 1100 1334" font-family="Helvetica, Arial, sans-serif">
+<rect width="100%%" height="100%%" fill="#fbfaf7"/>
+<text x="10" y="22" font-size="16" font-weight="bold" fill="#222">K-37 plan 3: The bend onto Kazi Nazrul Islam Avenue</text>
+<text x="10" y="44" font-size="12" fill="#444">North up. World metres (east 3812-4030, north 14792-15026). Data as exported; no pier, road or alignment moved.</text>
+<clipPath id="c"><rect x="0" y="64" width="1100" height="1178"/></clipPath><g clip-path="url(#c)">
+<path d="M-1107.2 195.4 L-199.5 195.4 L-196.1 256.3 L-1100.7 288.5 Z" fill="#dfe8f3" stroke="#3b6ea8" stroke-width="1.5" stroke-dasharray="6 3" fill-opacity="0.7"/>
+<path d="M580.8 671.2 L666.7 669.3 L689.6 793.9 L629.8 958.7 L554.0 948.8 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M472.5 664.4 L566.7 672.1 L555.6 806.6 L508.5 802.7 L510.7 776.2 L463.6 772.3 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M673.5 667.1 L742.0 658.5 L749.2 799.5 L694.8 794.4 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M842.1 843.7 L755.7 1133.1 L608.9 1092.7 L697.9 803.3 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M946.2 1194.0 L909.5 1083.6 L902.6 1117.3 L885.7 1175.6 L881.5 1201.8 L885.5 1223.5 L898.7 1237.1 L923.7 1243.7 L946.2 1242.9 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M1144.3 877.8 L1277.9 930.4 L1259.8 998.8 L1139.3 953.9 L1054.9 972.7 L1036.7 896.2 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M1153.1 1009.5 L1260.3 1044.0 L1236.5 1117.3 L1129.3 1082.9 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M1050.3 1019.8 L1119.4 1000.0 L1128.2 1030.2 L1059.0 1050.0 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M1112.9 1085.7 L1182.4 1104.2 L1174.3 1134.6 L1104.8 1116.2 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M946.2 1428.4 L960.0 1430.1 L946.2 1487.2 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M946.2 1523.8 L968.7 1430.2 L1026.1 1443.9 L1079.2 1665.7 L946.2 1634.1 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M-141.3 -30.1 L-41.6 -29.4 L-41.8 5.0 L-61.4 4.9 L-61.6 39.5 L-141.8 38.9 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M89.7 -10.2 L438.2 -24.7 L442.3 73.9 L93.8 88.3 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M44.6 -36.3 L70.1 -36.5 L70.5 8.0 L45.0 8.2 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M-1570.3 253.9 L-1126.5 235.8 L-1116.8 235.4 L-1051.4 233.1 L60.0 217.1 L558.5 209.9 L718.6 212.8" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="35.2" stroke-linejoin="round"/>
+<path d="M-1116.8 235.4 L-1034.2 298.4 L-952.5 328.4 L-892.4 338.3 L-168.1 318.3 L-131.9 305.9 L-67.2 264.7 L60.0 217.1" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="35.2" stroke-linejoin="round"/>
+<path d="M807.4 553.1 L246.1 583.8 L-599.5 637.2 L-861.2 653.0 L-1000.2 658.4 L-1105.7 657.4 L-1520.0 701.5 L-1570.3 705.3" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="35.2" stroke-linejoin="round"/>
+<path d="M807.4 553.1 L758.1 350.0 L718.6 212.8 L714.1 195.4" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="70.5" stroke-linejoin="round"/>
+<path d="M833.0 354.4 L937.6 474.0 L946.2 485.3" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="70.5" stroke-linejoin="round"/>
+<path d="M946.2 983.1 L918.2 875.6 L894.5 804.5 L807.4 553.1" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="70.5" stroke-linejoin="round"/>
+<path d="M785.5 232.4 L833.0 354.4 L946.2 758.3" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="70.5" stroke-linejoin="round"/>
+<path d="M150.1 2711.9 L329.0 2345.4 L395.1 2216.3 L465.4 2073.3 L571.6 1839.8 L702.2 1519.4 L757.7 1365.4 L894.5 804.5" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="17.6" stroke-linejoin="round"/>
+<path d="M946.2 1357.7 L879.3 1348.7 L829.4 1334.3 L811.7 1300.3 L815.2 1258.8 L918.2 875.6" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="35.2" stroke-linejoin="round"/>
+<path d="M1535.7 2711.9 L1396.7 2336.9 L1083.8 1390.2 L1070.8 1359.5 L952.1 1005.7 L946.2 983.1" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="70.5" stroke-linejoin="round"/>
+<path d="M946.2 758.3 L964.5 823.4 L1400.8 2114.4 L1471.2 2335.7 L1600.3 2711.9" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="70.5" stroke-linejoin="round"/>
+<path d="M1070.8 1359.5 L965.8 1360.3 L946.2 1357.7" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="35.2" stroke-linejoin="round"/>
+<path d="M1083.8 1390.2 L946.2 1380.2" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="35.2" stroke-linejoin="round"/>
+<path d="M-1164.6 195.4 L-1137.1 194.5 L-1051.7 191.5 L620.4 135.0 L636.4 130.5 L648.2 123.2 L683.5 78.4" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="35.2" stroke-linejoin="round"/>
+<path d="M-1570.3 253.9 L-1126.5 235.8 L-1116.8 235.4 L-1051.4 233.1 L60.0 217.1 L558.5 209.9 L718.6 212.8" fill="none" stroke="#5d6066" stroke-opacity="0.30" stroke-width="30.2" stroke-linejoin="round"/>
+<path d="M807.4 553.1 L246.1 583.8 L-599.5 637.2 L-861.2 653.0 L-1000.2 658.4 L-1105.7 657.4 L-1520.0 701.5 L-1570.3 705.3" fill="none" stroke="#5d6066" stroke-opacity="0.30" stroke-width="30.2" stroke-linejoin="round"/>
+<path d="M807.4 553.1 L758.1 350.0 L718.6 212.8 L714.1 195.4" fill="none" stroke="#5d6066" stroke-opacity="0.30" stroke-width="60.4" stroke-linejoin="round"/>
+<path d="M946.2 983.1 L918.2 875.6 L894.5 804.5 L807.4 553.1" fill="none" stroke="#5d6066" stroke-opacity="0.30" stroke-width="60.4" stroke-linejoin="round"/>
+<path d="M785.5 232.4 L833.0 354.4 L946.2 758.3" fill="none" stroke="#5d6066" stroke-opacity="0.30" stroke-width="60.4" stroke-linejoin="round"/>
+<path d="M150.1 2711.9 L329.0 2345.4 L395.1 2216.3 L465.4 2073.3 L571.6 1839.8 L702.2 1519.4 L757.7 1365.4 L894.5 804.5" fill="none" stroke="#5d6066" stroke-opacity="0.30" stroke-width="15.1" stroke-linejoin="round"/>
+<path d="M946.2 1357.7 L879.3 1348.7 L829.4 1334.3 L811.7 1300.3 L815.2 1258.8 L918.2 875.6" fill="none" stroke="#5d6066" stroke-opacity="0.30" stroke-width="30.2" stroke-linejoin="round"/>
+<path d="M1535.7 2711.9 L1396.7 2336.9 L1083.8 1390.2 L1070.8 1359.5 L952.1 1005.7 L946.2 983.1" fill="none" stroke="#5d6066" stroke-opacity="0.30" stroke-width="60.4" stroke-linejoin="round"/>
+<path d="M946.2 758.3 L964.5 823.4 L1400.8 2114.4 L1471.2 2335.7 L1600.3 2711.9" fill="none" stroke="#5d6066" stroke-opacity="0.30" stroke-width="60.4" stroke-linejoin="round"/>
+<path d="M1070.8 1359.5 L965.8 1360.3 L946.2 1357.7" fill="none" stroke="#5d6066" stroke-opacity="0.30" stroke-width="30.2" stroke-linejoin="round"/>
+<path d="M-1164.6 195.4 L-1137.1 194.5 L-1051.7 191.5 L620.4 135.0 L636.4 130.5 L648.2 123.2 L683.5 78.4" fill="none" stroke="#5d6066" stroke-opacity="0.30" stroke-width="30.2" stroke-linejoin="round"/>
+<path d="M-1570.3 253.9 L-1126.5 235.8 L-1116.8 235.4 L-1051.4 233.1 L60.0 217.1 L558.5 209.9 L718.6 212.8" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M-1116.8 235.4 L-1034.2 298.4 L-952.5 328.4 L-892.4 338.3 L-168.1 318.3 L-131.9 305.9 L-67.2 264.7 L60.0 217.1" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M807.4 553.1 L246.1 583.8 L-599.5 637.2 L-861.2 653.0 L-1000.2 658.4 L-1105.7 657.4 L-1520.0 701.5 L-1570.3 705.3" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M807.4 553.1 L758.1 350.0 L718.6 212.8 L714.1 195.4" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M718.9 596.5 L659.6 599.3" fill="none" stroke="#3c8d3c" stroke-width="1" stroke-dasharray="2 2"/>
+<path d="M833.0 354.4 L937.6 474.0 L946.2 485.3" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M946.2 983.1 L918.2 875.6 L894.5 804.5 L807.4 553.1" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M785.5 232.4 L833.0 354.4 L946.2 758.3" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M150.1 2711.9 L329.0 2345.4 L395.1 2216.3 L465.4 2073.3 L571.6 1839.8 L702.2 1519.4 L757.7 1365.4 L894.5 804.5" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M946.2 1357.7 L879.3 1348.7 L829.4 1334.3 L811.7 1300.3 L815.2 1258.8 L918.2 875.6" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M-222.3 268.8 L-346.5 271.6" fill="none" stroke="#3c8d3c" stroke-width="1" stroke-dasharray="2 2"/>
+<path d="M-333.6 284.5 L-221.8 282.3" fill="none" stroke="#3c8d3c" stroke-width="1" stroke-dasharray="2 2"/>
+<path d="M1535.7 2711.9 L1396.7 2336.9 L1083.8 1390.2 L1070.8 1359.5 L952.1 1005.7 L946.2 983.1" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M946.2 758.3 L964.5 823.4 L1400.8 2114.4 L1471.2 2335.7 L1600.3 2711.9" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M1070.8 1359.5 L965.8 1360.3 L946.2 1357.7" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M1083.8 1390.2 L946.2 1380.2" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M-1164.6 195.4 L-1137.1 194.5 L-1051.7 191.5 L620.4 135.0 L636.4 130.5 L648.2 123.2 L683.5 78.4" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M-190.1 150.3 L-98.2 146.9" fill="none" stroke="#3c8d3c" stroke-width="1" stroke-dasharray="2 2"/>
+<path d="M140.3 195.4 L176.8 202.1 L288.7 239.6 L366.6 270.4 L485.8 339.6 L579.3 407.4 L646.4 464.3 L716.0 540.0 L791.5 642.2 L821.5 698.6 L924.2 969.8 L946.2 1034.9" fill="none" stroke="#1f3d7a" stroke-width="1.6"/>
+<path d="M946.2 1090.1 L927.2 1026.9 L862.6 846.1 L812.0 736.3 L715.6 574.1 L565.0 424.5 L413.3 321.2 L341.5 279.2 L213.0 235.1 L106.8 204.8 L-100.6 198.7 L-1091.4 239.5 L-1570.3 249.1" fill="none" stroke="#1f3d7a" stroke-width="1.6"/>
+<path d="M946.2 1034.9 L1512.5 2711.9" fill="none" stroke="#1f3d7a" stroke-width="1.6"/>
+<path d="M1489.4 2711.9 L1214.0 1913.4 L1005.4 1286.8 L946.2 1090.1" fill="none" stroke="#1f3d7a" stroke-width="1.6"/>
+<path d="M-808.0 195.4 L-706.7 192.1 L-432.1 176.5 L-95.7 169.1 L57.1 180.3 L140.3 195.4" fill="none" stroke="#1f3d7a" stroke-width="1.6"/>
+<circle cx="1569.3" cy="2912.0" r="4.5" fill="none" stroke="#7b3fa0" stroke-width="1.6" stroke-dasharray="3 2"/>
+<line x1="1569.7" y1="2913.2" x2="1569.3" y2="2912.0" stroke="#7b3fa0" stroke-width="1"/>
+<circle cx="1715.8" cy="3344.8" r="4.5" fill="none" stroke="#a0522d" stroke-width="1.6" stroke-dasharray="3 2"/>
+<line x1="1723.2" y1="3366.2" x2="1715.8" y2="3344.8" stroke="#a0522d" stroke-width="1"/>
+<circle cx="140.9" cy="204.9" r="4.5" fill="#c0392b" stroke="#222" stroke-width="1"/>
+<text x="143.4" y="194.1" font-size="10.5" fill="#111" text-anchor="middle" stroke="#fbfaf7" stroke-width="3" paint-order="stroke">09</text>
+<circle cx="291.9" cy="251.6" r="4.5" fill="#ffffff" stroke="#222" stroke-width="1"/>
+<text x="297.0" y="241.6" font-size="10.5" fill="#111" text-anchor="middle" stroke="#fbfaf7" stroke-width="3" paint-order="stroke">10</text>
+<circle cx="442.9" cy="327.7" r="4.5" fill="#ffffff" stroke="#222" stroke-width="1"/>
+<text x="449.9" y="318.6" font-size="10.5" fill="#111" text-anchor="middle" stroke="#fbfaf7" stroke-width="3" paint-order="stroke">11</text>
+<circle cx="593.9" cy="435.8" r="4.5" fill="#ffffff" stroke="#222" stroke-width="1"/>
+<text x="602.9" y="428.2" font-size="10.5" fill="#111" text-anchor="middle" stroke="#fbfaf7" stroke-width="3" paint-order="stroke">12</text>
+<circle cx="658.1" cy="497.4" r="4.5" fill="#ffffff" stroke="#222" stroke-width="1"/>
+<text x="668.4" y="490.9" font-size="10.5" fill="#111" text-anchor="middle" stroke="#fbfaf7" stroke-width="3" paint-order="stroke">13</text>
+<circle cx="777.3" cy="648.4" r="4.5" fill="#ffffff" stroke="#222" stroke-width="1"/>
+<text x="788.6" y="643.1" font-size="10.5" fill="#111" text-anchor="middle" stroke="#fbfaf7" stroke-width="3" paint-order="stroke">14</text>
+<circle cx="850.5" cy="799.4" r="4.5" fill="#ffffff" stroke="#222" stroke-width="1"/>
+<text x="863.6" y="797.4" font-size="10.5" fill="#111" text-anchor="middle" stroke="#fbfaf7" stroke-width="3" paint-order="stroke">15</text>
+<circle cx="908.3" cy="950.4" r="4.5" fill="#c0392b" stroke="#222" stroke-width="1"/>
+<text x="921.4" y="948.4" font-size="10.5" fill="#111" text-anchor="middle" stroke="#fbfaf7" stroke-width="3" paint-order="stroke">16</text>
+<circle cx="959.1" cy="1101.3" r="4.5" fill="#c0392b" stroke="#222" stroke-width="1"/>
+<text x="972.3" y="1099.9" font-size="10.5" fill="#111" text-anchor="middle" stroke="#fbfaf7" stroke-width="3" paint-order="stroke">17</text>
+<circle cx="1007.2" cy="1252.3" r="4.5" fill="#c0392b" stroke="#222" stroke-width="1"/>
+<text x="1020.5" y="1250.8" font-size="10.5" fill="#111" text-anchor="middle" stroke="#fbfaf7" stroke-width="3" paint-order="stroke">18</text>
+<circle cx="-10.1" cy="201.4" r="4.5" fill="#c0392b" stroke="#222" stroke-width="1"/>
+<text x="-10.5" y="218.4" font-size="10.5" fill="#111" text-anchor="middle" stroke="#fbfaf7" stroke-width="3" paint-order="stroke">67</text>
+</g>
+<rect x="0.5" y="64" width="1099" height="1178" fill="none" stroke="#999"/>
+<line x1="10" y1="1264" x2="110.7" y2="1264" stroke="#222" stroke-width="2"/><text x="116.7" y="1268" font-size="11">20 m</text>
+<circle cx="191" cy="1264" r="5" fill="#2e8b57" stroke="#222"/><text x="200" y="1268" font-size="11">A width estimate (lanes tag)</text>
+<circle cx="382" cy="1264" r="5" fill="#9a9a2e" stroke="#222"/><text x="391" y="1268" font-size="11">A' width estimate (3.0-3.3 m lanes)</text>
+<circle cx="610" cy="1264" r="5" fill="#7b3fa0" stroke="#222"/><text x="619" y="1268" font-size="11">B pier placement rule</text>
+<circle cx="758" cy="1264" r="5" fill="#2f6db5" stroke="#222"/><text x="767" y="1268" font-size="11">C station over the road</text>
+<circle cx="918" cy="1264" r="5" fill="#a0522d" stroke="#222"/><text x="927" y="1268" font-size="11">D building footprint</text>
+<circle cx="10" cy="1284" r="5" fill="#c0392b" stroke="#222"/><text x="19" y="1288" font-size="11">E insufficient evidence</text>
+<circle cx="170" cy="1284" r="5" fill="#ffffff" stroke="#222"/><text x="179" y="1288" font-size="11"> clear</text>
+<rect x="10" y="1298" width="22" height="9" fill="#e0533d" fill-opacity="0.26"/><text x="38" y="1306" font-size="11">carriageway at the estimated width (now)</text>
+<rect x="270" y="1298" width="22" height="9" fill="#5d6066" fill-opacity="0.30"/><text x="298" y="1306" font-size="11">at its lanes tag x 3.0 m (proposal A)</text>
+<line x1="510" y1="1302" x2="532" y2="1302" stroke="#1f3d7a" stroke-width="1.6"/><text x="538" y="1306" font-size="11">elevated track</text>
+<rect x="630" y="1298" width="22" height="9" fill="#dfe8f3" stroke="#3b6ea8" stroke-dasharray="4 2"/><text x="658" y="1306" font-size="11">raised station</text>
+<circle cx="760" cy="1302" r="5" fill="none" stroke="#7b3fa0" stroke-dasharray="3 2"/><text x="769" y="1306" font-size="11">proposed slide along the deck</text>
+</svg>

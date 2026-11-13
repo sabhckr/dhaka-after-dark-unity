@@ -1,0 +1,39 @@
+# K-37 P-2 + K-50 a, b mutations (2026-11-04): each breaks one new viaduct rule, runs the survey in the Mono harness
+# on the slice (against the known list) and on Line 6 (viaduct duplicate and span findings, which must be none),
+# and restores the source. Caught = the slice gate or the Line 6 gate fails.
+import subprocess, sys, os, re, csv
+P = os.path.expanduser('~/Documents/dhaka-after-dark-unity')
+B = P + '/Assets/_Project/Runtime/World/Structures.cs'
+N = P + '/Assets/_Project/Runtime/World/NeighbourRails.cs'
+M = [
+ ('P1 no neighbour rails (each chunk alone, as before)', N, 'if (!any) { c.NearRails', 'if (true) { c.NearRails'),
+ ('P2 piers never slide', B, 'PierSlideMax = 4,', 'PierSlideMax = 0,'),
+ ('P3 minimum span 10 m', B, 'PierMinSpan = 25,', 'PierMinSpan = 10,'),
+ ('P4 no road counts as crossing', B, 'CrossAngle = 30,', 'CrossAngle = 91,'),
+ ('P5 both chunks own the border', B, 'return x >= 0 && x < Size && z >= 0 && z < Size;', 'return x >= 0 && x <= Size && z >= 0 && z <= Size;'),
+ ('P6 no one-pier-per-place check', B, '            foreach (var p in placed)\n', '            foreach (var p in new List<(double x, double z)>())\n'),
+ ('S9 survey: a pier beside counts as a span', P + '/Assets/_Project/Editor/Infra/InfraSurvey.cs', 'SpanAhead = 0.7071;', 'SpanAhead = 0;'),
+ ('S10 survey: long-span limit 31 m on the axis', P + '/Assets/_Project/Editor/Infra/InfraSurvey.cs', 'ViaductAxisMax = 61,', 'ViaductAxisMax = 31,'),
+]
+line6 = open(sys.argv[2]).read().strip()
+out = sys.argv[1]
+def run(d, ids=None):
+    r = subprocess.run([P + '/Tools/infra/run.sh', d] + ([ids] if ids else []), capture_output=True, text=True)
+    return r.stdout + r.stderr
+for name, f, a, b in M:
+    src = open(f).read()
+    assert src.count(a) == 1, (name, src.count(a))
+    open(f, 'w').write(src.replace(a, b))
+    try:
+        tag = name.split()[0]
+        txt = run(f'{out}/{tag}-slice')
+        m = re.search(r'Against the known list \((\d+) entries\): (\d+) new, (\d+) gone', txt)
+        sl = f'{m.group(2)} new, {m.group(3)} gone' if m else 'NO RESULT: ' + txt[-300:]
+        ex = [l.strip() for l in txt.splitlines() if l.strip().startswith(('NEW ', 'GONE '))][:2]
+        run(f'{out}/{tag}-line6', line6)
+        fp = f'{out}/{tag}-line6/findings.csv'
+        bad = [r['key'] for r in csv.DictReader(open(fp)) if r['kind'] == 'violation' and r['id'].startswith('VP-') and r['check'] in ('duplicate', 'span-short', 'span-long')] if os.path.exists(fp) else None
+        caught = (m and (m.group(2) != '0' or m.group(3) != '0')) or (bad is None or len(bad) > 0)
+        print(f"{'CAUGHT' if caught else 'MISSED'}  {name}: slice {sl}; Line 6 {('NO RESULT' if bad is None else len(bad))} pier dup/span findings  e.g. {' / '.join(x[:110] for x in ex)} {(bad or [''])[0]}", flush=True)
+    finally:
+        open(f, 'w').write(src)

@@ -1,0 +1,88 @@
+# K-37 P-6 mutations (2026-11-04): each breaks one island rule in a COPY of the sources (the project is never edited),
+# builds Dad.World, the survey and the test mirror (P6Check.cs) in the Mono harness, then runs the survey on the slice
+# against the known list and on Line 6 (64 chunks). Caught = the slice gate fails, Line 6 shows an island or median
+# finding on a viaduct pier or other figures than today's (23 piers on an island, 331 on a carriageway without), or
+# a mirrored test fails.
+import subprocess, sys, os, shutil, glob, csv, collections
+P = os.path.expanduser('~/Documents/dhaka-after-dark-unity')
+H = os.path.dirname(os.path.abspath(__file__))
+OUT = sys.argv[1]
+U = '/Applications/Unity/Hub/Editor/6000.3.27f1/Unity.app/Contents/Resources/Scripting'
+NS, MS, MO = U + '/NetStandard/ref/2.1.0/netstandard.dll', U + '/NetStandard/compat/2.1.0/shims/netfx/mscorlib.dll', U + '/MonoBleedingEdge'
+CSC = [U + '/NetCoreRuntime/dotnet', U + '/DotNetSdkRoslyn/csc.dll', '-nologo', '-noconfig', '-nostdlib', '-langversion:9', '-nowarn:1701,1702,8321', '-optimize+']
+ENV = dict(os.environ, MONO_PATH=f'{MO}/lib/mono/4.5:{MO}/lib/mono/4.5/Facades')
+CH = P + '/Assets/StreamingAssets/World/chunks'
+S, F, FU, I = 'World/Structures.cs', 'World/Flyovers.cs', 'World/StreetFurniture.cs', 'Infra/InfraSurvey.cs'
+M = [
+ ('V1 lane beside an island 2.5 m', F, 'if (part < LaneMin) return false;', 'if (part < LaneMin - 0.5) return false;'),
+ ('V2 island judged at its centre only', F, 'for (int k = -1; k <= 1; k++)\n            {\n                why = IslandAt(', 'for (int k = 0; k <= 0; k++)\n            {\n                why = IslandAt('),
+ ('V3 two-way roads may be covered on one side', F, 'if (part < IslandCovered && e.oneWay) continue;', 'if (part < IslandCovered) continue;'),
+ ('V4 islands may cross the chunk border', S, 'if (cx < 0 || cx > Size || cz < 0 || cz > Size) return "border";', ''),
+ ('V5 buildings not tested', S, 'if (IslandInGroundBuilding(x, z, dx, dz, h, a)) return "building";', ''),
+ ('V6 raised buildings refuse an island', S, 'BuildingRules.Place(b).Base >= GroundBuildingBase) continue;', 'false) continue;'),
+ ('V7 junction pads not avoided', S, 'if (InAnyPad(px, pz, 0.28, h)) return "junction";', ''),
+ ('V8 crossing keep-outs not avoided', S, 'foreach (var ring in Mine().GradeKeepOuts) if (InOrNear(ring, px, pz, h)) return "crossing";', ''),
+ ('V9 bus stop pads not avoided', S, 'if (OnStopPad(px, pz, h)) return "bus stop";', ''),
+ ('V10 islands may overlap', S, 'if (IslandOverlaps(ss, x, z, dx, dz, h, a)) return "island";', ''),
+ ('V11 the flyover\'s island round the viaduct pier', S, 'ViaductIslandHalf = PierRadius + MedianMargin, ViaductIslandEnds = PierRadius + MedianEnds;', 'ViaductIslandHalf = FlyPierRadius + MedianMargin, ViaductIslandEnds = FlyPierRadius + MedianEnds;'),
+ ('V12 dividers run through islands', S, 'if (ok && InIsland(ss, mx, mz, DividerHalf + 0.1)) { ok = false; st.DividerIslandGaps++; }', ''),
+ ('V13 scratch cleared only with a viaduct (the old defect)', S, '            ss.PiersPlaced.Clear();\n            ss.Islands.Clear();\n            if (c.Rails == null) return;', '            if (c.Rails == null) return;'),
+ ('V14 a road crossing under the island allowed', F, 'if (Math.Abs(ex * dx + ez * dz) / l <= cos) return "crossing road";', 'if (false) return "crossing road";'),
+ ('V15 island counted but not drawn', S, '            Median(st, w, x, z, dx, dz, h, a, lane, keep);\n            ss.Islands.Add', '            ss.Islands.Add'),
+ ('V16 no island at all (piers stay on the road)', S, '                string no = ViaductIsland(c, st, w, ss, x, z, dx, dz, keep);', '                string no = "narrow";'),
+ ('V17 covered margin removed (the 0.30 m edge case)', F, 'IslandCovered = 0.25;', 'IslandCovered = 0.3;'),
+ ('V18 traffic on one side allowed (no both-sides test)', S, 'MedianFits(x, z, dx, dz, h, a, IslandBeside, out double lane, out string why)', 'MedianFits(x, z, dx, dz, h, a, 0, out double lane, out string why)'),
+ ('V19 a carriageway 3 m off counts as beside', F, 'public const double IslandBeside = 1.0;', 'public const double IslandBeside = 3.0;'),
+ ('V20 side lanes taken from the wrong side', F, 'islandSideL = Math.Max(islandSideL, with ? e.left : e.right);', 'islandSideL = Math.Max(islandSideL, with ? e.right : e.left);'),
+ ('V21 flyover islands skip the building test', F, '                        && !IslandInGroundBuilding(x, z, dx, dz, MedianHalf, FlyPierRadius + MedianEnds) && MedianFits(', '                        && MedianFits('),
+ ('S7 survey: island margin 1.0 m', I, 'IslandMargin = 0.6,', 'IslandMargin = 1.0,'),
+ ('S8 survey: island reach 6 m', I, 'IslandReach = 3,', 'IslandReach = 6,'),
+ ('S9 survey: islands of viaduct piers not judged', I, 'static bool IsIsland(Support s) => s.BuilderWhy != null', 'static bool IsIsland(Support s) => s.Structure == Structure.Flyover && s.BuilderWhy != null'),
+ ('S10 survey: footprint not checked', I, '                IslandFootprint(ch, s);\n', ''),
+ ('S11 survey: both-sides check off', I, 'if (!double.IsNaN(s.IslandSideL) && Math.Min(s.IslandSideL, s.IslandSideR) < LaneMinWidth)', 'if (false)'),
+ ('S12 survey: a strip of 3 m counts as beside', I, 'IslandBesideMax = 1.0,', 'IslandBesideMax = 3.0,'),
+]
+only = sys.argv[2].split(',') if len(sys.argv) > 2 and sys.argv[2] else None
+L6 = open(H + '/../line6-ids.txt').read().strip()
+def survey(d, tag, ids=None):
+    o = f'{d}/{tag}'
+    os.makedirs(o, exist_ok=True)
+    subprocess.run([MO + '/bin/mono', f'{d}/infra.exe', CH, o, P + '/Tests/Infra/known-violations.csv'] + ([ids] if ids else []), env=ENV, check=True, capture_output=True)
+    return o
+for name, rel, a, b in M:
+    tag = name.split()[0]
+    if only and tag not in only: continue
+    d = f'{OUT}/{tag}'
+    if os.path.exists(d): shutil.rmtree(d)
+    os.makedirs(d + '/World'); os.makedirs(d + '/Infra')
+    for f in glob.glob(P + '/Assets/_Project/Runtime/World/*.cs'): shutil.copy(f, d + '/World')
+    for f in glob.glob(P + '/Assets/_Project/Editor/Infra/*.cs'): shutil.copy(f, d + '/Infra')
+    src = open(f'{d}/{rel}').read()
+    assert src.count(a) == 1, (name, src.count(a))
+    open(f'{d}/{rel}', 'w').write(src.replace(a, b))
+    subprocess.run(CSC + ['-target:library', '-unsafe', f'-out:{d}/Dad.World.dll', '-r:' + NS] + glob.glob(d + '/World/*.cs'), check=True, capture_output=True)
+    subprocess.run(CSC + ['-target:exe', f'-out:{d}/infra.exe', '-r:' + NS, f'-r:{d}/Dad.World.dll', '-r:' + MS] + glob.glob(d + '/Infra/*.cs') + [P + '/Tools/infra/Infra.cs'], check=True, capture_output=True)
+    subprocess.run(CSC + ['-target:exe', f'-out:{d}/p6check.exe', '-r:' + NS, f'-r:{d}/Dad.World.dll', '-r:' + MS, H + '/P6Check.cs'], check=True, capture_output=True)
+    why = []
+    sl = survey(d, 'slice')
+    summ = open(sl + '/summary.txt').read()
+    gate = [l for l in summ.splitlines() if l.startswith('Against')][0]
+    if ' 0 new, 0 gone' not in gate:
+        ex = [l.strip() for l in summ.splitlines() if l.strip().startswith(('NEW', 'GONE'))][:1]
+        why.append('slice gate ' + gate.split(': ')[1] + (' e.g. ' + ex[0][:150] if ex else ''))
+    l6 = survey(d, 'line6', L6)
+    isl = left = 0; checks = collections.Counter()
+    for r in csv.DictReader(open(l6 + '/supports.csv')):
+        if not r['id'].startswith('VP-') or r['built'] != 'yes': continue
+        if r['builder_note'] == 'median': isl += 1
+        elif r['builder_note'].startswith('on a carriageway'): left += 1
+        for f in r['findings'].split(' | '):
+            c = f.split(':')[0]
+            if c.startswith(('median', 'island')): checks[c] += 1
+    if checks: why.append('Line 6 findings ' + dict(checks).__repr__())
+    if (isl, left) != (23, 331): why.append(f'Line 6 figures {isl} on an island, {left} left (pinned 23, 331)')
+    m = subprocess.run([MO + '/bin/mono', f'{d}/p6check.exe'], env=ENV, capture_output=True, text=True).stdout.strip()
+    if m != 'OK': why.append('mirrored tests: ' + m)
+    line = ('CAUGHT  ' if why else 'MISSED  ') + name + ': ' + ('; '.join(why) if why else 'nothing failed')
+    print(line, flush=True)
+    shutil.rmtree(d + '/World'); shutil.rmtree(d + '/Infra')

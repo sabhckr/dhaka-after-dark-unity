@@ -1,0 +1,68 @@
+# F-01..F-03 mutations (2026-11-06): each breaks one rule of the lanes, the traffic or the vehicles in a COPY of the sources (the
+# project is never edited) and runs TrafficTests outside Unity with Tools/traffic/run.sh. The quick tests go first; the two long
+# runs only if those pass. Caught = a test fails. Run from anywhere:
+#   python3 -I Docs/PRODUCTION/F03/mut_f03.py.txt <out dir> [tags]
+import subprocess, sys, os, shutil
+P = os.path.expanduser('~/Documents/dhaka-after-dark-unity')
+OUT = sys.argv[1]
+TAGS = sys.argv[2:]
+RUN = P + '/Tools/traffic/run.sh'
+QUICK = ['TrafficKeepsToTheLeft', 'AOneWayRoadRunsOneWay', 'PathsAndDecksHaveNoLanes', 'ASideRoadGivesWayToTheMainRoad', 'EqualRoadsTakeTurns', 'AMajorCrossroadsRunsInPhases',
+         'ASignalNodeGetsSignals', 'LanesKeepOffWhatStandsOnTheRoad', 'TheSliceGraphIsSound', 'ChunksJoinAtTheirBorders', 'ASeedGivesOneRun', 'GridlockWatchSeesALockedJunction',
+         'CrossingConnectorsAreNotHeldTogether', 'NobodyIsLetIntoAJunctionOnRed', 'TooFastForTheLineStillStopsAtIt', 'ADriverTakesTheRoadWithoutAQueue', 'TheSignalCycles', 'AChunkLeavesAndComesBack', 'RickshawsKeepLeftAndOffTheMainRoads', 'TheDayHasItsRushes',
+         'EachFamilyDrivesAsItself', 'EveryFamilyIsSoundAndInBudget', 'ModelsAreTheSizeTheirSpecsSay', 'VehiclesAreAssembledNotShells', 'WheelsStandOnTheRoadAndTheFrontOnesSteer']
+LONG = ['TenMinutesOfTheMorningRush', 'HalfAnHourWithoutALockedJunction']
+L, T, G, V, F, K = 'World/Lanes.cs', 'Traffic/TrafficSim.cs', 'Traffic/GridlockWatch.cs', 'Traffic/VehicleSpec.cs', 'Traffic/VehicleFamilies.cs', 'Traffic/TrafficNet.cs'
+M = [
+ ('L1 lanes on the right of travel', L, 'double off = d.Hi - (i + 0.5) * lw;', 'double off = -(d.Hi - (i + 0.5) * lw);'),
+ ('L2 what stands on the road ignored', L, 'bool narrowed = blocks != null && Narrow(pts, blocks, ref lo, ref hi);', 'bool narrowed = false;'),
+ ('L3 connectors never conflict', L, '                FindConflicts(list, first);\n', ''),
+ ('L4 a mapped signal ignored', L, 'signal |= (c.Nodes[i].Signal ?? 0) != 0;', 'signal |= false;'),
+ ('L5 side roads do not yield', L, 'l.Yield = j.Kind == JunctionKind.Priority && a.Rank > best;', 'l.Yield = false;'),
+ ('L6 rank of a junction from the two best roads', L, 'worst == rank0 ? JunctionKind.AllWay', 'rank1 == rank0 ? JunctionKind.AllWay'),
+ ('T1 red ignored', T, 'if (j.Controlled && !j.Open(from.D.Phase)) return false;', ''),
+ ('T2 crossing connectors held together', T, '                if (k.Reserved > 0) return false;\n', ''),
+ ('T3 no gap needed from the main road', T, 'if (!p.D.Yield && Coming(p, k)) return false;', ''),
+ ('T4 no room needed beyond the junction', T, 'if (room - c.Booked < need) return false;', ''),
+ ('T5 merging streams do not take turns', T, 'theirs > MergeTurn && theirs > waited) return false;', 'false) return false;'),
+ ('T6 routes do not look at full lanes', T, 'if (full > 0.5)', 'if (false)'),
+ ('T7 RemoveChunk leaves routes through the chunk', T, '                a.RouteCount = keep;\n', ''),
+ ('T8 what a chunk held is not kept', T, '            Outside[(ch.X, ch.Y)] = far;\n', ''),
+ ('T9 vehicles do not see what is ahead off their lane', T, 'if (ahead < 0.5 || gap > look || gap >= leadGap) continue;', 'continue;'),
+ ('T10 the rickshaw does not keep left', T, 'a.LatBias = spec.Kind == VehicleKind.Rickshaw ? 1 :', 'a.LatBias = spec.Kind == VehicleKind.Rickshaw ? 0 :'),
+ ('T11 stuck vehicles released at once', T, 'a.Stuck > ReleaseAfter &&', 'a.Stuck > 2 &&'),
+ ('T12 a vehicle rolls into a junction it has not been given', T, 'if (a.Route[0].D.Connector && a.Lane.Junction != null && !Holds(a, a.Route[0]))', 'if (false)'),
+ ('V1 rickshaws on the main roads', V, 'return laneWidth >= 1.0 && rank >= 3;', 'return laneWidth >= 1.0;'),
+ ('V2 heavy vehicles down the lanes', V, 'return laneWidth >= 2.2 && rank <= 4;', 'return laneWidth >= 2.2;'),
+ ('G1 the watch wants half the junction still', G, 'Share = 0.15;', 'Share = 0.5;'),
+ ('G2 the watch never fires under fifty', G, 'Fewest = 5;', 'Fewest = 50;'),
+ ('K1 the signal never leaves its first phase', K, 'Phase = (Phase + 1) % D.Phases;', ''),
+ ('K2 no all-red between phases', K, 'public const double Clear = 3, Amber = 2.5;', 'public const double Clear = 0, Amber = 2.5;'),
+ ('F1 the front wheels do not steer', F, 'new WheelSpot { X = -track, Y = r, Z = zf, Steers = true, Flip = true, Mesh = mesh },', 'new WheelSpot { X = -track, Y = r, Z = zf, Flip = true, Mesh = mesh },'),
+ ('F2 a brake lamp that does not light', F, 'k.Use(190, 26, 22, KitMat.Lens, KitLamp.Brake);', 'k.Use(190, 26, 22, KitMat.Lens, KitLamp.Tail);'),
+]
+os.makedirs(OUT, exist_ok=True)
+caught = survived = 0
+for tag, f, a, b in M:
+    if TAGS and tag.split()[0] not in TAGS: continue
+    src = OUT + '/src'
+    shutil.rmtree(src, ignore_errors=True)
+    os.makedirs(src)
+    for d in ('World', 'Traffic'): shutil.copytree(P + '/Assets/_Project/Runtime/' + d, src + '/' + d, ignore=shutil.ignore_patterns('*.meta'))
+    s = open(src + '/' + f).read()
+    if a not in s: print('NOT FOUND', tag, flush=True); survived += 1; continue
+    open(src + '/' + f, 'w').write(s.replace(a, b))
+    env = dict(os.environ, SRC=src)
+    why = None
+    for names in (QUICK, LONG):
+        try:
+            r = subprocess.run([RUN, OUT + '/run'] + names, env=env, capture_output=True, text=True, timeout=1500)
+        except subprocess.TimeoutExpired:
+            why = 'hung'; break
+        fails = [l.split(':')[0].split('.')[-1] for l in r.stdout.splitlines() if l.startswith('FAIL')]
+        if r.returncode and not fails: why = 'BUILD ' + (r.stdout + r.stderr)[-300:]; break
+        if fails: why = ', '.join(fails[:4]); break
+    if why: caught += 1
+    else: survived += 1
+    print(('CAUGHT  ' if why else 'SURVIVED') + ' ' + tag + (' <- ' + why if why else ''), flush=True)
+print(f'{caught} caught, {survived} survived', flush=True)

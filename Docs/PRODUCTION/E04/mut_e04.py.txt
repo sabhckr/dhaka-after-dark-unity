@@ -1,0 +1,83 @@
+# E-04 mutations (2026-11-06): each breaks one rule of the driven vehicle, the chunk collision, traffic's reaction or the reading of the owner's models in a
+# COPY of the sources (the project is never edited) and runs the matching test class outside Unity with Tools/vehicles/run.sh.
+# Caught = a test fails. Check nothing is benching first (Docs/PRODUCTION/E04/README.txt). Run from anywhere:
+#   python3 -I Docs/PRODUCTION/E04/mut_e04.py.txt <out dir> [tags]
+import subprocess, sys, os, shutil
+P = os.path.expanduser('~/Documents/dhaka-after-dark-unity')
+OUT = sys.argv[1]
+TAGS = sys.argv[2:]
+RUN = P + '/Tools/vehicles/run.sh'
+D, C, S, T, A = 'Vehicles/VehicleDynamics.cs', 'World/ChunkCollision.cs', 'World/StreetFurniture.cs', 'Traffic/TrafficSim.cs', 'Traffic/VehicleArt.cs'
+DYN, COL, DRV, CAB, ART = 'VehicleDynamicsTests', 'ChunkCollisionTests', 'DrivenTrafficTests', 'PlayerCabinTests', 'VehicleArtTests'
+M = [
+ ('D1 no anti-roll bars', D, DYN, 'Spring(dt, i, Math.Sign(w.X) * -across, pose, sink);', 'Spring(dt, i, 0, pose, sink);'),
+ ('D2 the bars push the wrong way', D, DYN, 'Math.Sign(w.X) * -across', 'Math.Sign(w.X) * across'),
+ ('D3 one probe a wheel', D, DYN, 'Along = { 0, 0.7, -0.7 };', 'Along = { 0 };'),
+ ('D4 the damper has no speed limit', D, DYN, 'Math.Clamp((w.HubY - w.LastHub) / dt, -MaxDamperSpeed, MaxDamperSpeed)', '((w.HubY - w.LastHub) / dt)'),
+ ('D5 full lock at any speed', D, DYN, 'Math.Min(Spec.MaxSteer, Math.Atan(wheelBase * Spec.SteerGrip / (v * v)) + Spec.SteerSlack)', 'Spec.MaxSteer'),
+ ('D6 no ABS', D, DYN, 'brake *= 0.3;', ';'),
+ ('D7 braking force at the centre of mass height', D, DYN, 'pose.Up * (Spec.AntiDive * Spec.CentreHeight)', 'pose.Up * Spec.CentreHeight'),
+ ('D8 tyre force not held to what stops the corner', D, DYN, 'fx = Math.Clamp(fx, -stopX, stopX);', ''),
+ ('D9 no fuel burned', D, DYN, 's.Fuel = Math.Max(0, s.Fuel - power * dt / Spec.TankSeconds);', ''),
+ ('D10 no launch revs', D, DYN, 'Math.Max(fromWheels, launch)', 'fromWheels'),
+ ('D11 it never changes up', D, DYN, 's.Gear++;', ''),
+ ('D12 the brake at a stop does not select reverse', D, DYN, 'else if (brake > 0.1 && throttle < 0.1 && stopped) { s.Gear = -1; (throttle, brake) = (brake, 0); }', ''),
+ ('D13 the handbrake does nothing', D, DYN, 'if (s.Handbrake && !w.Front) brake += Spec.Handbrake;', ''),
+ ('D14 the road normal ignored', D, DYN, 'hit.Normal.Dot(pose.Up) > 0.5 ? hit.Normal : pose.Up', 'pose.Up'),
+ ('D15 an indicator never cancels', D, DYN, 'else if (turned && way < 0.08) { s.Indicator = 0; turned = false; }', ''),
+ ('D16 an empty tank keeps running', D, DYN, 'if (s.Fuel <= 0) s.EngineOn = false;', ''),
+ ('D17 brake lamps dead', D, DYN, 's.BrakeLamps = s.Brake > 0.05;', 's.BrakeLamps = false;'),
+ ('D18 reverse lamps dead', D, DYN, 's.ReverseLamps = s.Gear < 0;', 's.ReverseLamps = false;'),
+ ('C1 the paint is kept', C, COL, 'if (i == r.MarkFirstIndex) { i = r.MarkEndIndex - 1; continue; }', ''),
+ ('C2 walls face in', C, COL, 'if (area > 0) Quad(idx, a, a + 1, b + 1, b);', 'if (area < 0) Quad(idx, a, a + 1, b + 1, b);'),
+ ('C3 raised buildings walled to the ground', C, COL, 'if (pl.Base > Clearance) { Raised++; continue; }', ''),
+ ('C4 no ground', C, COL, '            s.Ground(p, idx);\n', ''),
+ ('C9 the ground in two big triangles', C, COL, 'const int GroundCells = 5;', 'const int GroundCells = 1;'),
+ ('C5 box tops look down', C, COL, 'Quad(idx, first + 4, first + 7, first + 6, first + 5);', 'Quad(idx, first + 5, first + 6, first + 7, first + 4);'),
+ ('C6 no road', C, COL, '            s.Road(roads, p, idx);\n', ''),
+ ('C7 no walls', C, COL, '            s.Walls(c, solids, p, idx, scratch.Flat, scratch.Holes);\n', ''),
+ ('C8 no street solids', C, COL, 'foreach (var q in roads.Street.Solids) Box(q, p, idx);', ''),
+ ('S1 poles are not solid', S, COL, 'q.Kind == ChunkStreet.Kind.Pole ? PoleSolid : ', ''),
+ ('S2 piers are not solid', S, COL, 'foreach (var (x, z) in ss.PiersPlaced) s.Add(new ChunkStreet.Solid', 'foreach (var (x, z) in new (double, double)[0]) s.Add(new ChunkStreet.Solid'),
+ ('S3 the median is not solid', S, COL, 'foreach (var o in ss.Islands) s.Add(new ChunkStreet.Solid', 'foreach (var o in ss.Islands.GetRange(0, 0)) s.Add(new ChunkStreet.Solid'),
+ ('T1 traffic does not look at the driven car', T, DRV, 'if (Driven != null) acc = Math.Min(acc, AvoidDriven(a, v, v0));', ''),
+ ('T2 a car on a deck above stops traffic', T, DRV, 'if (Math.Abs(d.Y - a.Y) > 2) return double.MaxValue;', ''),
+ ('T3 a car crossing counts as moving away', T, DRV, 'double along = Math.Max(0, d.Vx * a.Hx + d.Vz * a.Hz);', 'double along = Math.Sqrt(d.Vx * d.Vx + d.Vz * d.Vz);'),
+ ('T4 the car is measured as if in line', T, DRV, 'double reach = d.Length / 2 * cos + d.Width / 2 * sin, wide = d.Length / 2 * sin + d.Width / 2 * cos;', 'double reach = d.Length / 2, wide = d.Width / 2;'),
+ ('T5 a car a lane away stops traffic', T, DRV, ' || side > sp.Width / 2 + wide + 0.3', ''),
+ ('T6 a car behind stops traffic', T, DRV, 'if (ahead + reach < 0 || gap > look', 'if (gap > look'),
+ ('K1 hinges and columns read backwards', A, CAB, 'p.Axis = new V3(r.ReadSingle(), r.ReadSingle(), r.ReadSingle());', 'p.Axis = new V3(-r.ReadSingle(), -r.ReadSingle(), -r.ReadSingle());'),
+ ('K2 parts on the wrong side of the car', A, CAB, 'p.Pivot = new V3(r.ReadSingle(), r.ReadSingle(), r.ReadSingle());', 'p.Pivot = new V3(-r.ReadSingle(), r.ReadSingle(), r.ReadSingle());'),
+ ('K3 door windows drawn as body', A, CAB, 'p.Glass = r.ReadByte() != 0;', 'r.ReadByte();'),
+ ('K4 the doors do not open', A, CAB, 'p.Swing = r.ReadSingle();', 'r.ReadSingle();'),
+ ('K5 the brakes are lost', A, CAB, 'wheels[i].Hub = hub == 255 ? -1 : hub;', 'wheels[i].Hub = -1;'),
+ ('K6 wheel numbers ignore the caller', A, ART, 'Mesh = firstWheel + r.ReadByte()', 'Mesh = r.ReadByte()'),
+ ('K7 any version is taken', A, ART, 'if (version != Version) throw new InvalidDataException(kind + ": version " + version);', ''),
+ ('K8 length and width swapped', A, CAB, 'double length = r.ReadSingle(), width = r.ReadSingle(), height = r.ReadSingle();', 'double width = r.ReadSingle(), length = r.ReadSingle(), height = r.ReadSingle();'),
+ ('K9 the dials do not light', A, CAB, 'for (int i = 0; i < vertices; i++) m.Lamp.Add(r.ReadSingle());', 'for (int i = 0; i < vertices; i++) { float l = r.ReadSingle(); m.Lamp.Add(l == 8 ? 6 : l); }'),
+ ('F1 eyes on the passenger side', A, CAB, 'var eye = new V3(r.ReadSingle(), r.ReadSingle(), r.ReadSingle());', 'var eye = new V3(-r.ReadSingle(), r.ReadSingle(), r.ReadSingle());'),
+ ('F2 eyes in the roof', A, CAB, 'var eye = new V3(r.ReadSingle(), r.ReadSingle(), r.ReadSingle());', 'var eye = new V3(r.ReadSingle(), r.ReadSingle() + 0.3, r.ReadSingle());'),
+ ('F3 the dials sit behind the boss', A, CAB, 'p.Mesh = Mesh(r);', 'p.Mesh = Mesh(r); if (p.Name.EndsWith("Needle")) p.Pivot = new V3(p.Pivot.X, p.Pivot.Y - 0.16, p.Pivot.Z);'),
+ ('F4 no needle for the revs', A, CAB, 'Name = Encoding.ASCII.GetString(r.ReadBytes(r.ReadByte()))', 'Name = Encoding.ASCII.GetString(r.ReadBytes(r.ReadByte())).Replace("RevNeedle", "Lost")'),
+]
+os.makedirs(OUT, exist_ok=True)
+caught = survived = 0
+for tag, f, tests, a, b in M:
+    if TAGS and tag.split()[0] not in TAGS: continue
+    src = OUT + '/src'
+    shutil.rmtree(src, ignore_errors=True)
+    os.makedirs(src)
+    for d in ('World', 'Traffic', 'Vehicles'): shutil.copytree(P + '/Assets/_Project/Runtime/' + d, src + '/' + d, ignore=shutil.ignore_patterns('*.meta'))
+    s = open(src + '/' + f).read()
+    if a not in s: print('NOT FOUND', tag, flush=True); survived += 1; continue
+    open(src + '/' + f, 'w').write(s.replace(a, b))
+    try:
+        r = subprocess.run([RUN, OUT + '/run', tests], env=dict(os.environ, SRC=src), capture_output=True, text=True, timeout=900)
+    except subprocess.TimeoutExpired:
+        print('CAUGHT   ' + tag + ' <- hung', flush=True); caught += 1; continue
+    fails = [l.split(':')[0].split('.')[-1] for l in r.stdout.splitlines() if l.startswith('FAIL')]
+    if r.returncode and not fails: print('BUILD    ' + tag + ' ' + (r.stdout + r.stderr)[-300:], flush=True); survived += 1; continue
+    if fails: caught += 1
+    else: survived += 1
+    print(('CAUGHT   ' if fails else 'SURVIVED ') + tag + (' <- ' + ', '.join(fails[:4]) if fails else ''), flush=True)
+print(f'{caught} caught, {survived} survived', flush=True)

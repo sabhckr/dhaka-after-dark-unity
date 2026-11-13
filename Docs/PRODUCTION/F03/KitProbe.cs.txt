@@ -1,0 +1,32 @@
+using System;
+using System.Globalization;
+using System.Collections.Generic;
+using Dad.Traffic;
+static class P {
+  static void Bounds(KitMesh m, out double[] lo, out double[] hi) {
+    lo = new[]{1e9,1e9,1e9}; hi = new[]{-1e9,-1e9,-1e9};
+    for (int i=0;i<m.Pos.Count;i++){ int a=i%3; if(m.Pos[i]<lo[a])lo[a]=m.Pos[i]; if(m.Pos[i]>hi[a])hi[a]=m.Pos[i]; }
+  }
+  static int Bad(KitMesh m){ int n=0; foreach(var f in m.Pos) if(float.IsNaN(f)||float.IsInfinity(f)) n++; foreach(var f in m.Nor) if(float.IsNaN(f)||float.IsInfinity(f)) n++; 
+    for(int i=0;i<m.Vertices;i++){ double l=Math.Sqrt(m.Nor[3*i]*m.Nor[3*i]+m.Nor[3*i+1]*m.Nor[3*i+1]+m.Nor[3*i+2]*m.Nor[3*i+2]); if(Math.Abs(l-1)>.01) n++; }
+    foreach(var t in m.Tris) if(t<0||t>=m.Vertices) n++; return n; }
+  // Faces whose winding disagrees with the stored normals: shows inside-out parts.
+  static int Flipped(KitMesh m){ int n=0; for(int t=0;t<m.Tris.Count;t+=3){ int a=m.Tris[t],b=m.Tris[t+1],c=m.Tris[t+2];
+      double ux=m.Pos[3*b]-m.Pos[3*a],uy=m.Pos[3*b+1]-m.Pos[3*a+1],uz=m.Pos[3*b+2]-m.Pos[3*a+2];
+      double vx=m.Pos[3*c]-m.Pos[3*a],vy=m.Pos[3*c+1]-m.Pos[3*a+1],vz=m.Pos[3*c+2]-m.Pos[3*a+2];
+      double nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx;
+      double d=nx*(m.Nor[3*a]+m.Nor[3*b]+m.Nor[3*c])+ny*(m.Nor[3*a+1]+m.Nor[3*b+1]+m.Nor[3*c+1])+nz*(m.Nor[3*a+2]+m.Nor[3*b+2]+m.Nor[3*c+2]);
+      if(d<0){ if(Show>0){Show--; Console.WriteLine($"   flip at ({(m.Pos[3*a]+m.Pos[3*b]+m.Pos[3*c])/3:F2},{(m.Pos[3*a+1]+m.Pos[3*b+1]+m.Pos[3*c+1])/3:F2},{(m.Pos[3*a+2]+m.Pos[3*b+2]+m.Pos[3*c+2])/3:F2}) rgba {m.Rgba[4*a]},{m.Rgba[4*a+1]},{m.Rgba[4*a+2]},{m.Rgba[4*a+3]}");} n++; } } return n; }
+  static int Show=0;
+  static void Main(){
+    CultureInfo.DefaultThreadCurrentCulture=CultureInfo.InvariantCulture;
+    Console.WriteLine("kind        near    glass   far   verts  bad flip  x[lo,hi]  y[lo,hi]  z[lo,hi]  spec LxWxH");
+    foreach(VehicleKind k in Enum.GetValues(typeof(VehicleKind))){
+      var sw=System.Diagnostics.Stopwatch.StartNew();
+      var v=VehicleFamilies.Build(k); var s=VehicleSpec.Of(k); Show=8;
+      double[] lo,hi; Bounds(v.Near,out lo,out hi);
+      Console.WriteLine($"{k,-10} {v.Near.Triangles,6} {v.Glass.Triangles,6} {v.Far.Triangles,5} {v.Near.Vertices,6} {Bad(v.Near)+Bad(v.Glass)+Bad(v.Far),4} {Flipped(v.Near),4}/{Flipped(v.Far)}  [{lo[0]:F2},{hi[0]:F2}] [{lo[1]:F2},{hi[1]:F2}] [{lo[2]:F2},{hi[2]:F2}]  {s.Length}x{s.Width}x{s.Height}  {sw.ElapsedMilliseconds}ms");
+    }
+    for(int w=0;w<VehicleFamilies.WheelMeshes;w++){ var m=VehicleFamilies.BuildWheel(w); Console.WriteLine($"wheel {w}: {m.Triangles} tris, bad {Bad(m)} flip {Flipped(m)}"); }
+  }
+}

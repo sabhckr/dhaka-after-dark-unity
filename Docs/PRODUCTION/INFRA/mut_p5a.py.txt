@@ -1,0 +1,76 @@
+# K-37 P-5a mutations (2026-11-05): each breaks one rule of the continuous median in a COPY of the sources (the project
+# is never edited), builds Dad.World and the survey in the Mono harness, and runs the real EditMode test files listed in
+# TESTS outside Unity with TestRunner.cs.txt (their only Unity calls, Debug.Log and Application's paths, are stubbed).
+# The slice gate and the Line 6 figures are InfraSurveyTests'. Caught = a test fails. Run from anywhere:
+#   python3 -I Docs/PRODUCTION/INFRA/mut_p5a.py.txt <out dir> [tags]
+import subprocess, sys, os, shutil, glob
+P = os.path.expanduser('~/Documents/dhaka-after-dark-unity')
+H = os.path.dirname(os.path.abspath(__file__))
+OUT = sys.argv[1]
+U = '/Applications/Unity/Hub/Editor/6000.3.27f1/Unity.app/Contents/Resources/Scripting'
+NS, MS, MO = U + '/NetStandard/ref/2.1.0/netstandard.dll', U + '/NetStandard/compat/2.1.0/shims/netfx/mscorlib.dll', U + '/MonoBleedingEdge'
+NUNIT = glob.glob(P + '/Library/PackageCache/com.unity.ext.nunit*/net40/unity-custom/nunit.framework.dll')[0]
+CSC = [U + '/NetCoreRuntime/dotnet', U + '/DotNetSdkRoslyn/csc.dll', '-nologo', '-noconfig', '-nostdlib', '-langversion:9', '-nowarn:1701,1702,8321', '-optimize+']
+ENV = dict(os.environ, MONO_PATH=f'{MO}/lib/mono/4.5:{MO}/lib/mono/4.5/Facades')
+T = P + '/Assets/_Project/Tests/EditMode/'
+TESTS = [T + f + '.cs' for f in ('ViaductMedianRunTests', 'ViaductIslandTests', 'StreetTests', 'SidewalkTests', 'RoadWidthTests', 'InfraSurveyTests', 'FlyoverTests')]
+STUB = ('namespace UnityEngine {\n public static class Debug { public static void Log(object o) { } }\n'
+        f' public static class Application {{ public static string streamingAssetsPath => "{P}/Assets/StreamingAssets"; public static string dataPath => "{P}/Assets"; }}\n}}\n')
+S, F, I = 'World/Structures.cs', 'World/Flyovers.cs', 'Infra/InfraSurvey.cs'
+M = [
+ ('R1 one lane each side is enough', S, 'MedianRunLanes = 2 * LaneMin,', 'MedianRunLanes = LaneMin,'),
+ ('R2 two-way carriageways allowed', S, '&& fitOneWay && fitTwins && fitSides >= min;', '&& fitTwins && fitSides >= min;'),
+ ('R3 a single one-way road may be split', S, '&& fitOneWay && fitTwins && fitSides >= min;', '&& fitOneWay && fitSides >= min;'),
+ ('R4 a twin counts beside only within 1 m (the P-6 reach)', S, 'MedianRunBeside = TwinMax - ViaductIslandHalf;', 'MedianRunBeside = IslandBeside;'),
+ ('R5 the pier\'s RoadMargin off', S, 'MedianRunLanes + RoadMargin, out lane)', 'MedianRunLanes, out lane)'),
+ ('R6 a pier on the median without its own test', S, 'OnMedianRun(ss, x, z, dx, dz) && RunFits(x, z, dx, dz, ViaductIslandEnds, MedianRunLanes + RoadMargin, out lane)', 'OnMedianRun(ss, x, z, dx, dz)'),
+ ('R7 the pier\'s footprint judged at its centre only', S, 'double px = x + dx * ViaductIslandEnds * i, pz = z + dz * ViaductIslandEnds * i;', 'double px = x, pz = z;'),
+ ('R8 ground buildings not avoided', S, '            if (IslandInGroundBuilding(x, z, dx, dz, h, a)) return false;\n', ''),
+ ('R9 junction pads and bus stops not avoided', S, '                if (InAnyPad(px, pz, 0.28, h) || OnStopPad(px, pz, h)) return false;\n', ''),
+ ('R10 crossing keep-outs not avoided', S, '                foreach (var ring in Mine().GradeKeepOuts) if (InOrNear(ring, px, pz, h)) return false;\n', ''),
+ ('R11 no carriageway test (redundant with MedianFits\' "no road")', S, '            if (!OnCarriageway(x, z, 0.28, h)) return false;\n', ''),
+ ('R12 earlier deck runs\' islands and medians not avoided', S, 'if (IslandOverlaps(ss.Islands, x, z, dx, dz, h, a, before) || IslandOverlaps(ss.Runs, x, z, dx, dz, h, a, beforeRuns)) return false;', ''),
+ ('R13 cross-sections past the border judged (the seam gap)', F, 'if (inChunk && k != 0 && !Inside(', 'if (false && k != 0 && !Inside('),
+ ('R14 roads cut on the border not taken on', F, 'bool cut = cutOn && (', 'bool cut = false && ('),
+ ('R15 the border rule given to P-6 and flyover islands too', F, 'half, beside, inChunk);', 'half, beside, true);'),
+ ('R16 short pieces kept', S, 'if (length >= 2 * ViaductIslandEnds || startOn || endOn)', 'if (length > 0)'),
+ ('R17 a passing section covers only its point', S, 'reach = seg > 1e-9 ? ViaductSample / 2 / seg : 1;', 'reach = 0;'),
+ ('R18 a border segment drawn from a failing point inside', S, ' || !ia && !pass[k + 1] || !ib && !pass[k]', ''),
+ ('R19 median parts not kept (dividers through it, piers off it)', S, '                        ss.Runs.Add(part);\n', ''),
+ ('R20 dividers ignore the median', S, '=> InRect(ss.Islands, x, z, margin) || InRect(ss.Runs, x, z, margin);', '=> InRect(ss.Islands, x, z, margin);'),
+ ('R21 median parts not cleared per chunk', S, '            ss.Runs.Clear();\n', ''),
+ ('R22 median counted but not drawn', S, '                    w.Loft(profile, colours, path, ss.Left, true, true, kerb, ss.Flat, ss.Tris);\n', ''),
+ ('R23 ends at the border left open', S, 'ss.Left, true, true, kerb,', 'ss.Left, !startOn, !endOn, kerb,'),
+ ('R24 no median at all', S, '            MedianRuns(c, st, w, ss, keep);\n', ''),
+ ('S1 survey: two lanes means 7.5 m', I, 'RunBesideMax = 6.5, RunSideMin = 6;', 'RunBesideMax = 6.5, RunSideMin = 7.5;'),
+ ('S2 survey: a twin counts beside only within 1 m', I, 'RunBesideMax = 6.5, RunSideMin = 6;', 'RunBesideMax = 1.0, RunSideMin = 6;'),
+ ('S3 survey: every run pier counted as splitting its road', I, 'else if (left >= 0.3 && right >= 0.3)', 'else if (true)'),
+ ('S4 survey: median parts 1 m short at each end', I, 'if (Math.Abs(ex * ux + ez * uz) <= len / 2 + 1e-6 && Math.Abs(-ex * uz + ez * ux) <= IslandMargin + 1e-6)', 'if (Math.Abs(ex * ux + ez * uz) <= len / 2 - 1.0 && Math.Abs(-ex * uz + ez * ux) <= IslandMargin + 1e-6)'),
+ ('S5 survey: median parts judged 2 m wider', I, '            double h = ChunkRoads.PierRadius + IslandMargin;\n            foreach (var (ax, az, bx, bz) in ch.R.Street.MedianRunParts', '            double h = ChunkRoads.PierRadius + IslandMargin + 2.0;\n            foreach (var (ax, az, bx, bz) in ch.R.Street.MedianRunParts'),
+ ('S6 survey: median parts not judged (a guard: nothing to find today)', I, '                RunParts(ch, res);\n', ''),
+ ('S7 survey: run piers trusted to the builder\'s marker (a guard)', I, 's.OnIsland = OnRunParts(ch, s);', 's.OnIsland = true;'),
+]
+only = sys.argv[2].split(',') if len(sys.argv) > 2 and sys.argv[2] else None
+os.makedirs(OUT, exist_ok=True)
+open(OUT + '/UnityStub.cs', 'w').write(STUB)
+for name, rel, a, b in M:
+    tag = name.split()[0]
+    if only and tag not in only: continue
+    d = f'{OUT}/{tag}'
+    if os.path.exists(d): shutil.rmtree(d)
+    os.makedirs(d + '/World'); os.makedirs(d + '/Infra')
+    for f in glob.glob(P + '/Assets/_Project/Runtime/World/*.cs'): shutil.copy(f, d + '/World')
+    for f in glob.glob(P + '/Assets/_Project/Editor/Infra/*.cs'): shutil.copy(f, d + '/Infra')
+    src = open(f'{d}/{rel}').read()
+    assert src.count(a) == 1, (name, src.count(a))
+    open(f'{d}/{rel}', 'w').write(src.replace(a, b))
+    shutil.copy(NUNIT, d)
+    subprocess.run(CSC + ['-target:library', '-unsafe', f'-out:{d}/Dad.World.dll', '-r:' + NS] + glob.glob(d + '/World/*.cs'), check=True, capture_output=True)
+    subprocess.run(CSC + ['-target:exe', f'-out:{d}/tests.exe', '-r:' + NS, '-r:' + MS, f'-r:{d}/Dad.World.dll', f'-r:{d}/nunit.framework.dll']
+                   + TESTS + glob.glob(d + '/Infra/*.cs') + [OUT + '/UnityStub.cs', H + '/TestRunner.cs.txt'], check=True, capture_output=True)
+    out = subprocess.run([MO + '/bin/mono', f'{d}/tests.exe'], env=ENV, cwd=d, capture_output=True, text=True).stdout
+    fails = [l[5:] for l in out.splitlines() if l.startswith('FAIL ')]
+    passed = sum(1 for l in out.splitlines() if l.startswith('PASS '))
+    line = ('CAUGHT  ' if fails else 'MISSED  ') + name + f': {len(fails)} failed, {passed} passed' + ('; ' + ' | '.join(f[:170] for f in fails[:3]) if fails else '')
+    print(line, flush=True)
+    shutil.rmtree(d)

@@ -1,0 +1,31 @@
+// Mirror of the K-37 P-3 cases for the mutation harness (ViaductIslandTests.APierInABuildingOnTheGround...): prints one
+// line per failing case, "OK" if none.
+using System; using System.Linq; using System.Collections.Generic; using Dad.World;
+static class P3Check {
+ static DadcChunk Chunk(Building[] b) => new DadcChunk {
+  Ix = 0, Iy = -1, WidthsResolved = true, Roads = new Road[0], Buildings = b,
+  Rails = new[] { new Rail { Id = 30, YCm = 3100, Pts = new[] { 5000, 25000, 45000, 25000 } } } };
+ static IEnumerable<ChunkStreet.Item> Pi(ChunkStreet s) => s.Items.Where(i => i.Kind == ChunkStreet.Kind.Pier && !i.Skipped);
+ static int Main() {
+  var fail = new List<string>();
+  var ground = new Building { Id = 70, HeightCm = 900, Outer = new[] { 8000, 24000, 10000, 24000, 10000, 26000, 8000, 26000 } };
+  var raised = new Building { Id = 71, HeightCm = 2400, MinHeightCm = 1600, Outer = new[] { 14000, 24000, 16000, 24000, 16000, 26000, 14000, 26000 } };
+  var alone = ChunkRoads.Build(Chunk(new Building[0]), keepMarks: true).Street;
+  var st = ChunkRoads.Build(Chunk(new[] { ground, raised }), keepMarks: true).Street;
+  if (st.Piers != 14) fail.Add("piers " + st.Piers);
+  if (!Pi(st).Select(p => p.X).SequenceEqual(Pi(alone).Select(p => p.X))) fail.Add("a pier moved");
+  if (st.PiersInBuilding != 1 || st.PiersUnderRaised != 1) fail.Add($"split {st.PiersInBuilding}/{st.PiersUnderRaised}");
+  var a = Pi(st).Single(p => Math.Abs(p.X - 90) < 1e-6).Why; if (a != "in a building") fail.Add("x 90: " + a);
+  var b = Pi(st).Single(p => Math.Abs(p.X - 150) < 1e-6).Why; if (b != "under a raised building") fail.Add("x 150: " + b);
+  if (Pi(st).Count(p => p.Why != null) != 2) fail.Add("reasons " + Pi(st).Count(p => p.Why != null));
+  if (alone.PiersInBuilding + alone.PiersUnderRaised != 0) fail.Add("empty chunk counts");
+  var ell = new Building { Id = 72, HeightCm = 900, Outer = new[] { 20000, 24000, 25000, 24000, 25000, 24600, 22000, 24600, 22000, 26000, 20000, 26000 } };
+  var notch = new Building { Id = 73, HeightCm = 2400, MinHeightCm = 1600, Outer = new[] { 23000, 24700, 25000, 24700, 25000, 26000, 23000, 26000 } };
+  var l = ChunkRoads.Build(Chunk(new[] { ell, notch }), keepMarks: true).Street;
+  var l1 = Pi(l).Single(p => Math.Abs(p.X - 210) < 1e-6).Why; if (l1 != "in a building") fail.Add("L x 210: " + l1);
+  var l2 = Pi(l).Single(p => Math.Abs(p.X - 240) < 1e-6).Why; if (l2 != "under a raised building") fail.Add("L x 240: " + l2);
+  if (l.PiersInBuilding != 1 || l.PiersUnderRaised != 1) fail.Add($"L split {l.PiersInBuilding}/{l.PiersUnderRaised}");
+  Console.WriteLine(fail.Count == 0 ? "OK" : string.Join("; ", fail));
+  return 0;
+ }
+}

@@ -1,0 +1,22 @@
+# F-03 bench table (2026-11-06). Arg: the log of abba.sh.txt. Per run, from frame 300 on (a street run's start-up loading is over by then): main-thread p50 and mean,
+# GPU mean, frames over 20 ms; then each path's means, off and on, and their difference.
+import sys, csv, os
+P = os.path.expanduser('~/Documents/dhaka-after-dark-unity/')
+q = lambda a: sorted(a)[len(a) // 2]
+agg = {}
+for l in open(sys.argv[1]):
+    f = l.split()
+    if len(f) != 3: continue
+    path, side, d = f
+    r = list(csv.DictReader(open(P + d + '/frames.csv')))[300:]
+    m = [float(x['mainThreadMs']) for x in r]
+    g = [float(x['gpuMs']) for x in r if x['gpuMs'] not in ('', 'nan')]
+    t = [float(x['frameMs']) for x in r]
+    row = (q(m), sum(m) / len(m), sum(g) / max(len(g), 1), sum(1 for v in t if v > 20))
+    print('%-24s %-3s main p50 %.2f mean %.2f | GPU mean %.2f | over 20 ms %d' % ((path, side) + row))
+    agg.setdefault((path, side), []).append(row)
+for path in sorted({k[0] for k in agg}):
+    a, b = agg.get((path, 'off'), []), agg.get((path, 'on'), [])
+    if not a or not b: continue
+    mean = lambda rows, i: sum(x[i] for x in rows) / len(rows)
+    print('%s: %d runs each: main p50 %.2f -> %.2f, GPU %.2f -> %.2f' % (path, len(a), mean(a, 0), mean(b, 0), mean(a, 2), mean(b, 2)))

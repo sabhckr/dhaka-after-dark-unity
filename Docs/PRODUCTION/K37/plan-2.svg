@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="406" viewBox="0 0 1100 406" font-family="Helvetica, Arial, sans-serif">
+<rect width="100%%" height="100%%" fill="#fbfaf7"/>
+<text x="10" y="22" font-size="16" font-weight="bold" fill="#222">K-37 plan 2: Farmgate station (east) and the bend</text>
+<text x="10" y="44" font-size="12" fill="#444">North up. World metres (east 3572-3928, north 14945-15026). Data as exported; no pier, road or alignment moved.</text>
+<clipPath id="c"><rect x="0" y="64" width="1100" height="251"/></clipPath><g clip-path="url(#c)">
+<path d="M-71.2 235.4 L23.9 232.0 L29.4 380.2 L-65.8 383.6 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M61.8 147.0 L619.1 147.0 L621.2 184.3 L65.8 204.1 Z" fill="#dfe8f3" stroke="#3b6ea8" stroke-width="1.5" stroke-dasharray="6 3" fill-opacity="0.7"/>
+<path d="M1098.1 439.1 L1150.9 437.9 L1164.9 514.4 L1128.2 615.6 L1081.7 609.5 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M1031.7 434.9 L1089.5 439.6 L1082.7 522.2 L1053.8 519.8 L1055.1 503.5 L1026.2 501.2 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M1155.0 436.6 L1197.1 431.3 L1201.5 517.8 L1168.1 514.7 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M128.4 24.7 L258.3 21.9 L259.0 57.3 L129.2 60.0 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M317.0 -53.8 L317.0 -13.1 L304.4 -13.1 L304.4 47.5 L349.3 47.5 L349.4 86.4 L265.9 86.5 L265.8 11.4 L276.2 11.4 L276.2 -53.8 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M333.3 -133.8 L358.1 -133.8 L358.4 33.2 L333.7 33.2 L333.5 -76.6 L314.7 -76.5 L314.7 -123.6 L333.4 -123.6 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M412.2 21.7 L473.3 20.8 L473.7 50.7 L412.7 51.6 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M654.8 8.5 L716.1 9.0 L715.9 30.0 L703.9 30.0 L703.8 51.3 L654.5 50.9 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M796.6 20.7 L1010.6 11.8 L1013.1 72.4 L799.1 81.2 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M769.0 4.7 L784.6 4.6 L784.8 31.9 L769.2 32.0 Z" fill="#ddd8cf" stroke="#8f897f" stroke-width="0.6"/>
+<path d="M-222.5 182.9 L50.0 171.8 L55.9 171.5 L96.1 170.1 L778.4 160.2 L1084.5 155.8 L1182.7 157.6" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="43.3" stroke-linejoin="round"/>
+<path d="M-222.5 155.5 L26.6 147.0" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="43.3" stroke-linejoin="round"/>
+<path d="M95.9 147.0 L96.1 170.1" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="10.8" stroke-linejoin="round"/>
+<path d="M50.0 171.8 L43.6 147.0" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="13.9" stroke-linejoin="round"/>
+<path d="M55.9 171.5 L106.6 210.2 L156.8 228.6 L193.7 234.7 L638.4 222.4 L660.6 214.8 L700.3 189.5 L778.4 160.2" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="21.6" stroke-linejoin="round"/>
+<path d="M1237.3 366.6 L892.7 385.4 L373.5 418.2 L212.9 427.9 L127.5 431.2 L62.8 430.6 L-191.6 457.7 L-222.5 460.0" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="43.3" stroke-linejoin="round"/>
+<path d="M1237.3 366.6 L1207.0 241.9 L1182.7 157.6 L1180.0 147.0" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="43.3" stroke-linejoin="round"/>
+<path d="M1252.9 244.6 L1317.2 318.0 L1322.5 324.9" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="43.3" stroke-linejoin="round"/>
+<path d="M1322.5 630.6 L1305.3 564.5 L1290.7 520.9 L1237.3 366.6" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="43.3" stroke-linejoin="round"/>
+<path d="M1223.8 169.7 L1252.9 244.6 L1322.5 492.5" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="43.3" stroke-linejoin="round"/>
+<path d="M26.6 147.0 L43.5 146.4 L95.9 144.6 L1122.5 109.9 L1132.3 107.1 L1139.6 102.6 L1161.2 75.1" fill="none" stroke="#e0533d" stroke-opacity="0.26" stroke-width="43.3" stroke-linejoin="round"/>
+<path d="M-222.5 182.9 L50.0 171.8 L55.9 171.5 L96.1 170.1 L778.4 160.2 L1084.5 155.8 L1182.7 157.6" fill="none" stroke="#5d6066" stroke-opacity="0.30" stroke-width="18.5" stroke-linejoin="round"/>
+<path d="M-222.5 155.5 L26.6 147.0" fill="none" stroke="#5d6066" stroke-opacity="0.30" stroke-width="18.5" stroke-linejoin="round"/>
+<path d="M1237.3 366.6 L892.7 385.4 L373.5 418.2 L212.9 427.9 L127.5 431.2 L62.8 430.6 L-191.6 457.7 L-222.5 460.0" fill="none" stroke="#5d6066" stroke-opacity="0.30" stroke-width="18.5" stroke-linejoin="round"/>
+<path d="M1237.3 366.6 L1207.0 241.9 L1182.7 157.6 L1180.0 147.0" fill="none" stroke="#5d6066" stroke-opacity="0.30" stroke-width="37.1" stroke-linejoin="round"/>
+<path d="M1322.5 630.6 L1305.3 564.5 L1290.7 520.9 L1237.3 366.6" fill="none" stroke="#5d6066" stroke-opacity="0.30" stroke-width="37.1" stroke-linejoin="round"/>
+<path d="M1223.8 169.7 L1252.9 244.6 L1322.5 492.5" fill="none" stroke="#5d6066" stroke-opacity="0.30" stroke-width="37.1" stroke-linejoin="round"/>
+<path d="M26.6 147.0 L43.5 146.4 L95.9 144.6 L1122.5 109.9 L1132.3 107.1 L1139.6 102.6 L1161.2 75.1" fill="none" stroke="#5d6066" stroke-opacity="0.30" stroke-width="18.5" stroke-linejoin="round"/>
+<path d="M-222.5 182.9 L50.0 171.8 L55.9 171.5 L96.1 170.1 L778.4 160.2 L1084.5 155.8 L1182.7 157.6" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M-222.5 155.5 L26.6 147.0" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M62.8 430.6 L50.0 171.8" fill="none" stroke="#3c8d3c" stroke-width="1" stroke-dasharray="2 2"/>
+<path d="M95.9 147.0 L96.1 170.1" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M50.0 171.8 L43.6 147.0" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M55.9 171.5 L106.6 210.2 L156.8 228.6 L193.7 234.7 L638.4 222.4 L660.6 214.8 L700.3 189.5 L778.4 160.2" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M1237.3 366.6 L892.7 385.4 L373.5 418.2 L212.9 427.9 L127.5 431.2 L62.8 430.6 L-191.6 457.7 L-222.5 460.0" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M1237.3 366.6 L1207.0 241.9 L1182.7 157.6 L1180.0 147.0" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M1182.9 393.2 L1146.5 394.9" fill="none" stroke="#3c8d3c" stroke-width="1" stroke-dasharray="2 2"/>
+<path d="M1252.9 244.6 L1317.2 318.0 L1322.5 324.9" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M1322.5 630.6 L1305.3 564.5 L1290.7 520.9 L1237.3 366.6" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M1223.8 169.7 L1252.9 244.6 L1322.5 492.5" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M605.1 192.0 L528.8 193.7" fill="none" stroke="#3c8d3c" stroke-width="1" stroke-dasharray="2 2"/>
+<path d="M536.8 201.7 L605.4 200.3" fill="none" stroke="#3c8d3c" stroke-width="1" stroke-dasharray="2 2"/>
+<path d="M26.6 147.0 L43.5 146.4 L95.9 144.6 L1122.5 109.9 L1132.3 107.1 L1139.6 102.6 L1161.2 75.1" fill="none" stroke="#555" stroke-width="0.7" stroke-dasharray="5 4"/>
+<path d="M624.9 119.2 L681.3 117.2" fill="none" stroke="#3c8d3c" stroke-width="1" stroke-dasharray="2 2"/>
+<path d="M-222.5 162.2 L245.5 147.0" fill="none" stroke="#1f3d7a" stroke-width="1.6"/>
+<path d="M827.7 147.0 L850.1 151.0 L918.8 174.1 L966.7 193.0 L1039.8 235.5 L1097.3 277.1 L1138.4 312.0 L1181.2 358.5 L1227.5 421.3 L1245.9 455.9 L1309.0 622.4 L1322.5 662.3" fill="none" stroke="#1f3d7a" stroke-width="1.6"/>
+<path d="M1322.5 696.2 L1310.8 657.4 L1271.1 546.5 L1240.1 479.0 L1180.9 379.5 L1088.5 287.6 L995.3 224.2 L951.3 198.4 L872.4 171.3 L807.1 152.7 L679.8 149.0 L71.5 174.0 L-222.5 179.9" fill="none" stroke="#1f3d7a" stroke-width="1.6"/>
+<path d="M245.5 147.0 L307.7 145.0 L476.3 135.4 L682.8 130.8 L776.6 137.7 L827.7 147.0" fill="none" stroke="#1f3d7a" stroke-width="1.6"/>
+<circle cx="1705.0" cy="1814.8" r="4.0" fill="none" stroke="#7b3fa0" stroke-width="1.6" stroke-dasharray="3 2"/>
+<line x1="1705.3" y1="1815.5" x2="1705.0" y2="1814.8" stroke="#7b3fa0" stroke-width="1"/>
+<circle cx="1795.0" cy="2080.5" r="4.0" fill="none" stroke="#a0522d" stroke-width="1.6" stroke-dasharray="3 2"/>
+<line x1="1799.5" y1="2093.6" x2="1795.0" y2="2080.5" stroke="#a0522d" stroke-width="1"/>
+<circle cx="-6.2" cy="165.3" r="4.0" fill="#c0392b" stroke="#222" stroke-width="1"/>
+<text x="-6.6" y="154.4" font-size="10.5" fill="#111" text-anchor="middle" stroke="#fbfaf7" stroke-width="3" paint-order="stroke">06</text>
+<circle cx="86.5" cy="162.8" r="4.0" fill="#2f6db5" stroke="#222" stroke-width="1"/>
+<text x="86.1" y="151.8" font-size="10.5" fill="#111" text-anchor="middle" stroke="#fbfaf7" stroke-width="3" paint-order="stroke">07</text>
+<circle cx="179.2" cy="159.4" r="4.0" fill="#2f6db5" stroke="#222" stroke-width="1"/>
+<text x="178.8" y="148.4" font-size="10.5" fill="#111" text-anchor="middle" stroke="#fbfaf7" stroke-width="3" paint-order="stroke">08</text>
+<circle cx="828.1" cy="152.8" r="4.0" fill="#c0392b" stroke="#222" stroke-width="1"/>
+<text x="830.6" y="142.0" font-size="10.5" fill="#111" text-anchor="middle" stroke="#fbfaf7" stroke-width="3" paint-order="stroke">09</text>
+<circle cx="920.8" cy="181.5" r="4.0" fill="#2e8b57" stroke="#222" stroke-width="1"/>
+<text x="925.9" y="171.5" font-size="10.5" fill="#111" text-anchor="middle" stroke="#fbfaf7" stroke-width="3" paint-order="stroke">10</text>
+<circle cx="1013.5" cy="228.2" r="4.0" fill="#ffffff" stroke="#222" stroke-width="1"/>
+<text x="1020.5" y="219.1" font-size="10.5" fill="#111" text-anchor="middle" stroke="#fbfaf7" stroke-width="3" paint-order="stroke">11</text>
+<circle cx="1106.2" cy="294.6" r="4.0" fill="#ffffff" stroke="#222" stroke-width="1"/>
+<text x="1115.2" y="286.9" font-size="10.5" fill="#111" text-anchor="middle" stroke="#fbfaf7" stroke-width="3" paint-order="stroke">12</text>
+<circle cx="271.9" cy="165.8" r="4.0" fill="#2f6db5" stroke="#222" stroke-width="1"/>
+<text x="272.5" y="182.8" font-size="10.5" fill="#111" text-anchor="middle" stroke="#fbfaf7" stroke-width="3" paint-order="stroke">62</text>
+<circle cx="364.6" cy="162.0" r="4.0" fill="#2f6db5" stroke="#222" stroke-width="1"/>
+<text x="365.2" y="179.0" font-size="10.5" fill="#111" text-anchor="middle" stroke="#fbfaf7" stroke-width="3" paint-order="stroke">63</text>
+<circle cx="457.3" cy="158.1" r="4.0" fill="#2f6db5" stroke="#222" stroke-width="1"/>
+<text x="457.9" y="175.1" font-size="10.5" fill="#111" text-anchor="middle" stroke="#fbfaf7" stroke-width="3" paint-order="stroke">64</text>
+<circle cx="550.0" cy="154.3" r="4.0" fill="#2f6db5" stroke="#222" stroke-width="1"/>
+<text x="550.6" y="171.3" font-size="10.5" fill="#111" text-anchor="middle" stroke="#fbfaf7" stroke-width="3" paint-order="stroke">65</text>
+<circle cx="642.7" cy="150.5" r="4.0" fill="#c0392b" stroke="#222" stroke-width="1"/>
+<text x="643.3" y="167.5" font-size="10.5" fill="#111" text-anchor="middle" stroke="#fbfaf7" stroke-width="3" paint-order="stroke">66</text>
+<circle cx="735.4" cy="150.6" r="4.0" fill="#c0392b" stroke="#222" stroke-width="1"/>
+<text x="735.0" y="167.6" font-size="10.5" fill="#111" text-anchor="middle" stroke="#fbfaf7" stroke-width="3" paint-order="stroke">67</text>
+</g>
+<rect x="0.5" y="64" width="1099" height="251" fill="none" stroke="#999"/>
+<line x1="10" y1="337" x2="71.8" y2="337" stroke="#222" stroke-width="2"/><text x="77.8" y="341" font-size="11">20 m</text>
+<circle cx="152" cy="337" r="5" fill="#2e8b57" stroke="#222"/><text x="161" y="341" font-size="11">A width estimate (lanes tag)</text>
+<circle cx="343" cy="337" r="5" fill="#9a9a2e" stroke="#222"/><text x="352" y="341" font-size="11">A' width estimate (3.0-3.3 m lanes)</text>
+<circle cx="571" cy="337" r="5" fill="#7b3fa0" stroke="#222"/><text x="580" y="341" font-size="11">B pier placement rule</text>
+<circle cx="719" cy="337" r="5" fill="#2f6db5" stroke="#222"/><text x="728" y="341" font-size="11">C station over the road</text>
+<circle cx="879" cy="337" r="5" fill="#a0522d" stroke="#222"/><text x="888" y="341" font-size="11">D building footprint</text>
+<circle cx="10" cy="357" r="5" fill="#c0392b" stroke="#222"/><text x="19" y="361" font-size="11">E insufficient evidence</text>
+<circle cx="170" cy="357" r="5" fill="#ffffff" stroke="#222"/><text x="179" y="361" font-size="11"> clear</text>
+<rect x="10" y="371" width="22" height="9" fill="#e0533d" fill-opacity="0.26"/><text x="38" y="379" font-size="11">carriageway at the estimated width (now)</text>
+<rect x="270" y="371" width="22" height="9" fill="#5d6066" fill-opacity="0.30"/><text x="298" y="379" font-size="11">at its lanes tag x 3.0 m (proposal A)</text>
+<line x1="510" y1="375" x2="532" y2="375" stroke="#1f3d7a" stroke-width="1.6"/><text x="538" y="379" font-size="11">elevated track</text>
+<rect x="630" y="371" width="22" height="9" fill="#dfe8f3" stroke="#3b6ea8" stroke-dasharray="4 2"/><text x="658" y="379" font-size="11">raised station</text>
+<circle cx="760" cy="375" r="5" fill="none" stroke="#7b3fa0" stroke-dasharray="3 2"/><text x="769" y="379" font-size="11">proposed slide along the deck</text>
+</svg>

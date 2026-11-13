@@ -1,0 +1,20 @@
+#!/bin/zsh
+# K-56 balanced bench without the profiler (2026-11-05): the air path, main's player (Builds/MacBench-88b7a22, main 88b7a22)
+# and the P-5a player (Builds/MacBench). One discarded run of each, then main p5a p5a main p5a main main p5a (ABBA BAAB), so
+# each player runs first and second in a pair equally often and drift over the set falls on both alike. Lid checked before
+# every run; both players kept.   zsh Docs/PRODUCTION/K56/abba.sh.txt
+D=${0:a:h}; L=$D/abba.log; cd ~/Documents/dhaka-after-dark-unity
+st() { echo "$1 $(date +%H%M%S)" >> $L; }
+st "start $(pmset -g batt | head -1) $(ioreg -r -k AppleClamshellState -d 4 | /usr/bin/grep -m1 AppleClamshellState)"
+cur=p5a
+lid() { ioreg -r -k AppleClamshellState -d 4 | /usr/bin/grep -m1 AppleClamshellState | /usr/bin/grep -q Yes; }
+sw() { if [ $cur = main ]; then mv Builds/MacBench Builds/MacBench-88b7a22; mv Builds/MacBench-p5a Builds/MacBench; cur=p5a; else mv Builds/MacBench Builds/MacBench-p5a; mv Builds/MacBench-88b7a22 Builds/MacBench; cur=main; fi; }
+stop() { st "lid closed: stopping"; [ $cur = p5a ] || sw; exit 2; }
+run() { lid && stop; [ $cur = $1 ] || sw; Tools/bench.sh slice-crossing-air > /dev/null 2>&1; }
+run main; st "main discard exit $? $(ls -td Evidence/local/bench-slice-crossing-air-* | head -1)"
+run p5a; st "p5a discard exit $? $(ls -td Evidence/local/bench-slice-crossing-air-* | head -1)"
+for b in main p5a p5a main p5a main main p5a; do
+  run $b; st "$b slice-crossing-air exit $? $(ls -td Evidence/local/bench-slice-crossing-air-* | head -1)"
+done
+[ $cur = p5a ] || sw
+st "done; P-5a player in Builds/MacBench, main in Builds/MacBench-88b7a22 $(pmset -g batt | head -1) $(ioreg -r -k AppleClamshellState -d 4 | /usr/bin/grep -m1 AppleClamshellState)"

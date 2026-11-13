@@ -1,0 +1,13 @@
+{
+ "name": "w-n-crossing",
+ "east": 1042,
+ "north": 1158,
+ "height": 2.0,
+ "lookEast": 1020.41,
+ "lookNorth": 1145.41,
+ "lookHeight": 0.2,
+ "fov": 60,
+ "date": "",
+ "time": 12.0,
+ "weather": "clear"
+}

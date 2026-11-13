@@ -1,0 +1,13 @@
+{
+ "name": "w-street-rich",
+ "east": 3850,
+ "north": 2885,
+ "height": 1.7,
+ "lookEast": 3950,
+ "lookNorth": 2925,
+ "lookHeight": 8,
+ "fov": 60,
+ "date": "",
+ "time": 12.0,
+ "weather": "clear"
+}

@@ -1,0 +1,54 @@
+import csv, sys
+findings, k37reg, out = sys.argv[1:4]
+reg = {}
+for r in csv.DictReader(open(k37reg)):
+    reg[(float(r['east_m']), float(r['north_m']))] = (r['pier_id'], r['group'])
+# After P-2 (2026-11-04) a pier can stand up to 4 m from its K-37 register place: slid along the deck off a
+# crossing road, or moved onto the twin centre line where a border used to split the twin (K-50 a). The register
+# keeps the K-37 positions; the nearest register pier within 8 m (less than the 30 m grid) is the same pier.
+def k37(i):
+    p = i.split('-'); e, n = float(p[1]), float(p[2])
+    k = min(reg, key=lambda q: (q[0]-e)**2 + (q[1]-n)**2)
+    if (k[0]-e)**2 + (k[1]-n)**2 > 8**2: return None, None
+    return reg[k]
+rows = []
+for f in csv.DictReader(open(findings)):
+    if f['kind'] != 'violation': continue
+    key, i, chk, sub = f['key'], f['id'], f['check'], f['subject']
+    ref = note = None
+    if i.startswith('VP-'):
+        kid, grp = k37(i)
+        if kid is None and i == 'VP-4441.8-13500.0' and chk == 'carriageway':
+            ref, note = 'K-50 b (P-2)', 'pier on the N 13,500 grid line, new in P-2 (no K-37 row); along-road trunk under the deck, as group A'
+        elif kid is None: sys.exit(f'{i}: no K-37 register pier within 8 m')
+        elif chk == 'carriageway' and sub == '297117157': ref, note = f'K-37 {kid} (V-4)', 'group B: side street under the deck; P-2 not approved'
+        elif chk == 'carriageway': ref, note = f'K-37 {kid}', f'group {grp}; positions by rule, real piers unknown (evidence)'
+        elif chk == 'raised': ref, note = f'K-37 {kid} (V-8)', 'group C: a station on its own viaduct piers, expected'
+        elif chk == 'building': ref, note = f'K-37 {kid} (V-7)', 'group D: footprint reaches into the carriageway'
+        elif chk == 'crossing': ref, note = f'K-37 {kid} (V-4)', 'group B: Sonargaon roundabout ring; P-2 not approved'
+        elif chk == 'span-short': ref, note = 'K-37 K37-12/13 (V-6)', 'grid rule changes axis at the bend; P-2 not approved'
+        elif chk == 'duplicate' and i.startswith('VP-3390'): ref, note = f'K-37 {kid} (V-5)', 'one pier per grid line at a chunk border: P-2 not approved'
+        elif chk == 'duplicate': ref, note = f'K-50 a ({kid})', 'twin track split by the c_7_-30/-31 border: each chunk builds a single deck and its pier (V-5 mechanism)'
+        elif chk == 'span-long': ref, note = f'K-50 b ({kid})', 'K37-60 is spanned (junction) and the N 13,500 grid line on the c_8_-28/-27 border has no pier from either chunk'
+        elif chk == 'through-deck': ref, note = f'K-50 c ({kid})', 'flyover drawn at its 6 m layer height (K-13); the real levels are not in the data'
+    elif i.startswith('FC-'):
+        if chk == 'duplicate': ref, note = 'K-50 d', 'three footbridge ways meet at a node and each puts a column there'
+        elif chk == 'bus-stop': ref, note = 'K-50 e', 'the column rule avoids carriageways, not bus stop pads'
+    elif i.startswith('FB-'): ref, note = 'K-39', 'deck rests on its ends: columns left out over the carriageway, stair unattached'
+    elif i.startswith('ST-'): ref, note = 'K-39', 'steps way ends more than 2.5 m from any deck; check against imagery'
+    elif i.startswith('FD-'):
+        if chk == 'no-supports': ref, note = 'AXIOM v3 E.1', 'no road flyover has supports yet (section J step 7)'
+        elif chk == 'span-long' and i == 'FD-1558255166': ref, note = 'D-11a', 'two trunk roads either side of the c_7_-30/c_8_-30 border, 25 m apart: no support fits between them outside the 4 m border keep-out; an engineered 100 m span'
+        elif chk == 'unsupported-end' and i == 'FD-1249807413': ref, note = 'D-11a (K.5)', 'construction expressway built as finished (owner, K.5): its free end lies over a narrow two-way road between buildings; no support fits within 20 m'
+        elif chk == 'deck-in-building': ref, note = 'AXIOM v3 E.4', 'deck centre line inside a drawn building volume'
+    if ref is None: sys.exit(f'no reference for {key}')
+    rows.append((key, ref, note))
+with open(out, 'w', newline='') as o:
+    o.write('# Known infrastructure violations: every violation InfraSurvey finds in the slice today, with the issue it belongs to.\n')
+    o.write('# The EditMode test InfraSurveyTests fails on a violation not listed here and on a listed one that is gone.\n')
+    o.write('# A fix removes its rows; a new row needs a reference. Key: support or deck id | check | other party.\n')
+    o.write('# Spatial checks only: no navigation, collision or driving checks (AXIOM v3 section G.4). Generated 2026-11-04.\n')
+    w = csv.writer(o, lineterminator='\n'); w.writerow(['key','reference','note'])
+    for r in rows: w.writerow(r)
+from collections import Counter
+print(len(rows), Counter(r[1].split(' (')[0].split(' K37')[0] for r in rows))

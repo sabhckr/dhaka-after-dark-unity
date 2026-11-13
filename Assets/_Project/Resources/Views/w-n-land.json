@@ -1,0 +1,13 @@
+{
+ "name": "w-n-land",
+ "east": 1400,
+ "north": 1650,
+ "height": 60,
+ "lookEast": 1250,
+ "lookNorth": 1900,
+ "lookHeight": 0,
+ "fov": 60,
+ "date": "",
+ "time": 12.0,
+ "weather": "clear"
+}

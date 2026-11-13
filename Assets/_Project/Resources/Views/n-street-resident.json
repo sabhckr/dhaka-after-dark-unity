@@ -1,0 +1,14 @@
+{
+ "name": "n-street-resident",
+ "east": 2625.2,
+ "north": 2104.4,
+ "height": 2.0,
+ "lookEast": 2619.2,
+ "lookNorth": 2108.7,
+ "lookHeight": 1.3,
+ "fov": 50,
+ "date": "",
+ "time": 12.0,
+ "weather": "clear",
+ "npcs": 20
+}

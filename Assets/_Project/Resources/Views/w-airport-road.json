@@ -1,0 +1,13 @@
+{
+ "name": "w-airport-road",
+ "east": 4083,
+ "north": 1062,
+ "height": 6,
+ "lookEast": 4230,
+ "lookNorth": 800,
+ "lookHeight": 10,
+ "fov": 60,
+ "date": "",
+ "time": 12.0,
+ "weather": "clear"
+}

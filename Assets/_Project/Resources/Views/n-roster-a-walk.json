@@ -1,0 +1,24 @@
+{
+ "name": "n-roster-a-walk",
+ "east": 2613.84,
+ "north": 2105.01,
+ "height": 1.43,
+ "lookEast": 2619.2,
+ "lookNorth": 2108.7,
+ "lookHeight": 1.25,
+ "fov": 42,
+ "date": "",
+ "time": 12.0,
+ "weather": "clear",
+ "lineup": [
+  2619.2,
+  2108.7,
+  0.43,
+  235.4,
+  0.9,
+  0.42
+ ],
+ "act": "",
+ "facing": 0,
+ "only": "NPC_004,NPC_005,NPC_006,NPC_007,NPC_008,NPC_009,NPC_010"
+}

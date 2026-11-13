@@ -1,0 +1,13 @@
+{
+ "name": "w-air-hub",
+ "east": 2300,
+ "north": 1500,
+ "height": 420,
+ "lookEast": 2600,
+ "lookNorth": 2300,
+ "lookHeight": 0,
+ "fov": 60,
+ "date": "",
+ "time": 12.0,
+ "weather": "clear"
+}

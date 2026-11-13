@@ -1,0 +1,59 @@
+{
+  "name": "DHAKA: AFTER DARK social cut v1 (9:16, 30 s)",
+  "fps": 24, "width": 1080, "height": 1920, "duration": 30, "bars": 0,
+  "imageRoot": "Production/Trailer_2026/Graphics/Treated_v1",
+  "label": "CONCEPT VISUALISATION FROM IN-DEVELOPMENT RENDERS\nLIGHTING, NEON, RAIN AND REFLECTIONS ADDED  ·  NOT GAMEPLAY",
+  "layout": {"narrY": 470, "labelY": 1730, "labelSize": 23, "smallY": 1730, "cardY": 980, "titleY": 1060, "axiomY": 1040, "creditY": 900},
+  "audioEdit": {
+    "source": "Audio/Mix_v1/DAD_Trailer_v1_master_48k24.wav",
+    "segments": [[62.0, 78.0], [94.0, 101.0], [106.2, 111.2], [116.0, 118.0, 0.15]],
+    "crossfade": 0.04, "fadeIn": 0.01, "fadeOut": 1.0,
+    "note": "Master 62-78 (riser, hard stop, card hit, drop, drive) -> 0-16; 94-101 (build, montage, final hit) -> 16-23; 106.2-111.2 (title) -> 23-28; 116-118 (AXIOM) -> 28-30. Joints sit on bar lines of the 120 BPM grid."
+  },
+  "clips": [
+    {"img": "n-shopfront", "t": 0.0, "d": 2.6, "fout": 0.1, "from": [0.22, 0.5, 1.12], "to": [0.45, 0.5, 1.12], "shake": 0.4, "label": true},
+    {"img": "n-divider", "t": 2.5, "d": 2.5, "fin": 0.1, "from": [0.62, 0.5, 1.05], "to": [0.8, 0.5, 1.1], "flicker": 0.15, "label": true},
+
+    {"img": "n-kawran-street", "t": 8.0, "d": 2.0, "from": [0.78, 0.5, 1.0], "to": [0.78, 0.5, 1.25], "rain": 0.7, "label": true},
+    {"img": "n-karwan-station", "t": 10.0, "d": 2.0, "from": [0.2, 0.62, 1.05], "to": [0.2, 0.42, 1.05], "rain": 0.5, "label": true},
+    {"img": "n-busstop", "t": 12.0, "d": 1.5, "from": [0.3, 0.5, 1.0], "to": [0.42, 0.5, 1.15], "rain": 0.7, "label": true},
+    {"img": "n-air", "t": 13.5, "d": 1.5, "from": [0.45, 0.5, 1.0], "to": [0.55, 0.5, 1.15], "label": true},
+    {"img": "n-kawran-metro", "t": 15.0, "d": 1.0, "from": [0.18, 0.5, 1.0], "to": [0.18, 0.5, 1.12], "label": true},
+    {"img": "k-night-street", "t": 16.0, "d": 1.0, "from": [0.75, 0.46, 1.0], "to": [0.75, 0.46, 1.15], "rain": 0.5, "label": true},
+
+    {"img": "n-farmgate", "t": 17.0, "d": 0.5, "from": [0.55, 0.5, 1.1], "to": [0.55, 0.5, 1.25], "label": true},
+    {"img": "n-kni-kerb", "t": 17.5, "d": 0.5, "from": [0.86, 0.5, 1.1], "to": [0.86, 0.5, 1.25], "label": true},
+    {"img": "n-farmgate-mid", "t": 18.0, "d": 0.5, "from": [0.5, 0.5, 1.1], "to": [0.5, 0.5, 1.25], "label": true},
+    {"img": "n-shopfront", "t": 18.5, "d": 0.5, "from": [0.4, 0.42, 1.3], "to": [0.4, 0.42, 1.45], "label": true},
+    {"img": "n-kawran-metro", "t": 19.0, "d": 0.5, "from": [0.2, 0.4, 1.3], "to": [0.2, 0.4, 1.45], "label": true},
+    {"img": "n-busstop", "t": 19.5, "d": 0.5, "from": [0.25, 0.45, 1.2], "to": [0.25, 0.45, 1.35], "label": true},
+    {"img": "n-side-street", "t": 20.0, "d": 0.5, "from": [0.25, 0.5, 1.2], "to": [0.25, 0.5, 1.35], "label": true},
+    {"img": "n-divider", "t": 20.5, "d": 0.5, "from": [0.75, 0.5, 1.25], "to": [0.75, 0.5, 1.4], "label": true},
+
+    {"img": "k-night-sky", "t": 23.0, "d": 5.0, "fin": 0.3, "fout": 0.3, "from": [0.5, 0.4, 1.0], "to": [0.5, 0.4, 1.08], "dim": 0.45, "label": true}
+  ],
+  "texts": [
+    {"t": 0.2, "d": 2.3, "style": "narr", "text": "ঢাকা কখনো ঘুমায় না..."},
+    {"t": 2.6, "d": 2.3, "style": "narr", "text": "কিন্তু অন্ধকার নামলে..."},
+    {"t": 5.4, "d": 2.4, "style": "card", "text": "EVERY STREET\nHAS A SECRET.", "size": 1.25},
+    {"t": 6.0, "d": 1.9, "style": "narr", "text": "আর কেউ কেউ..."},
+    {"t": 8.6, "d": 3.2, "style": "narr", "text": "এই শহরের নিয়ম বদলাতে আসে।"},
+    {"t": 12.2, "d": 3.6, "style": "narr", "text": "কিন্তু ক্ষমতার একটা মূল্য আছে।"},
+    {"t": 21.1, "d": 1.8, "style": "card", "text": "NO WAY BACK.", "size": 1.25},
+    {"t": 23.3, "d": 4.7, "style": "title", "text": "DHAKA:\nAFTER DARK", "size": 1.15},
+    {"t": 24.5, "d": 3.3, "style": "narr", "text": "তুমি কি সেই মূল্য দিতে প্রস্তুত?"},
+    {"t": 28.05, "d": 1.95, "style": "axiom", "text": "AXIOM"},
+    {"t": 28.6, "d": 1.4, "style": "credit", "text": "A GAME BY ISHAK HASAN SABBIR\nFIRST STORY RELEASE  ·  16 DECEMBER 2026"},
+    {"t": 28.4, "d": 1.6, "style": "small", "text": "Concept visualisation from in-development renders.\nNot gameplay.", "size": 1.25}
+  ],
+  "flashes": [
+    {"t": 0.0, "d": 0.2, "peak": 0.5},
+    {"t": 8.0, "d": 0.3, "peak": 0.6}, {"t": 10.0, "d": 0.12, "peak": 0.3}, {"t": 12.0, "d": 0.12, "peak": 0.35},
+    {"t": 13.5, "d": 0.12, "peak": 0.3}, {"t": 15.0, "d": 0.12, "peak": 0.35},
+    {"t": 17.0, "d": 0.08, "peak": 0.4}, {"t": 17.5, "d": 0.08, "peak": 0.4}, {"t": 18.0, "d": 0.08, "peak": 0.4}, {"t": 18.5, "d": 0.08, "peak": 0.4},
+    {"t": 19.0, "d": 0.08, "peak": 0.4}, {"t": 19.5, "d": 0.08, "peak": 0.4}, {"t": 20.0, "d": 0.08, "peak": 0.4}, {"t": 20.5, "d": 0.08, "peak": 0.4},
+    {"t": 21.0, "d": 0.35, "peak": 0.9},
+    {"t": 23.2, "d": 0.4, "peak": 0.7},
+    {"t": 28.0, "d": 0.25, "peak": 0.5}
+  ]
+}

@@ -1,0 +1,23 @@
+#!/bin/zsh
+# Interleaved bench (P-5a, 2026-11-05): main's player (Builds/MacBench-88b7a22, main 88b7a22) and the P-5a player
+# (Builds/MacBench), run for run, 3 air and 3 street runs each after one discarded run of each; the lid is checked before
+# every run. Both players are kept.   zsh Docs/PRODUCTION/P5A/interleave.sh.txt
+D=${0:a:h}; L=$D/interleave.log; cd ~/Documents/dhaka-after-dark-unity
+st() { echo "$1 $(date +%H%M%S)" >> $L; }
+st "start $(pmset -g batt | head -1) $(ioreg -r -k AppleClamshellState -d 4 | /usr/bin/grep -m1 AppleClamshellState)"
+cur=p5a
+lid() { ioreg -r -k AppleClamshellState -d 4 | /usr/bin/grep -m1 AppleClamshellState | /usr/bin/grep -q Yes; }
+sw() { if [ $cur = main ]; then mv Builds/MacBench Builds/MacBench-88b7a22; mv Builds/MacBench-p5a Builds/MacBench; cur=p5a; else mv Builds/MacBench Builds/MacBench-p5a; mv Builds/MacBench-88b7a22 Builds/MacBench; cur=main; fi; }
+stop() { st "lid closed: stopping"; [ $cur = p5a ] || sw; exit 2; }
+lid && stop; Tools/bench.sh slice-crossing-air > /dev/null 2>&1; st "p5a discard exit $? $(ls -td Evidence/local/bench-slice-crossing-air-* | head -1)"
+lid && stop; sw; Tools/bench.sh slice-crossing-air > /dev/null 2>&1; st "main discard exit $? $(ls -td Evidence/local/bench-slice-crossing-air-* | head -1)"
+for i in 1 2 3; do
+  for p in slice-crossing-air kawran-farmgate-street; do
+    for b in p5a main; do
+      lid && stop; [ $cur = $b ] || sw
+      Tools/bench.sh $p > /dev/null 2>&1; st "$b $p exit $? $(ls -td Evidence/local/bench-$p-* | head -1)"
+    done
+  done
+done
+[ $cur = p5a ] || sw
+st "done; P-5a player in Builds/MacBench, main in Builds/MacBench-88b7a22 $(pmset -g batt | head -1) $(ioreg -r -k AppleClamshellState -d 4 | /usr/bin/grep -m1 AppleClamshellState)"

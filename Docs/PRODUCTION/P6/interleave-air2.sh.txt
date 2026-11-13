@@ -1,0 +1,22 @@
+#!/bin/zsh
+# Second AC set, air path only, main first in each pair (order check). Players as interleave.sh.txt.
+# run, each after one discarded run. Both players are kept.
+D=${0:a:h}; L=$D/interleave-air2.log; cd ~/Documents/dhaka-after-dark-unity
+st() { echo "$1 $(date +%H%M%S)" >> $L; }
+st "start $(pmset -g batt | head -1) $(ioreg -r -k AppleClamshellState -d 4 | /usr/bin/grep -m1 AppleClamshellState)"
+cur=p6
+lid() { ioreg -r -k AppleClamshellState -d 4 | /usr/bin/grep -m1 AppleClamshellState | /usr/bin/grep -q Yes; }
+stop() { st "lid closed: stopping"; [ $cur = p6 ] || sw; exit 2; }
+sw() { if [ $cur = main ]; then mv Builds/MacBench Builds/MacBench-main; mv Builds/MacBench-p6 Builds/MacBench; cur=p6; else mv Builds/MacBench Builds/MacBench-p6; mv Builds/MacBench-main Builds/MacBench; cur=main; fi; }
+lid && stop; Tools/bench.sh slice-crossing-air > /dev/null 2>&1; st "p6 discard exit $? $(ls -td Evidence/local/bench-slice-crossing-air-* | head -1)"
+lid && stop; sw; Tools/bench.sh slice-crossing-air > /dev/null 2>&1; st "main discard exit $? $(ls -td Evidence/local/bench-slice-crossing-air-* | head -1)"
+for i in 1 2 3; do
+  for p in slice-crossing-air; do
+    for b in main p6; do
+      lid && stop; [ $cur = $b ] || sw
+      Tools/bench.sh $p > /dev/null 2>&1; st "$b $p exit $? $(ls -td Evidence/local/bench-$p-* | head -1)"
+    done
+  done
+done
+[ $cur = p6 ] || sw
+st "done; P-6 player in Builds/MacBench, main in Builds/MacBench-main $(pmset -g batt | head -1) $(ioreg -r -k AppleClamshellState -d 4 | /usr/bin/grep -m1 AppleClamshellState)"

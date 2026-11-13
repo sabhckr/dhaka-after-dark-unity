@@ -1,0 +1,16 @@
+using System; using System.IO; using System.Linq; using System.Collections.Generic; using Dad.World; using Dad.Traffic;
+static class P { static void Main(string[] a){
+  string dir=a[0]; double secs=double.Parse(a[1]), hour=double.Parse(a[2]), fx=double.Parse(a[3]), fz=double.Parse(a[4]);
+  var net=new TrafficNet(); var sim=new TrafficSim(net,1){Budget=300,Hour=hour,FocusX=fx,FocusZ=fz};
+  for(int x=6;x<=9;x++) for(int y=-30;y<=-28;y++){ var c=Dadc.Load(File.ReadAllBytes(Path.Combine(dir,$"c_{x}_{y}.dadc"))); NeighbourRails.Attach(c,dir); var r=ChunkRoads.Build(c); sim.AddChunk(ChunkLanes.Build(c,r.Street.Blocks),false); }
+  net.Update(); sim.Populate();
+  for(int i=0;i<secs*10;i++) sim.Advance();
+  var km=new double[10]; var n=new int[10]; var mv=new double[10]; var st=new int[10]; var why=new Dictionary<string,int>();
+  foreach(var ch in net.Chunks) foreach(var l in ch.All){ if(l.D.Connector) continue; double dx=l.D.Pts[0]+l.Ox-fx,dz=l.D.Pts[1]+l.Oz-fz; if(dx*dx+dz*dz<320*320) km[Math.Min(l.D.Rank,(byte)9)]+=l.Length/1000; }
+  int conn=0; foreach(var g in sim.Agents){ int r=Math.Min(g.Lane.D.Rank,(byte)9); if(g.Lane.D.Connector) conn++; n[r]++; mv[r]+=g.V; if(g.V<.3){ st[r]++; var k=g.Why.ToString()+"/"+(g.WaitingFor?.Junction?.D.Kind.ToString()??"-"); why[k]=why.TryGetValue(k,out var q)?q+1:1; } }
+  Console.WriteLine($"agents {sim.Agents.Count}, on connectors {conn}");
+  for(int r=0;r<10;r++) if(km[r]>0||n[r]>0) Console.WriteLine($"rank {r}: {km[r]:F1} km lanes, {n[r]} agents ({(km[r]>0?n[r]/km[r]:0):F1}/km), mean v {(n[r]>0?mv[r]/n[r]:0):F1}, stopped {st[r]}");
+  foreach(var kv in why.OrderByDescending(k=>k.Value)) Console.WriteLine($"  {kv.Key}: {kv.Value}");
+  var kinds=new Dictionary<JunctionKind,int>(); var majorAll=0; foreach(var j in net.Junctions){ kinds[j.D.Kind]=kinds.TryGetValue(j.D.Kind,out var q)?q+1:1; }
+  Console.WriteLine(string.Join(", ",kinds.Select(k=>k.Key+":"+k.Value)));
+}}

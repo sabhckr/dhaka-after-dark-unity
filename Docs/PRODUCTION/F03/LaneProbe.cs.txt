@@ -1,0 +1,20 @@
+using System; using System.IO; using System.Linq; using System.Collections.Generic; using Dad.World;
+class P { static void Main(string[] a) {
+  string dir=a[0]; var ids=new List<string>(); for(int x=6;x<=9;x++) for(int y=-30;y<=-28;y++) ids.Add($"c_{x}_{y}");
+  int L=0,C=0,closed=0,narrow=0,lost=0,open=0,opens=0,pruned=0,blk=0,turn=0,bus=0,blocks=0,hitLanes=0,hitConn=0,tinyLanes=0,noNext=0; double m=0; var kinds=new Dictionary<JunctionKind,int>(); var sw=System.Diagnostics.Stopwatch.StartNew(); double ms=0; var wid=new SortedDictionary<int,int>();
+  var keys=new Dictionary<(long,long),(int ends,int starts,int chunks)>();
+  foreach(var id in ids){ var c=Dadc.Load(File.ReadAllBytes(Path.Combine(dir,id+".dadc"))); NeighbourRails.Attach(c,dir); var r=ChunkRoads.Build(c); blocks+=r.Street.Blocks.Length; sw.Restart(); var g=ChunkLanes.Build(c,r.Street.Blocks); ms+=sw.Elapsed.TotalMilliseconds;
+    L+=g.RoadLanes;C+=g.Connectors;closed+=g.ClosedDirections;narrow+=g.NarrowedDirections;lost+=g.LanesLost;open+=g.OpenEnds;opens+=g.OpenStarts;pruned+=g.Pruned;blk+=g.ConnectorsBlocked;turn+=g.Turnarounds;bus+=g.BusStops;m+=g.RoadMetres;
+    foreach(var j in g.Junctions) kinds[j.Kind]=kinds.GetValueOrDefault(j.Kind)+1;
+    foreach(var l in g.Lanes){ if(!l.Connector){int w=(int)(l.Width*10); wid[w]=wid.GetValueOrDefault(w)+1; if(l.Length<2)tinyLanes++;}
+      if(l.Next.Length==0&&!l.OpenEnd)noNext++;
+      bool hit=false; for(int i=0;i<l.Pts.Length&&!hit;i+=2) foreach(var k in r.Street.Blocks){double ex=l.Pts[i]-k.X,ez=l.Pts[i+1]-k.Z; if(Math.Abs(ex*k.Ux+ez*k.Uz)<k.Along&&Math.Abs(-ex*k.Uz+ez*k.Ux)<k.Half){hit=true;break;}}
+      if(hit){ if(l.Connector)hitConn++; else hitLanes++; }
+      if(l.OpenEnd||l.OpenStart){var kk=(l.NodeEast,l.NodeNorth); var v=keys.GetValueOrDefault(kk); if(l.OpenEnd)v.ends++; if(l.OpenStart)v.starts++; keys[kk]=v;}
+    }}
+  Console.WriteLine($"road lanes {L} ({m:F0} m), connectors {C}, blocks {blocks}, closed dirs {closed}, narrowed {narrow}, lanes lost {lost}, open ends {open}, open starts {opens}, pruned {pruned}, connectors blocked {blk}, turnarounds {turn}, bus stops {bus}, build {ms/ids.Count:F2} ms/chunk");
+  Console.WriteLine("junctions "+string.Join(", ",kinds.Select(k=>k.Key+" "+k.Value)));
+  Console.WriteLine($"road lanes through a block {hitLanes}, connectors through a block {hitConn}, lanes under 2 m {tinyLanes}, dead lanes {noNext}");
+  Console.WriteLine("widths (dm): "+string.Join(" ",wid.Select(k=>k.Key+":"+k.Value)));
+  int sOnlyE=keys.Count(k=>k.Value.ends>0&&k.Value.starts==0), sOnlyS=keys.Count(k=>k.Value.starts>0&&k.Value.ends==0); Console.WriteLine($"open keys {keys.Count}, ends only {sOnlyE}, starts only {sOnlyS}");
+}}

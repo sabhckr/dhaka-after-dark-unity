@@ -1,0 +1,13 @@
+{
+ "name": "w-n-richlow",
+ "east": 3900,
+ "north": 2900,
+ "height": 1.7,
+ "lookEast": 3990,
+ "lookNorth": 2950,
+ "lookHeight": 1.5,
+ "fov": 60,
+ "date": "",
+ "time": 12.0,
+ "weather": "clear"
+}

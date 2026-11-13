@@ -1,0 +1,20 @@
+# Run from the scratch folder holding p45/ll.py: samples the avenue lines (p5a/pts.txt = INFRA/p5a/avenue-lines.txt) at fixed N and gives lat/lng; second part gives the Mapillary cameras' east offsets.
+exec(open('p45/ll.py').read().split('for l in')[0])
+lines={}
+for l in open('p5a/pts.txt'):
+    k,i,w,*p=l.split(); pts=[tuple(map(float,q.split(','))) for q in p]; lines.setdefault(i,[]).extend(pts)
+def xat(pts,N):
+    for (x1,z1),(x2,z2) in zip(pts,pts[1:]):
+        if min(z1,z2)<=N<=max(z1,z2) and z1!=z2: return x1+(N-z1)/(z2-z1)*(x2-x1)
+for N in (14760,14640,14430,14310):
+    xs={k:xat(v,N) for k,v in lines.items()}
+    deck=(xs['612562211']+xs['671984898'])/2
+    print(N, ' '.join(f'{k} E{v:.1f}' for k,v in xs.items()), f'deck E{deck:.1f}')
+    for name,x in (('deck',deck),('NB',xs['528310083']),('SB',xs['528310084'])):
+        la,lo=inv(x,N); print(f'   {name} {la:.6f},{lo:.6f}')
+
+# --- cam.py
+exec(open('p5a/samp.py').read().split('for N in')[0])
+for E,N in ((4022.1,14808.5),(4038.9,14760.6),(4050.6,14695.2),(4109.3,14567.6),(4156.4,14406.4)):
+    xs={k:xat(v,N) for k,v in lines.items()}; deck=(xs['612562211']+xs['671984898'])/2
+    print(f'cam E{E} N{N}: deck {E-deck:+.1f} m east of deck; NB centre {xs["528310083"]-deck:+.1f}, SB centre {xs["528310084"]-deck:+.1f} (x at same N)')

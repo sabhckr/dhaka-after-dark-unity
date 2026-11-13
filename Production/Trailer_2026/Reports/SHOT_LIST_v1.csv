@@ -1,0 +1,31 @@
+shot,in,out,seconds,stage,card,picture,pose_source,time_of_day,camera,vo,sound,status
+S01,0:00.0,0:04.0,4.0,1 Curiosity,,Night sky: moon; stars; cloud drift,tod-night pose (4250;14550 h70),23:30,slow tilt; clock at 1 game-min/s for drift,VO1 at 0:00.5 (whispered),distant traffic bed (off-screen); 50 Hz mains hum; drone,F N
+S02,0:04.0,0:09.0,5.0,1 Curiosity,,Tilt down to moonlit roofs and the viaduct curve,tod-night pose,23:30,tilt continues to the horizon,,drone; single distant horn,F N
+S03,0:09.0,0:13.5,4.5,1 Curiosity,,Day: Farmgate validation area and viaduct from the air; empty roads,m2-overview pose,10:00,slow push 10 m/s,VO2 at 0:12.0,day ambience (off-screen),F
+S04,0:13.5,0:17.0,3.5,1 Curiosity,,Day: shut shutters and blank colour boards,m2-shopfront pose,10:00,lateral dolly 1.5 m/s at 1.6 m,,,F
+S05,0:17.0,0:20.0,3.0,1 Curiosity,ONE CITY. (0:17.5-0:19.7),Day: empty avenue under the viaduct,kawran-street pose,10:00,static,,horn; hit on the card,F
+S06,0:20.0,0:28.0,8.0,2 Unease,,Time-lapse: sunset to night over the skyline (game clock),tod-sunset pose,17:20 to 19:00 over 8 s,static; DayCycle animated,VO3 at 0:25.0,drone rises; heartbeat pulse starts,F
+S07,0:28.0,0:32.0,4.0,2 Unease,,Dusk rooftops: tanks; dishes; stair rooms; long shadows,d06b-roof-close pose,17:35,drift 2 m/s at roof height,,wind; metallic tick,F
+S08,0:32.0,0:36.5,4.5,2 Unease,,Night: viaduct piers receding down the avenue,tod-night-street pose,21:00,push 1 m/s at 1.7 m,VO4 at 0:35.0,low tension; distorted radio far off,F N
+S09,0:36.5,0:40.5,4.0,2 Unease,,Night: side lane; drains; cables against the sky,d05-drain-lane pose,22:00,low camera 0.6 m; slow push,,electrical buzz,F N
+S10,0:40.5,0:45.0,4.5,2 Unease,A THOUSAND STORIES. (0:41.5-0:44.5),Night: footbridge silhouette against the moonlit sky,m2-footbridge pose,21:30,low angle looking up; frame away from stairs (K-39),,pulse,F N
+S11,0:45.0,0:50.0,5.0,3 Fear,,Night: empty junction from a rooftop edge (the watcher),signal-junction pose (4396;13562 h46),23:00,creep 0.3 m/s,VO5 at 0:48.0,music down to a pulse,F N
+S12,0:50.0,0:54.0,4.0,3 Fear,,Night POV walk past the shutter row,m2-shopfront area,23:00,1.4 m/s at 1.7 m; subtle procedural handheld,,footsteps (decision D7); distant engine,F N
+S13,0:54.0,0:58.5,4.5,3 Fear,,Night: turn back to the empty avenue; nothing there,m2-shopfront area,23:00,slow yaw 150 degrees,VO6 at 0:57.0,silence beat,F N
+S14,0:58.5,1:03.0,4.5,3 Fear,,Night: crane up past the Karwan Bazar station mass,kawran-metro pose,23:00,rise 2 m to 25 m,,sub-bass swell,F N
+S15,1:03.0,1:07.0,4.0,3 Fear,,Night: on the viaduct deck between the rails; no train,d06b-viaduct pose,23:00,static then slow push,,rail ring; metallic creak,F N
+S16,1:07.0,1:10.0,3.0,3 Fear,EVERY STREET HAS A SECRET. (1:07.3-1:09.8),Black card,graphics,,,VO7 at 1:08.0,silence then breath,G
+S17,1:10.0,1:14.0,4.0,4 Excitement,,Night: fast low dolly up KNI under the viaduct,kawran-farmgate-street path segment (120 m),23:00,30 m/s at 1.8 m,,percussion and bass in,F N
+S18,1:14.0,1:17.0,3.0,4 Excitement,,Night: rush along the viaduct deck,d06b-viaduct line,23:00,40 m/s at 2 m,VO8 at 1:15.0,riser,F N
+S19,1:17.0,1:19.0,2.0,4 Excitement,,Night: rooftop skim over tanks,d06b-air area,23:00,25 m/s at 3 m above roofs,,hit,F N
+S20,1:19.0,1:21.0,2.0,4 Excitement,,Night: low pass through the Farmgate junction,FreeCamera start target (3942;14893),23:00,20 m/s at 4 m,,hit,F N
+S21,1:21.0,1:23.0,2.0,4 Excitement,,Night: crane up over Farmgate station,k37-farmgate-station area (reframed),23:00,rise 2 m to 40 m,,hit,F N
+S22,1:23.0,1:25.0,2.0,4 Excitement,,Night: fly under the footbridge,m2-footbridge pose,23:00,15 m/s,,whoosh,F N
+S23,1:25.0,1:27.0,2.0,4 Excitement,,Night: whip pan across the shutter row,m2-shopfront pose,23:00,yaw 90 degrees in 0.5 s,,whip,F N
+S24,1:27.0,1:30.0,3.0,4 Excitement,,Night: high aerial arc over Farmgate,farmgate pose (kept inside the slice),23:00,arc 30 degrees at 150 m,,build,F N
+S25,1:30.0,1:35.0,5.0,4 Excitement,,Night: push towards the Farmgate junction down the empty avenue,KNI centre line,23:00,2 m/s at 1.7 m,VO9 at 1:30.0 (stronger),orchestral tension; synth rise,F N
+S26,1:35.0,1:39.0,4.0,4 Excitement,,8 cuts of 0.5 s from S17-S24 handles on the beat,edit of captured footage,23:00,,,impacts on the cuts,E
+S27,1:39.0,1:42.0,3.0,4 Excitement,NO WAY BACK. (1:39.2-1:41.8),Card on black; then sudden drop,graphics,,,,impact then cut to silence,G
+S28,1:42.0,1:46.5,4.5,5 Desire,,Night: still wide of the empty avenue under the viaduct; moon above,near tod-night-street pose (look raised),23:30,static,VO10 at 1:43.0,room tone and hum only,F N
+S29,1:46.5,1:56.0,9.5,5 Desire,DHAKA: AFTER DARK,Title over S28 fading to black,graphics,,,title VO 1:47.0; hook 1:49.2-1:56.0,original title impact,G
+S30,1:56.0,2:00.0,4.0,5 Desire,AXIOM; credits; date (decision D6),AXIOM ident and end credits,graphics,,,optional 'AXIOM' at 1:56.5,AXIOM sonic signature; end at 2:00.000,G

@@ -1,0 +1,14 @@
+{
+ "name": "t-stop2",
+ "east": 555.7890826633625,
+ "north": 905.4977979540824,
+ "height": 3.2,
+ "lookEast": 588.0315016230725,
+ "lookNorth": 899.4623675944034,
+ "lookHeight": 2.2,
+ "fov": 60,
+ "date": "",
+ "time": 12.0,
+ "weather": "clear",
+ "trainStop": 2
+}

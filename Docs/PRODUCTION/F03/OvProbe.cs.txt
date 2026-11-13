@@ -1,0 +1,15 @@
+using System; using System.IO; using System.Linq; using System.Collections.Generic; using Dad.World;
+class P { static void Main(string[] a) {
+  string dir=a[0];
+  var tot=new Dictionary<(long,long),double>(); var info=new Dictionary<long,string>();
+  for(int x=6;x<=9;x++) for(int y=-30;y<=-28;y++){ var c=Dadc.Load(File.ReadAllBytes(Path.Combine(dir,$"c_{x}_{y}.dadc"))); var r=ChunkRoads.Build(c); var g=ChunkLanes.Build(c,r.Street.Blocks);
+    foreach(var rd in c.Roads) info[rd.Id]=$"{rd.Cls} w{rd.WidthCm/100.0:F1} y{rd.YCm} lanes{rd.Lanes} bridge{rd.Bridge} layer{rd.Layer} {rd.Name}";
+    var road=g.Lanes.Where(l=>!l.Connector).ToArray();
+    foreach(var p in road){ for(double s=2;s<p.Length-2;s+=4){ p.At(s,out double px,out double pz,out double dx,out double dz);
+       foreach(var q in road){ if(q.Way==p.Way) continue; if(string.CompareOrdinal(q.Way.ToString(),p.Way.ToString())<0) continue;
+         // nearest on q
+         double best=1e9; for(int i=0;i<q.Pts.Length-2;i+=2){ double ax=q.Pts[i],az=q.Pts[i+1],ex=q.Pts[i+2]-ax,ez=q.Pts[i+3]-az,l2=ex*ex+ez*ez; if(l2<1e-9)continue; double t=Math.Max(0,Math.Min(1,((px-ax)*ex+(pz-az)*ez)/l2)); double ux=ax+ex*t-px,uz=az+ez*t-pz; double d=ux*ux+uz*uz; if(d<best)best=d; }
+         if(Math.Sqrt(best)<(p.Width+q.Width)/2*0.75){ var k=(p.Way,q.Way); tot[k]=tot.GetValueOrDefault(k)+4; } } } } }
+  double sum=0; foreach(var kv in tot.OrderByDescending(k=>k.Value).Take(24)){ Console.WriteLine($"{kv.Value,6:F0} m  {kv.Key.Item1} [{info[kv.Key.Item1]}] x {kv.Key.Item2} [{info[kv.Key.Item2]}]"); }
+  Console.WriteLine($"pairs {tot.Count}, metres {tot.Values.Sum():F0}");
+}}

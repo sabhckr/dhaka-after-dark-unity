@@ -1,0 +1,13 @@
+{
+ "name": "w-air-port2",
+ "east": 700,
+ "north": 620,
+ "height": 120,
+ "lookEast": 1000,
+ "lookNorth": 300,
+ "lookHeight": 0,
+ "fov": 60,
+ "date": "",
+ "time": 12.0,
+ "weather": "clear"
+}

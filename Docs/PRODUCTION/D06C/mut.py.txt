@@ -1,0 +1,67 @@
+# D-06c mutations: each one applied alone, the tests that should catch it run, the file restored.
+# Mono: the EditMode NearFacadeTests on the editor's Mono (monotest harness); PlayMode: Unity's runner.
+import subprocess, shutil, os, sys, re
+P=os.path.expanduser('~/Documents/dhaka-after-dark-unity')
+D=os.path.dirname(os.path.abspath(__file__))
+MT=os.path.join(os.path.dirname(D),'monotest')
+W='Assets/_Project/Runtime/World/'
+C='Assets/_Project/Runtime/Core/Streaming/ChunkStreamer.cs'
+S='Assets/_Project/Shaders/DadWorld.shader'
+N=W+'NearFacades.cs'
+MONO=['NearFacadeTests.StylesFollowTheBuildingAndItsDistrict','NearFacadeTests.NearFacadesDressThePaintedWindows','NearFacadeTests.NothingReachesPastTheRoomInFrontOfIt',
+      'NearFacadeTests.TheShaderAgreesWithTheNearFacades','NearFacadeTests.TheSliceNearFacadesStayWithTheirCells','NearFacadeTests.OldDhakaAndTheModernAreasGetTheirStyles','NearFacadeTests.BuildingsKeepTheirColourAsTheirNearFacadesFadeIn']
+muts_all=[
+ ('bricked-up windows dressed', N, '                if (fw.Family != FacadeFamily.Commercial && r1 > Bricked) continue;\n', '', 'Mono'),
+ ('hash read one floor up', N, 'CellHash(fw.Seed, k, fl, out double r0, out double r1, out double r2);', 'CellHash(fw.Seed, k, fl + 1, out double r0, out double r1, out double r2);', 'Mono'),
+ ('room in front ignored', N, 'Bay(f, fw, upper, k, bw, Room(fw, k) - ClearMargin, trim, w);', 'Bay(f, fw, upper, k, bw, ClearReach, trim, w);', 'Mono'),
+ ('no minimum room', N, 'public const double MinClear = 1.0,', 'public const double MinClear = 0.0,', 'Mono'),
+ ('walk-up window box drifts from the shader', N, 'WinWalkUp = { 0.22, 0.30, 0.78, 0.78 }', 'WinWalkUp = { 0.22, 0.32, 0.78, 0.78 }', 'Mono'),
+ ('district ignored', N, '                    return Homes(district);\n', '                    return NearStyle.WalkUp;\n', 'Mono'),
+ ('last place wins, not the nearest', N, '                if (d < best) { best = d; kind = p.Kind[i]; }', '                if (d < Reach * Reach) { best = d; kind = p.Kind[i]; }', 'Mono'),
+ ('walls listed by their start, not their bays', N, 'else cells |= (ushort)(1 << ChunkStreet.CellOf(x, z));', 'else cells |= (ushort)(1 << ChunkStreet.CellOf(px, pz));', 'Mono'),
+ ('fade ends too late', N, 'FadeEnd = StreetLod.NearDistance - 10;', 'FadeEnd = StreetLod.NearDistance - 2;', 'Mono'),
+ ('road flag only for shops', W+'BuildingBuilder.cs', 'bool road = !hole && (far.Shops || far.Style != NearStyle.None) && near.Faces(', 'bool road = !hole && far.Shops && near.Faces(', 'Mono'),
+ ('shadow pass keeps every pixel', S, '''            half4 Frag(Varyings i) : SV_Target
+            {
+            #ifdef _DAD_NEAR
+                NearDither(i.positionWS, i.positionCS);
+            #endif
+                return 0;
+            }''', '''            half4 Frag(Varyings i) : SV_Target
+            {
+                return 0;
+            }''', 'Mono'),
+ ('fade without the focus height', S, 'float up = max(0, _DadNearFocus.y - 10);', 'float up = 0;', 'Mono'),
+ ('office spandrels in a colour of their own', N, 'Math.Min(0.06, cap), fw.Wall, Closed);', 'Math.Min(0.06, cap), WorldMaterials.Pack(Steel, WorldMaterial.Metal), Closed);', 'Mono'),
+ ('modern fins in concrete', N, 'Math.Min(0.5, cap), fw.Wall, w, -1);', 'Math.Min(0.5, cap), WorldMaterials.Pack(Slab, WorldMaterial.Concrete), w, -1);', 'Mono'),
+ ('near facades drawn in the world material', C, 'r.sharedMaterials = new[] { worldMat, nearMat };', 'r.sharedMaterials = new[] { worldMat, worldMat };', 'PlayMode'),
+ ('fade globals never set', C, '''                Shader.SetGlobalVector(NearFocusId, new Vector4(p.x, p.y, p.z, 0));
+                Shader.SetGlobalVector(NearFadeId, new Vector4((float)ChunkBuildings.FadeStart, (float)ChunkBuildings.FadeEnd, 0, 0));
+''', '', 'PlayMode'),
+ ('near walls not handed back', C, '''            v.Street?.ReleaseRoofKit();
+            v.Facades?.ReleaseNearWalls();''', '''            v.Street?.ReleaseRoofKit();''', 'PlayMode'),
+ ('near fade reaching past the switch', S, 'cover = saturate((_DadNearFade.y - sqrt(dot(d, d) + up * up))', 'cover = saturate((_DadNearFade.y + 20 - sqrt(dot(d, d) + up * up))', 'PlayMode'),
+ ('kits built without their facades', C, 'return st.BuildNearKit(c, fa, pooled: true);', 'return st.BuildNearKit(c, pooled: true);', 'PlayMode'),
+]
+muts=[m for m in muts_all if m[0] in sys.argv[1:]] if len(sys.argv) > 1 else muts_all
+out=open(os.path.join(D,"result2.txt" if len(sys.argv) > 1 else "result.txt"),"w")
+for name, f, a, b, mode in muts:
+    path=os.path.join(P,f); bak=os.path.join(D,'backup',os.path.basename(f))
+    shutil.copy2(path,bak)
+    s=open(path).read()
+    if s.count(a)!=1: out.write(f'## {name}: NOT APPLIED (matches {s.count(a)})\n'); out.flush(); continue
+    open(path,'w').write(s.replace(a,b))
+    try:
+        if mode=='Mono':
+            env=dict(os.environ, EXTRA=f'{MT}/D06c.cs {MT}/ShimD06c.cs', TESTS=f'{MT}/NearFacadeTestsMono.cs')
+            r=subprocess.run(['/bin/zsh',f'{MT}/run.sh']+MONO,cwd=MT,capture_output=True,text=True,env=env)
+            lines=[l for l in (r.stdout+r.stderr).splitlines() if l.startswith(('PASS','FAIL','/'))]
+            caught=sum(1 for l in lines if l.startswith('FAIL')) or (1 if r.returncode and not any(l.startswith('PASS') for l in lines) else 0)
+            out.write(f'## {name} [{mode}]: {"CAUGHT" if caught else "MISSED"} (exit {r.returncode})\n'+'\n'.join(l[:220] for l in lines if not l.startswith('PASS'))+'\n'); out.flush()
+        else:
+            r=subprocess.run(['caffeinate','-dimsu','Tools/run-tests.sh','PlayMode','Dad.Tests.ChunkStreamerTests'],cwd=P,capture_output=True,text=True)
+            tail=r.stdout.strip().splitlines()[-8:]
+            out.write(f'## {name} [{mode}]: {"CAUGHT" if r.returncode else "MISSED"} (exit {r.returncode})\n'+'\n'.join(tail)+'\n'); out.flush()
+    finally:
+        shutil.copy2(bak,path)
+out.write('restored\n'); out.close()

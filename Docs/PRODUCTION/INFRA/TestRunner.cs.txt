@@ -1,0 +1,14 @@
+// EditMode tests outside Unity (P-5a, 2026-11-05): runs every [Test] method of the test files compiled with it, in the Mono
+// harness, against Unity's bundled NUnit framework (Library/PackageCache/com.unity.ext.nunit*/net40/unity-custom). The tests
+// it is used with call nothing of UnityEngine but Debug.Log and Application's two paths, which mut_p5a.py.txt stubs
+// (UnityStub). A fast mirror for mutations and pre-checks; the Unity EditMode run stays the record.
+using System; using System.Linq; using System.Reflection;
+static class TestRunner { static int Main(string[] a) {
+  int fail = 0;
+  foreach (var t in Assembly.GetExecutingAssembly().GetTypes().OrderBy(t => t.Name))
+    foreach (var m in t.GetMethods().Where(m => m.GetCustomAttributes().Any(x => x.GetType().Name == "TestAttribute"))) {
+      if (a.Length > 0 && !a.Any(f => (t.Name + "." + m.Name).Contains(f))) continue;
+      try { m.Invoke(Activator.CreateInstance(t), null); Console.WriteLine($"PASS {t.Name}.{m.Name}"); }
+      catch (TargetInvocationException e) { fail++; Console.WriteLine($"FAIL {t.Name}.{m.Name}: {e.InnerException.GetType().Name}: {e.InnerException.Message.Replace('\n', ' ')}"); }
+    }
+  return fail; } }

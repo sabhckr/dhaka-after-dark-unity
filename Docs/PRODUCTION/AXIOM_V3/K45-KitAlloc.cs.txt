@@ -1,0 +1,34 @@
+using System; using System.IO; using System.Linq; using System.Collections.Generic; using System.Threading; using Dad.World;
+// K-45: what a near-kit build allocates (cold thread, warm thread), and how large cells' near kits get city-wide.
+namespace Dad.Tests { public class KitAlloc {
+  static long A() => GC.GetAllocatedBytesForCurrentThread();
+  static string Dir => Path.Combine(Environment.GetEnvironmentVariable("DAD_SA"), "World", "chunks");
+  public void Slice() {
+    var sts = new List<ChunkStreet>();
+    for (int ix = 6; ix <= 9; ix++) for (int iy = -30; iy <= -28; iy++) sts.Add(ChunkRoads.Build(Dadc.Load(File.ReadAllBytes(Path.Combine(Dir, $"c_{ix}_{iy}.dadc"))), pooled: true).Street);
+    var prep = typeof(ChunkStreet).GetMethod("PrepareNearKitScratch"); long p0 = A(); prep?.Invoke(null, new object[] { 1 }); Console.WriteLine($"prepare: {(A() - p0) / 1048576.0:F2} MiB ({(prep != null ? "pooled scratch" : "per-thread scratch")})");
+    long first = 0, firstN = 0;
+    for (int round = 0; round < 3; round++) {
+      // each round on a new thread: the cold scratch
+      long cold = 0, warm = 0; int n = 0; long kitObj = 0;
+      var t = new Thread(() => {
+        foreach (var st in sts) for (int c = 0; c < 16; c++) if (st.HasNearKit(c)) {
+          long a = A(); var k = st.BuildNearKit(c, pooled: true); long b = A(); k.Release(); cold += b - a; n++; }
+        foreach (var st in sts) for (int c = 0; c < 16; c++) if (st.HasNearKit(c)) {
+          long a = A(); var k = st.BuildNearKit(c, pooled: true); long b = A(); k.Release(); warm += b - a; }
+      });
+      t.Start(); t.Join();
+      Console.WriteLine($"round {round}: {n} cells; first pass on a new thread {cold / 1048576.0:F2} MiB ({cold / n} B a cell), second pass {warm / 1048576.0:F3} MiB ({warm / n} B a cell)");
+    }
+  }
+  public void City() {
+    var v = new List<int>(); var ix = new List<int>(); int chunks = 0;
+    foreach (var f in Directory.GetFiles(Dir, "*.dadc")) {
+      var st = ChunkRoads.Build(Dadc.Load(File.ReadAllBytes(f))).Street; chunks++;
+      for (int c = 0; c < 16; c++) if (st.HasNearKit(c)) { var k = st.BuildNearKit(c); v.Add(k.VertexCount); ix.Add(k.IndexCount); }
+    }
+    v.Sort(); ix.Sort();
+    int P(List<int> l, double q) => l[Math.Min(l.Count - 1, (int)(q * l.Count))];
+    Console.WriteLine($"city: {chunks} chunks, {v.Count} cells with a near kit; vertices p50 {P(v,.5)} p90 {P(v,.9)} p99 {P(v,.99)} max {v[^1]}; indices p50 {P(ix,.5)} p90 {P(ix,.9)} p99 {P(ix,.99)} max {ix[^1]}");
+  }
+}}

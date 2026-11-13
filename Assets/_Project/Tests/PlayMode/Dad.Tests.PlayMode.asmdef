@@ -1,0 +1,27 @@
+{
+    "name": "Dad.Tests.PlayMode",
+    "rootNamespace": "Dad.Tests",
+    "references": [
+        "Dad.Core",
+        "Dad.World",
+        "Dad.Traffic",
+        "Dad.Vehicles",
+        "UnityEngine.TestRunner",
+        "Unity.InputSystem",
+        "Unity.InputSystem.TestFramework",
+        "Unity.Animation.Rigging"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

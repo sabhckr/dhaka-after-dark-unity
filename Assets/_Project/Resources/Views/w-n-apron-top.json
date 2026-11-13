@@ -1,0 +1,13 @@
+{
+ "name": "w-n-apron-top",
+ "east": 4300,
+ "north": 850,
+ "height": 300,
+ "lookEast": 4300.5,
+ "lookNorth": 850,
+ "lookHeight": 0,
+ "fov": 70,
+ "date": "",
+ "time": 12.0,
+ "weather": "clear"
+}

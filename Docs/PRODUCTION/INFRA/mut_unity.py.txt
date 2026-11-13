@@ -1,0 +1,20 @@
+import subprocess, os, re, glob
+P = os.path.expanduser('~/Documents/dhaka-after-dark-unity')
+S = P + '/Assets/_Project/Editor/Infra/InfraSurvey.cs'
+B = P + '/Assets/_Project/Runtime/World/Structures.cs'
+for name, f, a, b in [
+ ('B1 builder: footbridge columns ignore carriageways', B, '!InChunk(x, z) || OnCarriageway(x, z, 0.28, 0.3)', '!InChunk(x, z)'),
+ ('S4 survey drops the raised-building check', S, 'else if (s.BuildingBase < s.Top) Add("raised"', 'else if (false) Add("raised"'),
+]:
+    src = open(f).read(); assert src.count(a) == 1
+    open(f, 'w').write(src.replace(a, b))
+    try:
+        r = subprocess.run(['caffeinate', '-dimsu', P + '/Tools/run-tests.sh', 'EditMode', 'InfraSurveyTests'], capture_output=True, text=True)
+    finally:
+        open(f, 'w').write(src)
+    xml = max(glob.glob(P + '/Evidence/local/tests-EditMode-*.xml'), key=os.path.getmtime)
+    x = open(xml).read()
+    failed = re.findall(r'<test-case [^>]*name="(\w+)"[^>]*result="Failed"', x)
+    msg = re.search(r'<message><!\[CDATA\[(.*?)\]\]>', x, re.S)
+    print(f"{name}: exit {r.returncode}, {r.stdout.strip().splitlines()[-1] if r.stdout.strip() else ''}; failed {failed}; {os.path.basename(xml)}")
+    if msg: print('   ', msg.group(1).strip().splitlines()[0][:150], '|', (msg.group(1).strip().splitlines()[1:2] or [''])[0][:150])
